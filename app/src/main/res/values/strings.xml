@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Repeton</string>
     <string name="search_placeholder">Искать репетитора</string>
+    <string name="see_more">Ещё</string>
+    <string name="see_less">Свернуть</string>
 
 </resources>

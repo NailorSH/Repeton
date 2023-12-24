@@ -20,8 +20,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -69,7 +71,7 @@ fun SearchBarWithFilter(
         )
 
         Icon(
-            painter = painterResource(filterIcon),
+            imageVector = ImageVector.vectorResource(filterIcon),
             contentDescription = null,
             modifier = Modifier
                 .width(21.dp)
@@ -106,7 +108,7 @@ fun SearchBar(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
-                    painter = painterResource(leadingIcon),
+                    imageVector = ImageVector.vectorResource(leadingIcon),
                     contentDescription = null,
                     modifier = Modifier
                         .padding(1.dp)

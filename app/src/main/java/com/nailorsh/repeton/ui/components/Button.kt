@@ -26,7 +26,12 @@ import com.nailorsh.repeton.R
 fun RepetonButton(
     modifier: Modifier = Modifier,
     @StringRes text: Int,
-    textColor: Color = Color.Black,
+    textStyle: TextStyle = TextStyle(
+        fontSize = 14.sp,
+        lineHeight = 32.sp,
+        fontWeight = FontWeight(600),
+        color = Color.Black
+    ),
     buttonColor: Color = Color.LightGray,
     onButtonClicked: () -> Unit
 ) {
@@ -43,12 +48,7 @@ fun RepetonButton(
     ) {
         Text(
             text = stringResource(text),
-            style = TextStyle(
-                fontSize = 14.sp,
-                lineHeight = 32.sp,
-                fontWeight = FontWeight(600),
-                color = textColor
-            )
+            style = textStyle
         )
     }
 }

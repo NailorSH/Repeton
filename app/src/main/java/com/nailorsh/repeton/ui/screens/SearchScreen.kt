@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
@@ -34,6 +35,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
+import com.nailorsh.repeton.model.Tutor
+import com.nailorsh.repeton.model.tutors
 import com.nailorsh.repeton.ui.components.ExpandableText
 import com.nailorsh.repeton.ui.components.IconWithText
 import com.nailorsh.repeton.ui.components.LikeButton
@@ -50,7 +53,9 @@ import com.nailorsh.repeton.ui.theme.WriteButtonBackgroundColor
 import com.nailorsh.repeton.ui.theme.WriteButtonTextColor
 
 @Composable
-fun SearchScreen(modifier: Modifier = Modifier) {
+fun SearchScreen(
+    modifier: Modifier = Modifier,
+) {
     var query by remember { mutableStateOf("") }
 
     Column(
@@ -76,36 +81,47 @@ fun SearchScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxWidth()
             )
 
-            TutorList()
+            TutorList(
+                tutors = tutors
+            )
         }
     }
 }
 
 @Composable
-fun TutorList(modifier: Modifier = Modifier) {
+fun TutorList(
+    modifier: Modifier = Modifier,
+    tutors: List<Tutor>
+) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        item { TutorCard() }
-        item { TutorCard() }
-        item { TutorCard() }
+        items(tutors) {
+            TutorCard(
+                modifier = Modifier.fillMaxWidth(),
+                tutor = it,
+                onWriteButtonClicked = {}
+            )
+        }
     }
 }
 
 @Composable
 fun TutorCard(
     modifier: Modifier = Modifier,
-    onWriteButtonClicked: () -> Unit = {}
+    tutor: Tutor,
+    onWriteButtonClicked: () -> Unit
 ) {
     var isLiked by remember { mutableStateOf(false) }
+
+    val photoSrc = painterResource(R.drawable.man_photo)
 
     Column(
         verticalArrangement = Arrangement.spacedBy(25.dp, Alignment.Top),
         horizontalAlignment = Alignment.Start,
         modifier = modifier
-            .fillMaxWidth()
             .shadow(elevation = 4.dp, spotColor = SpotColor, ambientColor = AmbientColor)
             .background(color = White, shape = RoundedCornerShape(size = 5.dp))
             .padding(15.dp)
@@ -120,8 +136,8 @@ fun TutorCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.man_photo),
-                    contentDescription = "Репетитор",
+                    painter = photoSrc,
+                    contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .width(81.dp)
@@ -137,7 +153,7 @@ fun TutorCard(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "Александр Витальевич",
+                            text = tutor.name + "\n" + tutor.middleName,
                             style = TextStyle(
                                 fontSize = 22.sp,
                                 lineHeight = 26.sp,
@@ -163,11 +179,11 @@ fun TutorCard(
                         IconWithText(
                             icon = R.drawable.star_icon,
                             iconTint = StarColor,
-                            text = "4,93"
+                            text = tutor.rating.toString()
                         )
                         IconWithText(
                             icon = R.drawable.comment_icon,
-                            text = "100 отзывов"
+                            text = "${tutor.reviewsNumber} отзывов"
                         )
                     }
                 }
@@ -175,7 +191,7 @@ fun TutorCard(
 
             ExpandableText(
                 modifier = modifier.fillMaxWidth(),
-                text = "Я являюсь техническим руководителем проекта «Учу на Профи.Ру» и активно использую современные технологии распознавания "
+                text = tutor.about
             )
 
             Column(
@@ -186,22 +202,19 @@ fun TutorCard(
                 InfoSection(
                     modifier = Modifier.fillMaxWidth(),
                     title = R.string.subjects_section,
-                    body = "Математика • Информатика"
+                    body = tutor.subjects.joinToString(separator = " • ")
                 )
 
                 InfoSection(
                     modifier = Modifier.fillMaxWidth(),
                     title = R.string.education_section,
-                    body = "Окончил МФТИ, ФОПФ, два красных диплома, 2005 г."
+                    body = tutor.education
                 )
 
                 PriceSection(
                     modifier = Modifier.fillMaxWidth(),
                     title = R.string.prices_section,
-                    subjectsPrices = mapOf(
-                        "Математика" to "500-1000 ₽ / 60 мин",
-                        "Информатика" to "800-1000 ₽ / 60 мин"
-                    )
+                    subjectsPrices = tutor.subjectsPrices
                 )
             }
         }
@@ -210,13 +223,17 @@ fun TutorCard(
             modifier = Modifier
                 .fillMaxWidth(),
             text = R.string.message_button,
-            textColor = WriteButtonTextColor,
+            textStyle = TextStyle(
+                fontSize = 14.sp,
+                lineHeight = 32.sp,
+                fontWeight = FontWeight(600),
+                color = WriteButtonTextColor
+            ),
             buttonColor = WriteButtonBackgroundColor,
             onButtonClicked = onWriteButtonClicked
         )
     }
 }
-
 
 
 @Composable
@@ -271,32 +288,39 @@ fun PriceSection(
                 color = TitleColor,
             ),
         )
-        for (pair in subjectsPrices) {
-            Row(
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = pair.key,
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 24.sp,
-                        fontWeight = FontWeight(400),
-                        color = BodyColor,
-                    ),
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    text = pair.value,
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 24.sp,
-                        fontWeight = FontWeight(400),
-                        color = BodyColor,
-                    ),
-                    textAlign = TextAlign.Right,
-                    modifier = Modifier.weight(1f)
-                )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(3.dp, Alignment.Top),
+            horizontalAlignment = Alignment.Start,
+        ) {
+            for (pair in subjectsPrices) {
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = pair.key,
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 20.sp,
+                            fontWeight = FontWeight(400),
+                            color = BodyColor,
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 5.dp)
+                    )
+                    Text(
+                        text = pair.value,
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            lineHeight = 20.sp,
+                            fontWeight = FontWeight(400),
+                            color = BodyColor,
+                        ),
+                        textAlign = TextAlign.Right,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
         }
     }
@@ -308,7 +332,9 @@ fun PriceSection(
 @Composable
 fun TutorCardPreview() {
     RepetonTheme {
-        TutorCard()
+        TutorCard(
+            tutor = tutors[0],
+            onWriteButtonClicked = {}
+        )
     }
 }
-

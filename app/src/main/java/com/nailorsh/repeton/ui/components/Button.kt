@@ -31,8 +31,8 @@ fun RepetonButton(
         horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .padding(horizontal = 5.dp, vertical = 10.dp)
             .clickable { onButtonClicked() }
+            .padding(horizontal = 5.dp, vertical = 10.dp)
     ) {
         Text(
             text = stringResource(text),

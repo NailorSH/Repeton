@@ -222,16 +222,19 @@ fun TutorCard(
         RepetonButton(
             modifier = Modifier
                 .fillMaxWidth(),
-            text = R.string.message_button,
-            textStyle = TextStyle(
-                fontSize = 14.sp,
-                lineHeight = 32.sp,
-                fontWeight = FontWeight(600),
-                color = WriteButtonTextColor
-            ),
             buttonColor = WriteButtonBackgroundColor,
-            onButtonClicked = onWriteButtonClicked
-        )
+            onClick = onWriteButtonClicked
+        ) {
+            Text(
+                text = stringResource(R.string.message_button),
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    lineHeight = 32.sp,
+                    fontWeight = FontWeight(600),
+                    color = WriteButtonTextColor
+                ),
+            )
+        }
     }
 }
 

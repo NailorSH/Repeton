@@ -1,10 +1,12 @@
 package com.nailorsh.repeton.ui.components
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +27,7 @@ fun RepetonButton(
     modifier: Modifier = Modifier,
     @StringRes text: Int,
     textColor: Color = Color.Black,
+    buttonColor: Color = Color.LightGray,
     onButtonClicked: () -> Unit
 ) {
     Row(
@@ -32,6 +35,10 @@ fun RepetonButton(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .clickable { onButtonClicked() }
+            .background(
+                color = buttonColor,
+                shape = RoundedCornerShape(size = 8.dp)
+            )
             .padding(horizontal = 5.dp, vertical = 10.dp)
     ) {
         Text(

@@ -45,6 +45,8 @@ import com.nailorsh.repeton.ui.theme.RepetonTheme
 import com.nailorsh.repeton.ui.theme.SpotColor
 import com.nailorsh.repeton.ui.theme.StarColor
 import com.nailorsh.repeton.ui.theme.White
+import com.nailorsh.repeton.ui.theme.WriteButtonBackgroundColor
+import com.nailorsh.repeton.ui.theme.WriteButtonTextColor
 
 @Composable
 fun SearchScreen(modifier: Modifier = Modifier) {
@@ -205,13 +207,10 @@ fun TutorCard(
 
         RepetonButton(
             modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = Color(0xFF3856BF),
-                    shape = RoundedCornerShape(size = 8.dp)
-                ),
+                .fillMaxWidth(),
             text = R.string.message_button,
-            textColor = Color.White,
+            textColor = WriteButtonTextColor,
+            buttonColor = WriteButtonBackgroundColor,
             onButtonClicked = onWriteButtonClicked
         )
     }

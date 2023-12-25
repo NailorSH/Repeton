@@ -1,5 +1,7 @@
 package com.nailorsh.repeton.ui.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -41,13 +43,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
+import com.nailorsh.repeton.data.LessonSource
+import com.nailorsh.repeton.model.Lesson
 import com.nailorsh.repeton.ui.theme.AmbientColor
 import com.nailorsh.repeton.ui.theme.RepetonTheme
 import com.nailorsh.repeton.ui.theme.SpotColor
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ScheduleScreen() {
+fun ScheduleScreen(lesson: Lesson) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -110,9 +116,10 @@ fun ScheduleScreen() {
                 .width(296.dp)
                 .align(Alignment.CenterHorizontally)
         ) {
-            LessonBox("Английский язык", "15:00 - 16:25","Иван Иванов Иванович", "Conditionals + Irregular verbs. Unit Test 1. Vocabulary.")
-            LessonBox("Английский язык", "15:00 - 16:25","Иван Иванов Иванович", "Conditionals + Irregular verbs. Unit Test 1. Vocabulary.")
-            LessonBox("Английский язык", "15:00 - 16:25","Иван Иванов Иванович", "Conditionals + Irregular verbs. Unit Test 1. Vocabulary.")
+            val lessons = LessonSource().loadLessons()
+            LessonBox(lessons[0])
+            LessonBox(lessons[1])
+            LessonBox(lessons[2])
         }
         Button(
             onClick = { },
@@ -170,8 +177,9 @@ fun ObjectInRow(number: String, day: String) {
         }
     }
 }
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun LessonBox(subject: String, time: String, teacher: String, description: String) {
+fun LessonBox(lesson: Lesson) {
     Box(
         modifier = Modifier
             .padding(top = 21.dp)
@@ -189,30 +197,33 @@ fun LessonBox(subject: String, time: String, teacher: String, description: Strin
                 .fillMaxWidth()
                 .padding(top = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(13.dp)){
+                horizontalArrangement = Arrangement.SpaceBetween)
+                {
                 Text(
-                    text = subject,
+                    text = lesson.subject,
                     color = Color.Black,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
 
                     )
+                    //Обрезала дату, при выборе конкретного дня она лишняя
+                    val startTimeCutted = lesson.startTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)).substringAfter(", ")
+                    val endTimeCutted = lesson.endTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)).substringAfter(", ")
                 Text(
-                    text = time,
-                    color = Color.Black,
+                    text = "$startTimeCutted - $endTimeCutted",
                     fontSize = 14.sp,
                     letterSpacing = 0.sp,
-                    fontWeight = FontWeight.Medium
-                )
+                    textAlign = TextAlign.Left,
+                    fontWeight = FontWeight.Medium)
             }
             Text(
-                text = teacher,
+                text = lesson.teacherName,
                 color = Color.Black,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal
             )
             Text(
-                text = description,
+                text = lesson.title,
                 style = LocalTextStyle.current.copy(
                     lineHeight = 13.sp
                 ),
@@ -223,13 +234,14 @@ fun LessonBox(subject: String, time: String, teacher: String, description: Strin
         }
     }
 }
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(
     showSystemUi = true,
+    showBackground = true
 )
 @Composable
 fun ScheduleScreenPreview() {
     RepetonTheme {
-        ScheduleScreen()
+        ScheduleScreen(LessonSource().loadLessons()[0])
     }
 }

@@ -20,11 +20,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
+import com.nailorsh.repeton.ui.theme.BodyColor
+import com.nailorsh.repeton.ui.theme.ShowMoreTextButtonColor
 
 @Composable
 fun ExpandableText(
     modifier: Modifier = Modifier,
-    text: String
+    text: String,
+    textColor: Color = BodyColor,
+    showMoreTextColor: Color = ShowMoreTextButtonColor
 ) {
     Column(
         modifier = modifier
@@ -43,7 +47,7 @@ fun ExpandableText(
                 fontSize = 16.sp,
                 lineHeight = 24.sp,
                 fontWeight = FontWeight(400),
-                color = Color.Black,
+                color = textColor,
             ),
             maxLines = if (seeMore) 3 else Int.MAX_VALUE,
             overflow = TextOverflow.Ellipsis,
@@ -61,7 +65,7 @@ fun ExpandableText(
                 fontSize = 14.sp,
                 lineHeight = 24.sp,
                 fontWeight = FontWeight(500),
-                color = Color(0xFF3D3D3D),
+                color = showMoreTextColor,
             ),
             modifier = Modifier
                 .clickable {

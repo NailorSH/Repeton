@@ -17,13 +17,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nailorsh.repeton.ui.theme.Black
+import com.nailorsh.repeton.ui.theme.TitleColor
 
 @Composable
 fun IconWithText(
     modifier: Modifier = Modifier,
     @DrawableRes icon: Int,
     text: String,
-    iconTint: Color = Color.Black
+    textColor: Color = TitleColor,
+    iconTint: Color = Black
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(7.dp, Alignment.Start),
@@ -44,7 +47,7 @@ fun IconWithText(
                 fontSize = 14.sp,
                 lineHeight = 26.sp,
                 fontWeight = FontWeight(500),
-                color = Color.Black,
+                color = textColor,
             )
         )
     }

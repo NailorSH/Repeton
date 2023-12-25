@@ -19,9 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
@@ -32,7 +30,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
+import com.nailorsh.repeton.ui.theme.Black
 import com.nailorsh.repeton.ui.theme.RepetonTheme
+import com.nailorsh.repeton.ui.theme.SearchPlaceholderColor
+import com.nailorsh.repeton.ui.theme.TextFieldTextColor
+import com.nailorsh.repeton.ui.theme.White
 
 @Composable
 fun SearchBarWithFilter(
@@ -51,12 +53,12 @@ fun SearchBarWithFilter(
         modifier = modifier
             .border(
                 width = 2.dp,
-                color = Color.Black,
+                color = Black,
                 shape = RoundedCornerShape(size = 5.dp)
             )
             .fillMaxWidth()
             .background(
-                color = Color.White,
+                color = White,
                 shape = RoundedCornerShape(size = 5.dp)
             )
             .padding(10.dp)
@@ -99,7 +101,7 @@ fun SearchBar(
             fontSize = 14.sp,
             lineHeight = 17.sp,
             fontWeight = FontWeight(400),
-            color = Color.Black
+            color = TextFieldTextColor
         ),
         modifier = modifier,
         decorationBox = { innerTextField ->
@@ -123,7 +125,7 @@ fun SearchBar(
                             fontSize = 14.sp,
                             lineHeight = 17.sp,
                             fontWeight = FontWeight(400),
-                            color = Color(R.color.search_placeholder),
+                            color = SearchPlaceholderColor,
                         ),
                         modifier = Modifier.fillMaxWidth()
                     )

@@ -22,7 +22,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -41,9 +40,11 @@ import com.nailorsh.repeton.ui.components.LikeButton
 import com.nailorsh.repeton.ui.components.RepetonButton
 import com.nailorsh.repeton.ui.components.SearchBarWithFilter
 import com.nailorsh.repeton.ui.theme.AmbientColor
+import com.nailorsh.repeton.ui.theme.BodyColor
 import com.nailorsh.repeton.ui.theme.RepetonTheme
 import com.nailorsh.repeton.ui.theme.SpotColor
 import com.nailorsh.repeton.ui.theme.StarColor
+import com.nailorsh.repeton.ui.theme.TitleColor
 import com.nailorsh.repeton.ui.theme.White
 import com.nailorsh.repeton.ui.theme.WriteButtonBackgroundColor
 import com.nailorsh.repeton.ui.theme.WriteButtonTextColor
@@ -141,7 +142,7 @@ fun TutorCard(
                                 fontSize = 22.sp,
                                 lineHeight = 26.sp,
                                 fontWeight = FontWeight(800),
-                                color = Color.Black,
+                                color = TitleColor,
                             ),
                             modifier = Modifier.weight(1f)
                         )
@@ -235,7 +236,7 @@ fun InfoSection(
                 fontSize = 18.sp,
                 lineHeight = 24.sp,
                 fontWeight = FontWeight(500),
-                color = Color.Black,
+                color = TitleColor,
             )
         )
         Text(
@@ -244,7 +245,7 @@ fun InfoSection(
                 fontSize = 16.sp,
                 lineHeight = 24.sp,
                 fontWeight = FontWeight(400),
-                color = Color.Black,
+                color = BodyColor,
             )
         )
     }
@@ -267,7 +268,7 @@ fun PriceSection(
                 fontSize = 18.sp,
                 lineHeight = 24.sp,
                 fontWeight = FontWeight(500),
-                color = Color.Black,
+                color = TitleColor,
             ),
         )
         for (pair in subjectsPrices) {
@@ -281,7 +282,7 @@ fun PriceSection(
                         fontSize = 16.sp,
                         lineHeight = 24.sp,
                         fontWeight = FontWeight(400),
-                        color = Color.Black,
+                        color = BodyColor,
                     ),
                     modifier = Modifier.weight(1f)
                 )
@@ -291,7 +292,7 @@ fun PriceSection(
                         fontSize = 16.sp,
                         lineHeight = 24.sp,
                         fontWeight = FontWeight(400),
-                        color = Color.Black,
+                        color = BodyColor,
                     ),
                     textAlign = TextAlign.Right,
                     modifier = Modifier.weight(1f)

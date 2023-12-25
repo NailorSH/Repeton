@@ -24,13 +24,15 @@ import com.nailorsh.repeton.R
 fun RepetonButton(
     modifier: Modifier = Modifier,
     @StringRes text: Int,
-    textColor: Color = Color.Black
+    textColor: Color = Color.Black,
+    onButtonClicked: () -> Unit
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .padding(horizontal = 5.dp, vertical = 10.dp)
+            .clickable { onButtonClicked() }
     ) {
         Text(
             text = stringResource(text),

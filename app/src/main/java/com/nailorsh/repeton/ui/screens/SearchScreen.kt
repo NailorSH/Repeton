@@ -92,7 +92,10 @@ fun TutorList(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun TutorCard(modifier: Modifier = Modifier) {
+fun TutorCard(
+    modifier: Modifier = Modifier,
+    onWriteButtonClicked: () -> Unit = {}
+) {
     var isLiked by remember { mutableStateOf(false) }
 
     Column(
@@ -208,7 +211,8 @@ fun TutorCard(modifier: Modifier = Modifier) {
                     shape = RoundedCornerShape(size = 8.dp)
                 ),
             text = R.string.message_button,
-            textColor = Color.White
+            textColor = Color.White,
+            onButtonClicked = onWriteButtonClicked
         )
     }
 }

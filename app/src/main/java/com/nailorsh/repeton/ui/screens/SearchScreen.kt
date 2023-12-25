@@ -35,7 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.data.TutorsSource
+import com.nailorsh.repeton.data.FakeTutorsSource
 import com.nailorsh.repeton.model.Tutor
 import com.nailorsh.repeton.ui.components.ExpandableText
 import com.nailorsh.repeton.ui.components.IconWithText
@@ -82,7 +82,7 @@ fun SearchScreen(
             )
 
             TutorList(
-                tutors = TutorsSource.getTutorsList()
+                tutors = FakeTutorsSource.getTutorsList()
             )
         }
     }
@@ -336,7 +336,7 @@ fun PriceSection(
 fun TutorCardPreview() {
     RepetonTheme {
         TutorCard(
-            tutor = TutorsSource.getTutorsList()[0],
+            tutor = FakeTutorsSource.getTutorsList()[0],
             onWriteButtonClicked = {}
         )
     }

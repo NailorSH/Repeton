@@ -2,7 +2,7 @@ package com.nailorsh.repeton.data
 
 import com.nailorsh.repeton.model.Tutor
 
-object TutorsSource {
+object FakeTutorsSource {
     private val tutors = listOf(
         Tutor(
             name = "Александр ",

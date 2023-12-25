@@ -7,5 +7,6 @@
     <string name="subjects_section">Предметы</string>
     <string name="education_section">Образование</string>
     <string name="prices_section">Цены занятий</string>
+    <string name="search_tutors">Поиск репетиторов</string>
 
 </resources>

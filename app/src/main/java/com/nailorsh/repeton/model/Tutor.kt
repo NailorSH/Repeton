@@ -1,6 +1,6 @@
 package com.nailorsh.repeton.model
 
-data class Tutor (
+data class Tutor(
     val name: String,
     val surname: String,
     val middleName: String = "",
@@ -9,6 +9,6 @@ data class Tutor (
     val subjects: List<String>,
     val education: String,
     val subjectsPrices: Map<String, String>,
-    val rating: Float,
+    val rating: Double,
     val reviewsNumber: Int
 )

@@ -23,11 +23,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nailorsh.repeton.R
 import com.nailorsh.repeton.data.FakeLessonSource
 import com.nailorsh.repeton.ui.theme.AddLessonButtonColor
 import com.nailorsh.repeton.ui.theme.LineColor
@@ -67,7 +69,7 @@ fun ScheduleScreen(
         )
         {
             Text(
-                text = "Календарь",
+                text = stringResource(R.string.calendar),
                 color = Color.Black,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -82,13 +84,13 @@ fun ScheduleScreen(
                 .align(Alignment.CenterHorizontally),
             horizontalArrangement = Arrangement.spacedBy(7.dp)
         ) {
-            Day("1", "пн")
-            Day("2", "вт")
-            Day("3", "ср")
-            SelectedDay("4", "чт")
-            Day("5", "пт")
-            Day("6", "сб")
-            Day("7", "вс")
+            Day("1", stringResource(R.string.mon))
+            Day("2", stringResource(R.string.tue))
+            Day("3", stringResource(R.string.wed))
+            SelectedDay("4", stringResource(R.string.thu))
+            Day("5", stringResource(R.string.fri))
+            Day("6", stringResource(R.string.sat))
+            Day("7", stringResource(R.string.sun))
         }
         Divider(
             modifier = Modifier
@@ -132,7 +134,7 @@ fun ScheduleScreen(
             )
         ) {
             Text(
-                text = "Добавить занятие",
+                text = stringResource(R.string.add_lesson_button),
                 color = Color.White
             )
         }

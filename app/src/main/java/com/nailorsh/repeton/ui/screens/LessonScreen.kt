@@ -36,6 +36,8 @@ fun LessonScreen(lessonId: Int, modifier: Modifier = Modifier) {
     val lesson = FakeLessonSource.loadLessons()[lessonId]
     Surface(
         color = ScreenBackground,
+        modifier = modifier
+            .fillMaxSize()
     ) {
         Surface(
             modifier = modifier

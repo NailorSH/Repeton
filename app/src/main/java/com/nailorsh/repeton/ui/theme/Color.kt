@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.Color
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)
-val ScreenBackground = Color(android.graphics.Color.parseColor("#EFEFEF"))
+val ScreenBackground = Color(0xFFEFEFEF)
 val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
@@ -24,6 +24,8 @@ val BodyColor = Black
 val ShowMoreTextButtonColor = Color(0xFF3D3D3D)
 val TextFieldTextColor = Black
 val SearchPlaceholderColor = Color(0xFF3D3D3D)
+val HomeWorkButtonColor = Color(0xFF3A65FF)
+val SubjectColor = Color(0xFF3A65FF)
 val BottomNavigationBarColor = Color(0xFFF6F6F6)
 val SelectedBottomBarIconColor = Color(0xFF3856BF)
 val UnselectedBottomBarIconColor = Black

@@ -12,4 +12,11 @@
     <string name="lesson">Занятие</string>
     <string name="chats">Сообщения</string>
     <string name="profile">Профиль</string>
+    <string name="homework">Домашнее задание</string>
+    <string name="to_homework_button">Перейти к заданию</string>
+    <string name="additional_materials">Дополнинтельные материалы</string>
+    <string name="date_and_time">Дата и время занятия</string>
+    <string name="conduct_lesson">Занятие ведёт</string>
+    <string name="teacher_icon_desc">Teacher</string>
+    <string name="no_additional_materials">Дополнительные материалы не прикреплены</string>
 </resources>

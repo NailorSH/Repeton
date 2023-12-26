@@ -19,4 +19,6 @@
     <string name="conduct_lesson">Занятие ведёт</string>
     <string name="teacher_icon_desc">Teacher</string>
     <string name="no_additional_materials">Дополнительные материалы не прикреплены</string>
+    <string name="loading_failed">Ошибка загрузки результатов</string>
+    <string name="retry">Повторить</string>
 </resources>

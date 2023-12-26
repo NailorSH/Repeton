@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -42,6 +43,7 @@ fun SearchBarWithFilter(
     @DrawableRes leadingIcon: Int,
     @DrawableRes filterIcon: Int,
     keyboardOptions: KeyboardOptions,
+    keyboardActions: KeyboardActions,
     value: String,
     onValueChanged: (String) -> Unit,
     onFilterClicked: () -> Unit = { },
@@ -68,6 +70,7 @@ fun SearchBarWithFilter(
             placeholder = placeholder,
             leadingIcon = leadingIcon,
             keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
             value = value,
             onValueChanged = onValueChanged
         )
@@ -89,6 +92,7 @@ fun SearchBar(
     @StringRes placeholder: Int,
     @DrawableRes leadingIcon: Int,
     keyboardOptions: KeyboardOptions,
+    keyboardActions: KeyboardActions,
     value: String,
     onValueChanged: (String) -> Unit,
 ) {
@@ -96,6 +100,7 @@ fun SearchBar(
         value = value,
         onValueChange = onValueChanged,
         keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
         singleLine = true,
         textStyle = TextStyle(
             fontSize = 14.sp,
@@ -149,6 +154,9 @@ fun SearchBarPreview() {
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Search
+            ),
+            keyboardActions = KeyboardActions(
+                onSearch = { }
             ),
             onValueChanged = {},
             modifier = Modifier,

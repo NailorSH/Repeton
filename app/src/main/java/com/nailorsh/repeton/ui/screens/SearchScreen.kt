@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -40,10 +41,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.data.FakeTutorsSource
+import com.nailorsh.repeton.domain.SearchUiState
 import com.nailorsh.repeton.model.Tutor
 import com.nailorsh.repeton.ui.components.ExpandableText
 import com.nailorsh.repeton.ui.components.IconWithText
 import com.nailorsh.repeton.ui.components.LikeButton
+import com.nailorsh.repeton.ui.components.LoadingScreen
+import com.nailorsh.repeton.ui.components.ErrorScreen
 import com.nailorsh.repeton.ui.components.SearchBarWithFilter
 import com.nailorsh.repeton.ui.theme.AmbientColor
 import com.nailorsh.repeton.ui.theme.BodyColor
@@ -57,6 +61,8 @@ import com.nailorsh.repeton.ui.theme.WriteButtonTextColor
 
 @Composable
 fun SearchScreen(
+    getSearchResults: () -> Unit,
+    searchUiState: SearchUiState,
     modifier: Modifier = Modifier,
 ) {
     var query by remember { mutableStateOf("") }
@@ -69,7 +75,9 @@ fun SearchScreen(
         Column(
             verticalArrangement = Arrangement.spacedBy(18.dp, Alignment.Top),
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth(0.9f).padding(top = 15.dp)
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .padding(top = 15.dp)
         ) {
             SearchBarWithFilter(
                 placeholder = R.string.search_placeholder,
@@ -79,14 +87,26 @@ fun SearchScreen(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Search
                 ),
+                keyboardActions = KeyboardActions(
+                    onSearch = {
+                        getSearchResults()
+                    }
+                ),
                 value = query,
                 onValueChanged = { query = it },
                 modifier = Modifier.fillMaxWidth()
             )
 
-            TutorList(
-                tutors = FakeTutorsSource.getTutorsList()
-            )
+            when (searchUiState) {
+                is SearchUiState.None -> { }
+                is SearchUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
+
+                is SearchUiState.Success -> TutorList(
+                    tutors = searchUiState.tutors
+                )
+
+                is SearchUiState.Error -> ErrorScreen(getSearchResults, modifier = modifier.fillMaxSize())
+            }
         }
     }
 }

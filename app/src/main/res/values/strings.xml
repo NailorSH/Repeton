@@ -9,6 +9,7 @@
     <string name="prices_section">Цены занятий</string>
     <string name="search_tutors">Поиск репетиторов</string>
     <string name="home">Расписание</string>
+    <string name="lesson">Занятие</string>
     <string name="chats">Сообщения</string>
     <string name="profile">Профиль</string>
 </resources>

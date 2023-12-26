@@ -1,10 +1,13 @@
 package com.nailorsh.repeton.ui.screens
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -25,9 +28,10 @@ import com.nailorsh.repeton.ui.theme.RepetonTheme
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun LessonScreen(lesson: Lesson, modifier: Modifier = Modifier) {
+fun LessonScreen(lessonId: Int, modifier: Modifier = Modifier) {
+    val lesson = LessonSource().loadLessons()[lessonId]
+
     Surface(modifier.padding(horizontal = 16.dp, vertical = 32.dp)) {
         Column {
             LessonSubject(lesson.subject, Modifier
@@ -60,7 +64,6 @@ fun LessonSubject(subject: String, modifier: Modifier = Modifier) {
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LessonCard(lesson: Lesson, modifier: Modifier = Modifier) {
     Card(
@@ -147,8 +150,6 @@ fun AdditionalMaterialsCard(additionalMaterials: String?, modifier: Modifier = M
 }
 
 
-
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(
     showSystemUi = true,
     showBackground = true
@@ -156,6 +157,6 @@ fun AdditionalMaterialsCard(additionalMaterials: String?, modifier: Modifier = M
 @Composable
 fun LessonScreenPreview() {
     RepetonTheme {
-        LessonScreen(LessonSource().loadLessons()[0])
+        LessonScreen(lessonId = 0)
     }
 }

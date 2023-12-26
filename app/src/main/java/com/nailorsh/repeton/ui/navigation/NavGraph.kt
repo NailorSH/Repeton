@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.nailorsh.repeton.ui.screens.ChatsScreen
+import com.nailorsh.repeton.ui.screens.LessonScreen
 import com.nailorsh.repeton.ui.screens.ProfileScreen
 import com.nailorsh.repeton.ui.screens.ScheduleScreen
 import com.nailorsh.repeton.ui.screens.SearchScreen
@@ -24,13 +25,22 @@ fun NavGraph(
             SearchScreen()
         }
         composable(AppSections.HOME.route) {
-            ScheduleScreen()
+            ScheduleScreen(
+                onLessonClicked = { lessonId ->
+                    navHostController.navigate("lesson/$lessonId")
+                }
+            )
         }
         composable(AppSections.CHATS.route) {
             ChatsScreen()
         }
         composable(AppSections.PROFILE.route) {
             ProfileScreen()
+        }
+        composable(AppSections.LESSON.route) { backStackEntry ->
+            backStackEntry.arguments?.getString("id")?.let { id ->
+                LessonScreen(lessonId = id.toInt())
+            }
         }
     }
 }

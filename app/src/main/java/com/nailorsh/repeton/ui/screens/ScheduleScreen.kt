@@ -29,7 +29,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.data.LessonSource
-import com.nailorsh.repeton.model.Lesson
 import com.nailorsh.repeton.ui.theme.AddLessonButtonColor
 import com.nailorsh.repeton.ui.theme.LineColor
 import com.nailorsh.repeton.ui.theme.RepetonTheme
@@ -40,7 +39,9 @@ import java.time.format.FormatStyle
 
 
 @Composable
-fun ScheduleScreen() {
+fun ScheduleScreen(
+    onLessonClicked: (Int) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -103,16 +104,20 @@ fun ScheduleScreen() {
                 .width(296.dp)
                 .align(Alignment.CenterHorizontally)
         ) {
-            val lessons = LessonSource().loadLessons()
-            LessonBox(lessons[0]) {
+            LessonBox(
+                lessonId = 0,
+                onClick = onLessonClicked
+            )
 
-            }
-            LessonBox(lessons[1]) {
+            LessonBox(
+                lessonId = 1,
+                onClick = onLessonClicked
+            )
 
-            }
-            LessonBox(lessons[2]) {
-
-            }
+            LessonBox(
+                lessonId = 2,
+                onClick = onLessonClicked
+            )
         }
         Button(
             onClick = { },
@@ -213,14 +218,15 @@ fun SelectedDay(number: String, day: String) {
 }
 
 @Composable
-fun LessonBox(lesson: Lesson, onClick: () -> Unit) {
+fun LessonBox(lessonId: Int, onClick: (Int) -> Unit) {
+    val lesson = LessonSource().loadLessons()[lessonId]
     Box(
         modifier = Modifier
             .padding(top = 21.dp)
             .width(296.dp)
             .height(95.dp)
             .background(color = Color.White, shape = RoundedCornerShape(size = 16.dp))
-            .clickable { onClick() }
+            .clickable { onClick(lessonId) }
     )
     {
         Column(
@@ -284,6 +290,8 @@ fun LessonBox(lesson: Lesson, onClick: () -> Unit) {
 @Composable
 fun ScheduleScreenPreview() {
     RepetonTheme {
-        ScheduleScreen()
+        ScheduleScreen(
+            onLessonClicked = { }
+        )
     }
 }

@@ -20,5 +20,14 @@
     <string name="teacher_icon_desc">Teacher</string>
     <string name="no_additional_materials">Дополнительные материалы не прикреплены</string>
     <string name="loading_failed">Ошибка загрузки результатов</string>
+    <string name="calendar">Календарь</string>
+    <string name="add_lesson_button">Добавить занятие</string>
+    <string name="mon">пн</string>
+    <string name="tue">вт</string>
+    <string name="wed">ср</string>
+    <string name="thu">чт</string>
+    <string name="fri">пт</string>
+    <string name="sat">сб</string>
+    <string name="sun">вс</string>
     <string name="retry">Повторить</string>
 </resources>

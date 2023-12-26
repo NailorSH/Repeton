@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -38,10 +40,12 @@ import java.nio.file.WatchEvent
 
 @Composable
 fun ProfileScreen() {
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = ScreenBackground)
+            .verticalScroll(scrollState)
     )
     {
         Divider(
@@ -108,6 +112,8 @@ fun ProfileScreen() {
         )
         {
             AboutMeBox("О себе", "Учусь в 11 классе. Планирую поступать в технический вуз, готовлюсь сдавать ЕГЭ по физике и математике")
+            MyTeachersBox()
+            MySubjectsBox()
         }
     }
 }
@@ -143,6 +149,107 @@ fun AboutMeBox(title: String, information: String) {
         }
     }
 }
+
+@Composable
+fun MyTeachersBox() {
+    Box(
+        modifier = Modifier
+            .padding(top = 30.dp)
+            .width(299.dp)
+            .background(color = Color.White, shape = RoundedCornerShape(size = 5.dp))
+    )
+    {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier
+                .padding(top = 16.dp, bottom = 16.dp)
+        )
+        {
+            Text(
+                text = "Мои репетиторы",
+                color = Color.Black,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 40.dp)
+            )
+            MyTeacher("Иванова Мария Ивановна")
+            MyTeacher("Коновалов Александр Владимирович")
+        }
+    }
+}
+
+@Composable
+fun MyTeacher(teacherName: String) {
+    Column(verticalArrangement = Arrangement.spacedBy(5.dp)
+    )
+    {
+        Text (
+            text = teacherName,
+            color = Color.Black,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
+            modifier = Modifier.padding(horizontal = 40.dp)
+        )
+        Text (
+            text = "Перейти в профиль",
+            color = Color.Blue,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(horizontal = 40.dp)
+        )
+    }
+}
+
+@Composable
+fun MySubjectsBox() {
+    Box(
+        modifier = Modifier
+            .padding(top = 30.dp)
+            .width(299.dp)
+            .background(color = Color.White, shape = RoundedCornerShape(size = 5.dp))
+    )
+    {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier
+                .padding(top = 16.dp, bottom = 16.dp)
+        )
+        {
+            Text(
+                text = "Мои предметы",
+                color = Color.Black,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 40.dp)
+            )
+            MySubject("Математика")
+            MySubject("Физика")
+        }
+    }
+}
+
+@Composable
+fun MySubject(subjectName: String) {
+    Column(verticalArrangement = Arrangement.spacedBy(5.dp)
+    )
+    {
+        Text (
+            text = subjectName,
+            color = Color.Black,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
+            modifier = Modifier.padding(horizontal = 40.dp)
+        )
+        Text (
+            text = "Успеваемость",
+            color = Color.Blue,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(horizontal = 40.dp)
+        )
+    }
+}
+
 
 @Preview(
     showSystemUi = true,

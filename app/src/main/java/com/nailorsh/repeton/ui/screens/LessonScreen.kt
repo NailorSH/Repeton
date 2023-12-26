@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -24,10 +25,7 @@ import com.nailorsh.repeton.R
 import com.nailorsh.repeton.data.FakeLessonSource
 import com.nailorsh.repeton.model.Lesson
 import com.nailorsh.repeton.ui.components.RepetonButton
-import com.nailorsh.repeton.ui.theme.HomeWorkButtonColor
-import com.nailorsh.repeton.ui.theme.RepetonTheme
-import com.nailorsh.repeton.ui.theme.ScreenBackground
-import com.nailorsh.repeton.ui.theme.SubjectColor
+import com.nailorsh.repeton.ui.theme.*
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
@@ -41,10 +39,20 @@ fun LessonScreen(lessonId: Int, modifier: Modifier = Modifier) {
     ) {
         Surface(
             modifier = modifier
-                .padding(horizontal = 16.dp, vertical = 32.dp),
+                .padding(horizontal = 28.dp, vertical = 32.dp),
             color = ScreenBackground,
             ) {
+
             Column {
+                Divider(
+                    modifier = Modifier
+                        .width(290.73.dp)
+                        .padding(top = 15.8.dp)
+                        .align(Alignment.CenterHorizontally),
+                    color = LineColor,
+                    thickness = 1.dp,
+                )
+                Spacer(modifier = Modifier.height(24.dp))
                 LessonSubject(
                     lesson.subject, Modifier
                         .border(
@@ -83,7 +91,7 @@ fun LessonSubject(subject: String, modifier: Modifier = Modifier) {
 fun LessonCard(lesson: Lesson, modifier: Modifier = Modifier) {
     Box(
         modifier
-            .padding(vertical = 16.dp)
+            .padding(vertical = 12.dp)
     ) {
         Column(
             Modifier

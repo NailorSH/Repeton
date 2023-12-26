@@ -25,6 +25,13 @@ sealed interface SearchUiState {
     object None : SearchUiState
 }
 
+
+sealed interface CurrentLessonUiState {
+    data class Success(val lesson: Lesson) : CurrentLessonUiState
+    object Error : CurrentLessonUiState
+    object Loading : CurrentLessonUiState
+}
+
 sealed interface ScheduleUiState {
     data class Success(val lessons: List<Lesson>) : ScheduleUiState
     object Error : ScheduleUiState
@@ -47,6 +54,9 @@ class RepetonViewModel(private val repetonRepository: RepetonRepository) : ViewM
     var chatsUiState: ChatsUiState by mutableStateOf(ChatsUiState.Loading)
         private set
 
+    var currentLessonUiState: CurrentLessonUiState by mutableStateOf(CurrentLessonUiState.Loading)
+        private set
+
     init {
         getLessons()
     }
@@ -61,6 +71,20 @@ class RepetonViewModel(private val repetonRepository: RepetonRepository) : ViewM
                 ScheduleUiState.Error
             } catch (e: HttpRetryException) {
                 ScheduleUiState.Error
+            }
+        }
+    }
+
+    fun getLesson(lessonId: Int) {
+        viewModelScope.launch {
+            currentLessonUiState = CurrentLessonUiState.Loading
+            currentLessonUiState = try {
+                val lesson = repetonRepository.getLesson(lessonId)
+                CurrentLessonUiState.Success(lesson)
+            } catch (e: IOException) {
+                CurrentLessonUiState.Error
+            } catch (e: HttpRetryException) {
+                CurrentLessonUiState.Error
             }
         }
     }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -23,25 +24,68 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.data.FakeLessonSource
+import com.nailorsh.repeton.data.FakeRepetonRepository
+import com.nailorsh.repeton.data.RepetonRepository
+import com.nailorsh.repeton.domain.CurrentLessonUiState
+import com.nailorsh.repeton.domain.RepetonViewModel
 import com.nailorsh.repeton.model.Lesson
+import com.nailorsh.repeton.ui.components.LoadingScreen
 import com.nailorsh.repeton.ui.components.RepetonButton
 import com.nailorsh.repeton.ui.theme.*
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 @Composable
-fun LessonScreen(lessonId: Int, modifier: Modifier = Modifier) {
-    val lesson = FakeLessonSource.loadLessons()[lessonId]
+fun LessonScreen(
+    lessonId: Int,
+    viewModel: RepetonViewModel = RepetonViewModel(FakeRepetonRepository()),
+    modifier: Modifier = Modifier) {
+
+    LaunchedEffect(lessonId) {
+        viewModel.getLesson(lessonId)
+    }
+
+    val lessonState = viewModel.currentLessonUiState
+    when (lessonState) {
+        is CurrentLessonUiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        }
+        is CurrentLessonUiState.Success -> {
+            LessonContent(lessonState.lesson)
+        }
+        CurrentLessonUiState.Error -> {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Text(
+                    text = stringResource(R.string.error_lesson_loading),
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun LessonContent(lesson: Lesson, modifier: Modifier = Modifier) {
+
     Surface(
         color = ScreenBackground,
         modifier = modifier
             .fillMaxSize()
     ) {
+
         Surface(
             modifier = modifier
                 .padding(horizontal = 28.dp, vertical = 32.dp),
             color = ScreenBackground,
-            ) {
+        ) {
 
             Column {
                 Divider(

@@ -5,11 +5,13 @@ import com.nailorsh.repeton.model.Lesson
 import com.nailorsh.repeton.model.Tutor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.lang.Thread.sleep
 
 interface RepetonRepository {
     suspend fun getTutors(): List<Tutor>
     suspend fun getLessons(): List<Lesson>
     suspend fun getChats(): List<Chat>
+    suspend fun getLesson(id: Int): Lesson
 }
 
 class FakeRepetonRepository : RepetonRepository {
@@ -23,5 +25,10 @@ class FakeRepetonRepository : RepetonRepository {
 
     override suspend fun getChats(): List<Chat> = withContext(Dispatchers.IO) {
         FakeChatsSource.generateChatList()
+    }
+
+    override suspend fun getLesson(id: Int): Lesson = withContext(Dispatchers.IO) {
+        sleep(15000)
+        FakeLessonSource.loadLessons()[id]
     }
 }

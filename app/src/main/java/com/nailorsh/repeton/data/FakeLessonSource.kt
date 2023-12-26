@@ -8,7 +8,7 @@ import kotlin.random.Random
 fun getRandomStartDateTime(): LocalDateTime {
     val day = Random.nextInt(1, 8) // Случайный день между 1 и 7 января
     val hour = Random.nextInt(12, 21) // Случайный час между 12:00 и 20:00
-    return LocalDateTime.of(2024, 1, day, hour, 0)
+    return LocalDateTime.of(2024, day, 1, 12, 0)
 }
 
 object FakeLessonSource {

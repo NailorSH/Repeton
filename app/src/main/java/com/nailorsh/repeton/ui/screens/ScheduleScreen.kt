@@ -140,20 +140,41 @@ fun ScheduleScreen(
                 .width(296.dp)
                 .align(Alignment.CenterHorizontally)
         ) {
-            LessonBox(
-                lessonId = 0,
-                onClick = onLessonClicked
-            )
+            if (FakeLessonSource.loadLessons().isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .padding(top = 21.dp)
+                        .width(296.dp)
+                        .height(95.dp)
+                        .background(color = Color.White, shape = RoundedCornerShape(size = 16.dp))
+                ) {
+                    Text(
+                        text = stringResource(R.string.lessons_not_found),
+                        color = Color.Black,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier
+                            .padding(horizontal = 13.dp, vertical = 16.dp)
+                    )
+                }
+            } else {
 
-            LessonBox(
-                lessonId = 1,
-                onClick = onLessonClicked
-            )
+                LessonBox(
+                    lessonId = 0,
+                    onClick = onLessonClicked
+                )
 
-            LessonBox(
-                lessonId = 2,
-                onClick = onLessonClicked
-            )
+                LessonBox(
+                    lessonId = 1,
+                    onClick = onLessonClicked
+                )
+
+                LessonBox(
+                    lessonId = 2,
+                    onClick = onLessonClicked
+                )
+            }
+
         }
         Button(
             onClick = { },

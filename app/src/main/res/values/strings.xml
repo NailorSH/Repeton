@@ -30,4 +30,5 @@
     <string name="sat">сб</string>
     <string name="sun">вс</string>
     <string name="retry">Повторить</string>
+    <string name="lessons_not_found">На сегодня уроков не найдено</string>
 </resources>

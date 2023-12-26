@@ -49,8 +49,12 @@ import androidx.navigation.compose.rememberNavController
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.data.LessonSource
 import com.nailorsh.repeton.model.Lesson
+import com.nailorsh.repeton.ui.theme.AddLessonButtonColor
 import com.nailorsh.repeton.ui.theme.AmbientColor
+import com.nailorsh.repeton.ui.theme.LineColor
 import com.nailorsh.repeton.ui.theme.RepetonTheme
+import com.nailorsh.repeton.ui.theme.ScreenBackground
+import com.nailorsh.repeton.ui.theme.SelectedDayColor
 import com.nailorsh.repeton.ui.theme.SpotColor
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -61,14 +65,14 @@ fun ScheduleScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color(android.graphics.Color.parseColor("#EFEFEF")))
+            .background(color = ScreenBackground)
     ) {
         Divider(
             modifier = Modifier
                 .padding(top = 47.6.dp)
                 .width(290.73.dp)
                 .align(Alignment.CenterHorizontally),
-            color = Color(android.graphics.Color.parseColor("#BAB3B3")),
+            color = LineColor,
             thickness = 1.dp,
 
             )
@@ -98,20 +102,20 @@ fun ScheduleScreen() {
                 .align(Alignment.CenterHorizontally),
             horizontalArrangement = Arrangement.spacedBy(7.dp)
         ) {
-            ObjectInRow("1", "пн")
-            ObjectInRow("2", "вт")
-            ObjectInRow("3", "ср")
-            ObjectInRow("4", "чт")
-            ObjectInRow("5", "пт")
-            ObjectInRow("6", "сб")
-            ObjectInRow("7", "вс")
+            Day("1", "пн")
+            Day("2", "вт")
+            Day("3", "ср")
+            SelectedDay("4", "чт")
+            Day("5", "пт")
+            Day("6", "сб")
+            Day("7", "вс")
         }
         Divider(
             modifier = Modifier
                 .padding(top = 22.dp)
                 .width(290.73.dp)
                 .align(Alignment.CenterHorizontally),
-            color = Color(android.graphics.Color.parseColor("#BAB3B3")),
+            color = LineColor,
             thickness = 1.dp,
 
             )
@@ -140,7 +144,7 @@ fun ScheduleScreen() {
                 .width(298.dp)
                 .height(52.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(android.graphics.Color.parseColor("#4B9E58")),
+                containerColor = AddLessonButtonColor,
                 contentColor = Color.Black
             )
         ) {
@@ -151,13 +155,13 @@ fun ScheduleScreen() {
     }
 }
 @Composable
-fun ObjectInRow(number: String, day: String) {
+fun Day(number: String, day: String) {
     Box(
         modifier = Modifier
             .width(36.dp)
             .height(48.dp)
             .background(
-                color = Color(android.graphics.Color.parseColor("#EFEFEF")),
+                color = ScreenBackground,
                 shape = RoundedCornerShape(size = 8.dp)
             )
             .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(size = 8.dp))
@@ -181,6 +185,44 @@ fun ObjectInRow(number: String, day: String) {
             Text(
                 text = day,
                 color = Color.Black,
+                textAlign = TextAlign.Center,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Light,
+            )
+        }
+    }
+}
+@Composable
+fun SelectedDay(number: String, day: String) {
+    Box(
+        modifier = Modifier
+            .width(36.dp)
+            .height(48.dp)
+            .background(
+                color = SelectedDayColor,
+                shape = RoundedCornerShape(size = 8.dp)
+            )
+            .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(size = 8.dp))
+    )
+    {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(-4.dp)
+        ) {
+            Text(
+                text = number,
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(top = 6.dp)
+            )
+            Text(
+                text = day,
+                color = Color.White,
                 textAlign = TextAlign.Center,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Light,

@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.nailorsh.repeton.ui.screens.SearchScreen
+import com.nailorsh.repeton.ui.RepetonApp
 import com.nailorsh.repeton.ui.theme.RepetonTheme
 
 class MainActivity : ComponentActivity() {
@@ -15,12 +15,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             RepetonTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    SearchScreen()
+                    RepetonApp()
                 }
             }
         }

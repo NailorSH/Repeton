@@ -21,3 +21,6 @@ val BodyColor = Black
 val ShowMoreTextButtonColor = Color(0xFF3D3D3D)
 val TextFieldTextColor = Black
 val SearchPlaceholderColor = Color(0xFF3D3D3D)
+val BottomNavigationBarColor = Color(0xFFF6F6F6)
+val SelectedBottomBarIconColor = Color(0xFF3856BF)
+val UnselectedBottomBarIconColor = Black

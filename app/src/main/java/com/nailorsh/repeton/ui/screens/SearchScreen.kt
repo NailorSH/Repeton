@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,6 +15,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,7 +43,6 @@ import com.nailorsh.repeton.model.Tutor
 import com.nailorsh.repeton.ui.components.ExpandableText
 import com.nailorsh.repeton.ui.components.IconWithText
 import com.nailorsh.repeton.ui.components.LikeButton
-import com.nailorsh.repeton.ui.components.RepetonButton
 import com.nailorsh.repeton.ui.components.SearchBarWithFilter
 import com.nailorsh.repeton.ui.theme.AmbientColor
 import com.nailorsh.repeton.ui.theme.BodyColor
@@ -119,7 +121,7 @@ fun TutorCard(
     val photoSrc = painterResource(R.drawable.man_photo)
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(25.dp, Alignment.Top),
+        verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.Top),
         horizontalAlignment = Alignment.Start,
         modifier = modifier
             .shadow(elevation = 4.dp, spotColor = SpotColor, ambientColor = AmbientColor)
@@ -218,12 +220,12 @@ fun TutorCard(
                 )
             }
         }
-
-        RepetonButton(
-            modifier = Modifier
-                .fillMaxWidth(),
-            buttonColor = WriteButtonBackgroundColor,
-            onClick = onWriteButtonClicked
+        Button(
+            onClick = { onWriteButtonClicked() },
+            shape = RoundedCornerShape(size = 8.dp),
+            contentPadding = PaddingValues(horizontal = 5.dp, vertical = 10.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = WriteButtonBackgroundColor),
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
                 text = stringResource(R.string.message_button),
@@ -235,6 +237,23 @@ fun TutorCard(
                 ),
             )
         }
+
+//        RepetonButton(
+//            modifier = Modifier
+//                .fillMaxWidth(),
+//            buttonColor = WriteButtonBackgroundColor,
+//            onClick = onWriteButtonClicked
+//        ) {
+//            Text(
+//                text = stringResource(R.string.message_button),
+//                style = TextStyle(
+//                    fontSize = 14.sp,
+//                    lineHeight = 32.sp,
+//                    fontWeight = FontWeight(600),
+//                    color = WriteButtonTextColor
+//                ),
+//            )
+//        }
     }
 }
 

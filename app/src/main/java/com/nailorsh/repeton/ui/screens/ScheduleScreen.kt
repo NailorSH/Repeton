@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.nailorsh.repeton.data.LessonSource
+import com.nailorsh.repeton.data.FakeLessonSource
 import com.nailorsh.repeton.ui.theme.AddLessonButtonColor
 import com.nailorsh.repeton.ui.theme.LineColor
 import com.nailorsh.repeton.ui.theme.RepetonTheme
@@ -219,7 +219,7 @@ fun SelectedDay(number: String, day: String) {
 
 @Composable
 fun LessonBox(lessonId: Int, onClick: (Int) -> Unit) {
-    val lesson = LessonSource.loadLessons()[lessonId]
+    val lesson = FakeLessonSource.loadLessons()[lessonId]
     Box(
         modifier = Modifier
             .padding(top = 21.dp)

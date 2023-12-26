@@ -11,7 +11,7 @@ fun getRandomStartDateTime(): LocalDateTime {
     return LocalDateTime.of(2024, 1, day, hour, 0)
 }
 
-object LessonSource {
+object FakeLessonSource {
     fun loadLessons() : List<Lesson> {
         return listOf(
             getRandomStartDateTime().let { startTime ->

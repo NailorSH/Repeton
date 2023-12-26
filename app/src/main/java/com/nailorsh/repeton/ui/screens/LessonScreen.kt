@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.data.LessonSource
+import com.nailorsh.repeton.data.FakeLessonSource
 import com.nailorsh.repeton.model.Lesson
 import com.nailorsh.repeton.ui.theme.RepetonTheme
 import java.time.format.DateTimeFormatter
@@ -30,7 +30,7 @@ import java.time.format.FormatStyle
 
 @Composable
 fun LessonScreen(lessonId: Int, modifier: Modifier = Modifier) {
-    val lesson = LessonSource.loadLessons()[lessonId]
+    val lesson = FakeLessonSource.loadLessons()[lessonId]
 
     Surface(modifier.padding(horizontal = 16.dp, vertical = 32.dp)) {
         Column {

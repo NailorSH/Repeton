@@ -1,22 +1,17 @@
 package com.nailorsh.repeton.data
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.nailorsh.repeton.model.Lesson
-import java.time.Instant
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import kotlin.random.Random
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun getRandomStartDateTime(): LocalDateTime {
     val day = Random.nextInt(1, 8) // Случайный день между 1 и 7 января
     val hour = Random.nextInt(12, 21) // Случайный час между 12:00 и 20:00
     return LocalDateTime.of(2024, 1, day, hour, 0)
 }
-@RequiresApi(Build.VERSION_CODES.O)
-class LessonSource {
+
+object LessonSource {
     fun loadLessons() : List<Lesson> {
         return listOf(
             getRandomStartDateTime().let { startTime ->

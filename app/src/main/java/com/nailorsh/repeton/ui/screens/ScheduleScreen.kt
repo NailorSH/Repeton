@@ -219,7 +219,7 @@ fun SelectedDay(number: String, day: String) {
 
 @Composable
 fun LessonBox(lessonId: Int, onClick: (Int) -> Unit) {
-    val lesson = LessonSource().loadLessons()[lessonId]
+    val lesson = LessonSource.loadLessons()[lessonId]
     Box(
         modifier = Modifier
             .padding(top = 21.dp)

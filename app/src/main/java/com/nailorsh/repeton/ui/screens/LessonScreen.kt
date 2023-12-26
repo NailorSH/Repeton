@@ -30,7 +30,7 @@ import java.time.format.FormatStyle
 
 @Composable
 fun LessonScreen(lessonId: Int, modifier: Modifier = Modifier) {
-    val lesson = LessonSource().loadLessons()[lessonId]
+    val lesson = LessonSource.loadLessons()[lessonId]
 
     Surface(modifier.padding(horizontal = 16.dp, vertical = 32.dp)) {
         Column {

@@ -37,7 +37,10 @@ fun NavGraph(
             )
         }
         composable(AppSections.CHATS.route) {
-            ChatsScreen()
+            ChatsScreen(
+                getChats = viewModel::getChats,
+                chatsUiState = viewModel.chatsUiState
+            )
         }
         composable(AppSections.PROFILE.route) {
             ProfileScreen()

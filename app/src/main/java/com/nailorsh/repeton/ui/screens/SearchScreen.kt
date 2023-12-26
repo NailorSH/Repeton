@@ -102,7 +102,8 @@ fun SearchScreen(
                 is SearchUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
 
                 is SearchUiState.Success -> TutorList(
-                    tutors = searchUiState.tutors
+                    tutors = searchUiState.tutors,
+                    modifier = Modifier.fillMaxWidth()
                 )
 
                 is SearchUiState.Error -> ErrorScreen(getSearchResults, modifier = modifier.fillMaxSize())

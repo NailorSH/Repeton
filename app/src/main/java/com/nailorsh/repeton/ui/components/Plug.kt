@@ -13,9 +13,9 @@ import androidx.compose.ui.unit.dp
 
 // Экран заглушка
 @Composable
-fun PlugScreen() {
+fun PlugScreen(modifier: Modifier) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Text(

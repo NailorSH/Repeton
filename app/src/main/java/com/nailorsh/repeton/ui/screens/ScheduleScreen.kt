@@ -21,7 +21,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,7 +36,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.data.FakeLessonSource
 import com.nailorsh.repeton.ui.theme.AddLessonButtonColor
@@ -42,7 +45,7 @@ import com.nailorsh.repeton.ui.theme.ScreenBackground
 import com.nailorsh.repeton.ui.theme.SelectedDayColor
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import java.util.*
+import java.util.Calendar
 
 
 @Composable
@@ -88,7 +91,6 @@ fun ScheduleScreen(
 
             )
         Box(
-
             modifier = Modifier
                 .padding(top = 16.4.dp)
                 .width(294.dp)
@@ -98,8 +100,6 @@ fun ScheduleScreen(
                 .clickable {
                     showDatePicker = true
                 }
-
-
         )
         {
             Text(
@@ -213,7 +213,6 @@ fun Day(number: String, day: String) {
         }
     }
 }
-
 
 
 @Composable

@@ -12,6 +12,7 @@ import com.nailorsh.repeton.RepetonApplication
 import com.nailorsh.repeton.data.RepetonRepository
 import com.nailorsh.repeton.model.Lesson
 import com.nailorsh.repeton.model.Tutor
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.net.HttpRetryException
@@ -43,6 +44,7 @@ class RepetonViewModel(private val repetonRepository: RepetonRepository) : ViewM
     fun getLessons() {
         viewModelScope.launch {
             scheduleUiState = ScheduleUiState.Loading
+            delay(2000)
             scheduleUiState = try {
                 ScheduleUiState.Success(repetonRepository.getLessons())
             } catch (e: IOException) {
@@ -56,6 +58,7 @@ class RepetonViewModel(private val repetonRepository: RepetonRepository) : ViewM
     fun getTutors() {
         viewModelScope.launch {
             searchUiState = SearchUiState.Loading
+            delay(2000)
             searchUiState = try {
                 SearchUiState.Success(repetonRepository.getTutors())
             } catch (e: IOException) {

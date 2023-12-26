@@ -47,12 +47,10 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Calendar
 
-
 @Composable
 fun ScheduleScreen(
     onLessonClicked: (Int) -> Unit
 ) {
-
     var showDatePicker by remember { mutableStateOf(false) }
 
     if (showDatePicker) {

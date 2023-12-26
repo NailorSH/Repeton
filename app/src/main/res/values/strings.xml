@@ -31,4 +31,6 @@
     <string name="sun">вс</string>
     <string name="retry">Повторить</string>
     <string name="lessons_not_found">На сегодня уроков не найдено</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

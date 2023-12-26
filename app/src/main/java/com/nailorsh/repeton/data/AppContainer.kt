@@ -5,6 +5,7 @@ interface AppContainer {
 }
 
 class DefaultAppContainer : AppContainer {
+
     override val repetonRepository: RepetonRepository by lazy {
         FakeRepetonRepository()
     }

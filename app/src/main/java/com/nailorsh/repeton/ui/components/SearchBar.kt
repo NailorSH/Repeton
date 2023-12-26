@@ -156,7 +156,7 @@ fun SearchBarPreview() {
                 imeAction = ImeAction.Search
             ),
             keyboardActions = KeyboardActions(
-                onSearch = { }
+                onSearch = {  }
             ),
             onValueChanged = {},
             modifier = Modifier,

@@ -53,22 +53,24 @@ fun ScheduleScreen(
     var showDatePicker by remember { mutableStateOf(false) }
 
     if (showDatePicker) {
-        Dialog({
-            showDatePicker = false
-        }) {
-            val context = LocalContext.current
-            val calendar = Calendar.getInstance()
-            DatePickerDialog(
-                context,
-                { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+        val context = LocalContext.current
+        val calendar = Calendar.getInstance()
+        val datePickerDialog = DatePickerDialog(
+            context,
+            { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
 
-                    showDatePicker = false
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-            ).show()
+                showDatePicker = false
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+        datePickerDialog.setOnDismissListener {
+            showDatePicker = false
         }
+
+        datePickerDialog.show()
+
     }
 
     Column(

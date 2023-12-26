@@ -1,11 +1,8 @@
 package com.nailorsh.repeton.ui.screens
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,47 +12,29 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ComposableTarget
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
-import com.nailorsh.repeton.R
 import com.nailorsh.repeton.data.LessonSource
 import com.nailorsh.repeton.model.Lesson
 import com.nailorsh.repeton.ui.theme.AddLessonButtonColor
-import com.nailorsh.repeton.ui.theme.AmbientColor
 import com.nailorsh.repeton.ui.theme.LineColor
 import com.nailorsh.repeton.ui.theme.RepetonTheme
 import com.nailorsh.repeton.ui.theme.ScreenBackground
 import com.nailorsh.repeton.ui.theme.SelectedDayColor
-import com.nailorsh.repeton.ui.theme.SpotColor
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
@@ -125,7 +104,6 @@ fun ScheduleScreen() {
                 .align(Alignment.CenterHorizontally)
         ) {
             val lessons = LessonSource().loadLessons()
-            val navController = rememberNavController()
             LessonBox(lessons[0]) {
 
             }
@@ -148,12 +126,14 @@ fun ScheduleScreen() {
                 contentColor = Color.Black
             )
         ) {
-            Text(text = "Добавить занятие",
+            Text(
+                text = "Добавить занятие",
                 color = Color.White
             )
         }
     }
 }
+
 @Composable
 fun Day(number: String, day: String) {
     Box(
@@ -172,7 +152,7 @@ fun Day(number: String, day: String) {
                 .fillMaxHeight()
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(-4.dp)
+            verticalArrangement = Arrangement.spacedBy((-4).dp)
         ) {
             Text(
                 text = number,
@@ -192,6 +172,7 @@ fun Day(number: String, day: String) {
         }
     }
 }
+
 @Composable
 fun SelectedDay(number: String, day: String) {
     Box(
@@ -210,7 +191,7 @@ fun SelectedDay(number: String, day: String) {
                 .fillMaxHeight()
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(-4.dp)
+            verticalArrangement = Arrangement.spacedBy((-4).dp)
         ) {
             Text(
                 text = number,
@@ -239,20 +220,22 @@ fun LessonBox(lesson: Lesson, onClick: () -> Unit) {
             .width(296.dp)
             .height(95.dp)
             .background(color = Color.White, shape = RoundedCornerShape(size = 16.dp))
-            .clickable { onClick }
+            .clickable { onClick() }
     )
     {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 13.dp,)
+                .padding(horizontal = 13.dp)
         ) {
-            Row (modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp),
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween)
-                {
+                horizontalArrangement = Arrangement.SpaceBetween
+            )
+            {
                 Text(
                     text = lesson.subject,
                     color = Color.Black,
@@ -260,15 +243,20 @@ fun LessonBox(lesson: Lesson, onClick: () -> Unit) {
                     fontWeight = FontWeight.SemiBold,
 
                     )
-                    //Обрезала дату, при выборе конкретного дня она лишняя
-                    val startTimeCutted = lesson.startTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)).substringAfter(", ")
-                    val endTimeCutted = lesson.endTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)).substringAfter(", ")
+                //Обрезала дату, при выборе конкретного дня она лишняя
+                val startTimeCutted =
+                    lesson.startTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT))
+                        .substringAfter(", ")
+                val endTimeCutted =
+                    lesson.endTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT))
+                        .substringAfter(", ")
                 Text(
                     text = "$startTimeCutted - $endTimeCutted",
                     fontSize = 14.sp,
                     letterSpacing = 0.sp,
                     textAlign = TextAlign.Left,
-                    fontWeight = FontWeight.Medium)
+                    fontWeight = FontWeight.Medium
+                )
             }
             Text(
                 text = lesson.teacherName,

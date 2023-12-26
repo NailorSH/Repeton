@@ -4,6 +4,8 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
@@ -42,6 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.rememberNavController
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.data.LessonSource
 import com.nailorsh.repeton.model.Lesson
@@ -51,9 +55,9 @@ import com.nailorsh.repeton.ui.theme.SpotColor
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-@RequiresApi(Build.VERSION_CODES.O)
+
 @Composable
-fun ScheduleScreen(lesson: Lesson) {
+fun ScheduleScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -117,9 +121,16 @@ fun ScheduleScreen(lesson: Lesson) {
                 .align(Alignment.CenterHorizontally)
         ) {
             val lessons = LessonSource().loadLessons()
-            LessonBox(lessons[0])
-            LessonBox(lessons[1])
-            LessonBox(lessons[2])
+            val navController = rememberNavController()
+            LessonBox(lessons[0]) {
+
+            }
+            LessonBox(lessons[1]) {
+
+            }
+            LessonBox(lessons[2]) {
+
+            }
         }
         Button(
             onClick = { },
@@ -177,15 +188,16 @@ fun ObjectInRow(number: String, day: String) {
         }
     }
 }
-@RequiresApi(Build.VERSION_CODES.O)
+
 @Composable
-fun LessonBox(lesson: Lesson) {
+fun LessonBox(lesson: Lesson, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .padding(top = 21.dp)
             .width(296.dp)
             .height(95.dp)
             .background(color = Color.White, shape = RoundedCornerShape(size = 16.dp))
+            .clickable { onClick }
     )
     {
         Column(
@@ -234,7 +246,7 @@ fun LessonBox(lesson: Lesson) {
         }
     }
 }
-@RequiresApi(Build.VERSION_CODES.O)
+
 @Preview(
     showSystemUi = true,
     showBackground = true
@@ -242,6 +254,6 @@ fun LessonBox(lesson: Lesson) {
 @Composable
 fun ScheduleScreenPreview() {
     RepetonTheme {
-        ScheduleScreen(LessonSource().loadLessons()[0])
+        ScheduleScreen()
     }
 }

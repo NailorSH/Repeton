@@ -16,11 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -77,7 +74,7 @@ fun ScheduleScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = ScreenBackground)
+            .background(color = MaterialTheme.colorScheme.background)
     ) {
         Divider(
             modifier = Modifier
@@ -93,7 +90,10 @@ fun ScheduleScreen(
                 .padding(top = 16.4.dp)
                 .width(294.dp)
                 .height(63.dp)
-                .background(color = Color.White, shape = RoundedCornerShape(size = 16.dp))
+                .background(
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                    shape = RoundedCornerShape(size = 16.dp)
+                )
                 .align(Alignment.CenterHorizontally)
                 .clickable {
                     showDatePicker = true
@@ -281,7 +281,8 @@ fun LessonBox(lessonId: Int, onClick: (Int) -> Unit) {
             .padding(top = 21.dp)
             .width(296.dp)
             .height(95.dp)
-            .background(color = Color.White, shape = RoundedCornerShape(size = 16.dp))
+            .background(color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(
+                dimensionResource(R.dimen.padding_medium)))
             .clickable { onClick(lessonId) }
     )
     {

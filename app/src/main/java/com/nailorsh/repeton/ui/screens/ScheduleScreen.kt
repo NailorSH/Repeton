@@ -5,16 +5,7 @@ import android.widget.DatePicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -35,11 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.data.FakeLessonSource
-import com.nailorsh.repeton.ui.theme.AddLessonButtonColor
 import com.nailorsh.repeton.ui.theme.LineColor
 import com.nailorsh.repeton.ui.theme.RepetonTheme
-import com.nailorsh.repeton.ui.theme.ScreenBackground
-import com.nailorsh.repeton.ui.theme.SelectedDayColor
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Calendar
@@ -76,10 +64,13 @@ fun ScheduleScreen(
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background)
     ) {
+        Spacer(
+            modifier = Modifier
+                .height(dimensionResource(R.dimen.top_padding))
+        )
         Divider(
             modifier = Modifier
-                .padding(top = 47.6.dp)
-                .width(290.73.dp)
+                .width(dimensionResource(R.dimen.divider_width))
                 .align(Alignment.CenterHorizontally),
             color = LineColor,
             thickness = 1.dp,
@@ -87,12 +78,12 @@ fun ScheduleScreen(
             )
         Box(
             modifier = Modifier
-                .padding(top = 16.4.dp)
-                .width(294.dp)
+                .padding(top = dimensionResource(R.dimen.padding_medium))
+                .width(dimensionResource(R.dimen.schedule_screen_button_width))
                 .height(63.dp)
                 .background(
-                    color = MaterialTheme.colorScheme.tertiaryContainer,
-                    shape = RoundedCornerShape(size = 16.dp)
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.padding_medium))
                 )
                 .align(Alignment.CenterHorizontally)
                 .clickable {
@@ -102,7 +93,7 @@ fun ScheduleScreen(
         {
             Text(
                 text = stringResource(R.string.calendar),
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
@@ -142,7 +133,7 @@ fun ScheduleScreen(
                 Box(
                     modifier = Modifier
                         .padding(top = 21.dp)
-                        .width(296.dp)
+                        .width(dimensionResource(R.dimen.schedule_screen_button_width))
                         .height(95.dp)
                         .background(color = Color.White, shape = RoundedCornerShape(size = 16.dp))
                 ) {
@@ -179,16 +170,16 @@ fun ScheduleScreen(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 30.dp)
-                .width(298.dp)
+                .width(dimensionResource(R.dimen.schedule_screen_button_width))
                 .height(52.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = AddLessonButtonColor,
-                contentColor = Color.Black
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             )
         ) {
             Text(
                 text = stringResource(R.string.add_lesson_button),
-                color = Color.White
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
     }
@@ -201,8 +192,8 @@ fun Day(number: String, day: String) {
             .width(36.dp)
             .height(48.dp)
             .background(
-                color = ScreenBackground,
-                shape = RoundedCornerShape(size = 8.dp)
+                color = MaterialTheme.colorScheme.tertiaryContainer,
+                shape = RoundedCornerShape(dimensionResource(R.dimen.padding_small))
             )
             .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(size = 8.dp))
     )
@@ -216,7 +207,7 @@ fun Day(number: String, day: String) {
         ) {
             Text(
                 text = number,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
                 textAlign = TextAlign.Center,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -224,7 +215,7 @@ fun Day(number: String, day: String) {
             )
             Text(
                 text = day,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
                 textAlign = TextAlign.Center,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Light,
@@ -241,7 +232,7 @@ fun SelectedDay(number: String, day: String) {
             .width(36.dp)
             .height(48.dp)
             .background(
-                color = SelectedDayColor,
+                color = MaterialTheme.colorScheme.tertiary,
                 shape = RoundedCornerShape(size = 8.dp)
             )
             .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(size = 8.dp))
@@ -256,7 +247,7 @@ fun SelectedDay(number: String, day: String) {
         ) {
             Text(
                 text = number,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onTertiary,
                 textAlign = TextAlign.Center,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -264,7 +255,7 @@ fun SelectedDay(number: String, day: String) {
             )
             Text(
                 text = day,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onTertiary,
                 textAlign = TextAlign.Center,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Light,
@@ -274,15 +265,16 @@ fun SelectedDay(number: String, day: String) {
 }
 
 @Composable
-fun LessonBox(lessonId: Int, onClick: (Int) -> Unit) {
+fun LessonBox(lessonId: Int, onClick: (Int) -> Unit, modifier: Modifier = Modifier) {
     val lesson = FakeLessonSource.loadLessons()[lessonId]
     Box(
         modifier = Modifier
             .padding(top = 21.dp)
-            .width(296.dp)
+            .width(dimensionResource(R.dimen.schedule_screen_button_width))
             .height(95.dp)
-            .background(color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(
-                dimensionResource(R.dimen.padding_medium)))
+            .background(
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                shape = RoundedCornerShape(dimensionResource(R.dimen.padding_medium)))
             .clickable { onClick(lessonId) }
     )
     {
@@ -290,6 +282,7 @@ fun LessonBox(lessonId: Int, onClick: (Int) -> Unit) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 13.dp)
+
         ) {
             Row(
                 modifier = Modifier
@@ -301,7 +294,7 @@ fun LessonBox(lessonId: Int, onClick: (Int) -> Unit) {
             {
                 Text(
                     text = lesson.subject,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
 
@@ -323,7 +316,7 @@ fun LessonBox(lessonId: Int, onClick: (Int) -> Unit) {
             }
             Text(
                 text = lesson.teacherName,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal
             )
@@ -332,7 +325,7 @@ fun LessonBox(lessonId: Int, onClick: (Int) -> Unit) {
                 style = LocalTextStyle.current.copy(
                     lineHeight = 13.sp
                 ),
-                color = Color.Black.copy(alpha = 0.6f),
+                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold
             )
@@ -347,6 +340,19 @@ fun LessonBox(lessonId: Int, onClick: (Int) -> Unit) {
 @Composable
 fun ScheduleScreenPreview() {
     RepetonTheme {
+        ScheduleScreen(
+            onLessonClicked = { }
+        )
+    }
+}
+
+@Preview(
+    showSystemUi = true,
+    showBackground = true
+)
+@Composable
+fun ScheduleScreenPreviewDark() {
+    RepetonTheme(darkTheme = true) {
         ScheduleScreen(
             onLessonClicked = { }
         )

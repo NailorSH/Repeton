@@ -83,7 +83,7 @@ fun ScheduleScreen(
                 .height(63.dp)
                 .background(
                     color = MaterialTheme.colorScheme.primaryContainer,
-                    shape = RoundedCornerShape(dimensionResource(R.dimen.padding_medium))
+                    shape = MaterialTheme.shapes.medium
                 )
                 .align(Alignment.CenterHorizontally)
                 .clickable {
@@ -194,7 +194,7 @@ fun Day(number: String, day: String) {
             .height(48.dp)
             .background(
                 color = MaterialTheme.colorScheme.tertiaryContainer,
-                shape = RoundedCornerShape(dimensionResource(R.dimen.padding_small))
+                shape = MaterialTheme.shapes.small
             )
             .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(size = 8.dp))
     )
@@ -274,7 +274,8 @@ fun LessonBox(lessonId: Int, onClick: (Int) -> Unit, modifier: Modifier = Modifi
             .height(95.dp)
             .background(
                 color = MaterialTheme.colorScheme.secondaryContainer,
-                shape = RoundedCornerShape(dimensionResource(R.dimen.padding_medium)))
+                shape = MaterialTheme.shapes.medium
+            )
             .clickable { onClick(lessonId) }
     )
     {

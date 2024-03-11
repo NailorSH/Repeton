@@ -94,8 +94,7 @@ fun ScheduleScreen(
             Text(
                 text = stringResource(R.string.calendar),
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.displaySmall,
                 modifier = Modifier
                     .align(Alignment.Center)
             )
@@ -179,6 +178,8 @@ fun ScheduleScreen(
         ) {
             Text(
                 text = stringResource(R.string.add_lesson_button),
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
@@ -209,16 +210,15 @@ fun Day(number: String, day: String) {
                 text = number,
                 color = MaterialTheme.colorScheme.onTertiaryContainer,
                 textAlign = TextAlign.Center,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(top = 6.dp)
             )
             Text(
                 text = day,
                 color = MaterialTheme.colorScheme.onTertiaryContainer,
                 textAlign = TextAlign.Center,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Light,
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.W400
             )
         }
     }
@@ -295,8 +295,7 @@ fun LessonBox(lessonId: Int, onClick: (Int) -> Unit, modifier: Modifier = Modifi
                 Text(
                     text = lesson.subject,
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.headlineSmall,
 
                     )
                 //Обрезала дату, при выборе конкретного дня она лишняя
@@ -308,25 +307,21 @@ fun LessonBox(lessonId: Int, onClick: (Int) -> Unit, modifier: Modifier = Modifi
                         .substringAfter(", ")
                 Text(
                     text = "$startTimeCutted - $endTimeCutted",
-                    fontSize = 14.sp,
-                    letterSpacing = 0.sp,
-                    textAlign = TextAlign.Left,
-                    fontWeight = FontWeight.Medium
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Left
                 )
             }
             Text(
                 text = lesson.teacherName,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Normal
+                style = MaterialTheme.typography.bodyMedium,
+                letterSpacing = 0.25.sp,
             )
             Text(
                 text = lesson.title,
-                style = LocalTextStyle.current.copy(
-                    lineHeight = 13.sp
-                ),
+                style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
-                fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold
             )
         }

@@ -18,6 +18,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -25,17 +30,39 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.nailorsh.repeton.R
 import com.nailorsh.repeton.ui.theme.Black
-import com.nailorsh.repeton.ui.theme.RepetonTheme
 import com.nailorsh.repeton.ui.theme.SearchPlaceholderColor
 import com.nailorsh.repeton.ui.theme.TextFieldTextColor
 import com.nailorsh.repeton.ui.theme.White
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
+
+@Composable
+fun triggerSearch(
+    getSearchResults: () -> Unit,
+    newQuery: String
+): Job? {
+    var searchJob by remember { mutableStateOf<Job?>(null) }
+
+    DisposableEffect(Unit) {
+        val coroutineScope = CoroutineScope(Dispatchers.IO)
+        searchJob?.cancel()
+        searchJob = coroutineScope.launch {
+            delay(600) // Задержка 600 мс
+            getSearchResults() // Вызов функции поиска после задержки
+        }
+        onDispose {
+            searchJob?.cancel() // Отмена предыдущего запроса при удалении компонента
+        }
+    }
+    return searchJob
+}
 
 @Composable
 fun SearchBarWithFilter(
@@ -46,6 +73,7 @@ fun SearchBarWithFilter(
     keyboardActions: KeyboardActions,
     value: String,
     onValueChanged: (String) -> Unit,
+    onSearch: () -> Unit,
     onFilterClicked: () -> Unit = { },
     modifier: Modifier
 ) {
@@ -72,7 +100,8 @@ fun SearchBarWithFilter(
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             value = value,
-            onValueChanged = onValueChanged
+            onValueChanged = onValueChanged,
+            onSearch = onSearch
         )
 
         Icon(
@@ -94,11 +123,16 @@ fun SearchBar(
     keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions,
     value: String,
+    onSearch: () -> Unit,
     onValueChanged: (String) -> Unit,
 ) {
+    var searchJob by remember { mutableStateOf<Job?>(null) }
+
     BasicTextField(
         value = value,
-        onValueChange = onValueChanged,
+        onValueChange = {
+            onValueChanged(it)
+        },
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
         singleLine = true,
@@ -141,26 +175,27 @@ fun SearchBar(
     )
 }
 
-@Preview(
-    showSystemUi = true
-)
-@Composable
-fun SearchBarPreview() {
-    RepetonTheme {
-        SearchBarWithFilter(
-            placeholder = R.string.search_placeholder,
-            leadingIcon = R.drawable.search_icon,
-            filterIcon = R.drawable.filter_icon,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Search
-            ),
-            keyboardActions = KeyboardActions(
-                onSearch = {  }
-            ),
-            onValueChanged = {},
-            modifier = Modifier,
-            value = ""
-        )
-    }
-}
+//@Preview(
+//    showSystemUi = true
+//)
+//@Composable
+//fun SearchBarPreview() {
+//    RepetonTheme {
+//        SearchBarWithFilter(
+//            placeholder = R.string.search_placeholder,
+//            leadingIcon = R.drawable.search_icon,
+//            filterIcon = R.drawable.filter_icon,
+//            keyboardOptions = KeyboardOptions(
+//                keyboardType = KeyboardType.Text,
+//                imeAction = ImeAction.Search
+//            ),
+//            keyboardActions = KeyboardActions(
+//                onSearch = {  }
+//            ),
+//            onSearch = {},
+////            onValueChanged = {},
+//            modifier = Modifier,
+////            value = ""
+//        )
+//    }
+//}

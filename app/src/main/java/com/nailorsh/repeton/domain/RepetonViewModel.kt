@@ -13,6 +13,7 @@ import com.nailorsh.repeton.data.RepetonRepository
 import com.nailorsh.repeton.model.Chat
 import com.nailorsh.repeton.model.Lesson
 import com.nailorsh.repeton.model.Tutor
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -85,6 +86,29 @@ class RepetonViewModel(private val repetonRepository: RepetonRepository) : ViewM
                 CurrentLessonUiState.Error
             } catch (e: HttpRetryException) {
                 CurrentLessonUiState.Error
+            }
+        }
+    }
+    private  var tutorSearchJob: Job? = null
+
+    fun typingTutorSearch(prefix: String) {
+        with(prefix) {
+            when {
+                length > 1 -> {
+                    tutorSearchJob?.cancel()
+                    tutorSearchJob = viewModelScope.launch {
+                        delay(600) //debounce
+                        searchUiState = SearchUiState.Loading
+                        delay(2000)
+                        searchUiState = try {
+                            SearchUiState.Success(repetonRepository.getTutors())
+                        } catch (e: IOException) {
+                            SearchUiState.Error
+                        } catch (e: HttpRetryException) {
+                            SearchUiState.Error
+                        }
+                    }
+                }
             }
         }
     }

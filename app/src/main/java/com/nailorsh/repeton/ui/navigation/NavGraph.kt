@@ -26,6 +26,8 @@ fun NavGraph(
         composable(AppSections.SEARCH.route) {
             SearchScreen(
                 getSearchResults = viewModel::getTutors,
+                typingGetSearchResults = viewModel::typingTutorSearch,
+//                getSearchResults = viewModel::getTutors,
                 searchUiState = viewModel.searchUiState
             )
         }
@@ -45,6 +47,7 @@ fun NavGraph(
         composable(AppSections.PROFILE.route) {
             ProfileScreen()
         }
+
         composable(AppSections.LESSON.route) { backStackEntry ->
             backStackEntry.arguments?.getString("id")?.let { id ->
                 LessonScreen(lessonId = id.toInt())

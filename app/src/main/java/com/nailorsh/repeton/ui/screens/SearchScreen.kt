@@ -21,6 +21,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,9 +60,16 @@ import com.nailorsh.repeton.ui.theme.TitleColor
 import com.nailorsh.repeton.ui.theme.White
 import com.nailorsh.repeton.ui.theme.WriteButtonBackgroundColor
 import com.nailorsh.repeton.ui.theme.WriteButtonTextColor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
 @Composable
 fun SearchScreen(
+    typingGetSearchResults: (String) -> Unit,
     getSearchResults: () -> Unit,
     searchUiState: SearchUiState,
     modifier: Modifier = Modifier,
@@ -93,12 +102,16 @@ fun SearchScreen(
                     }
                 ),
                 value = query,
-                onValueChanged = { query = it },
+                onSearch = getSearchResults,
+                onValueChanged = {
+                    query = it
+                    typingGetSearchResults(it)
+                },
                 modifier = Modifier.fillMaxWidth()
             )
 
             when (searchUiState) {
-                is SearchUiState.None -> { }
+                is SearchUiState.None -> {}
                 is SearchUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
 
                 is SearchUiState.Success -> TutorList(
@@ -106,11 +119,18 @@ fun SearchScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                is SearchUiState.Error -> ErrorScreen(getSearchResults, modifier = modifier.fillMaxSize())
+                is SearchUiState.Error -> ErrorScreen(
+                    getSearchResults,
+                    modifier = modifier.fillMaxSize()
+                )
             }
         }
     }
 }
+
+
+
+
 
 @Composable
 fun TutorList(

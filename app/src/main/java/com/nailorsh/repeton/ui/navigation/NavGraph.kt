@@ -31,8 +31,8 @@ fun NavGraph(
         }
         composable(AppSections.HOME.route) {
             ScheduleScreen(
-                onLessonClicked = { lessonId ->
-                    navHostController.navigate("lesson/$lessonId")
+                onLessonClicked = { lesson ->
+                    navHostController.navigate("lesson/${lesson.id}")
                 }
             )
         }

@@ -69,9 +69,11 @@ fun ScheduleScreen(
     }
 
     Column(
+
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background)
+
 
 
     ) {
@@ -193,7 +195,7 @@ fun ScheduleScreen(
     }
 }
 
-const val TAG = "SCHEDULE"
+const val TAG = "DAY_SLIDER"
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

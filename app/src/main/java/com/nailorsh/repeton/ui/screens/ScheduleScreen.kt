@@ -3,23 +3,18 @@ package com.nailorsh.repeton.ui.screens
 import android.app.DatePickerDialog
 import android.util.Log
 import android.widget.DatePicker
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -30,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.data.FakeLessonSource
+import com.nailorsh.repeton.model.Lesson
 import com.nailorsh.repeton.ui.theme.LineColor
 import com.nailorsh.repeton.ui.theme.RepetonTheme
 import java.time.DayOfWeek
@@ -37,58 +33,51 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.time.temporal.ChronoUnit
-import java.time.temporal.TemporalAdjusters
 import java.util.Calendar
 
+const val TAG = "SCHEDULE_SCREEN"
+const val MAX_PAGE_COUNT = 10000
+val BASE_DATE: LocalDate = LocalDate.of(2024, 1, 1)
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ScheduleScreen(
-    onLessonClicked: (Int) -> Unit
+    onLessonClicked: (Lesson) -> Unit
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     var selectedDay by remember {
         mutableStateOf(LocalDate.now())
     }
     if (showDatePicker) {
-        val context = LocalContext.current
-        val datePickerDialog = DatePickerDialog(
-            context,
-            { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-                selectedDay = LocalDate.of(year, month + 1, dayOfMonth)
-                showDatePicker = false
-            },
-            selectedDay.year,
-            selectedDay.monthValue - 1,
-            selectedDay.dayOfMonth
+        CalendarDatePicker(
+            selectedDay = selectedDay,
+            selectedDayUpdate = { selectedDay = it },
+            showDatePickerUpdate = { showDatePicker = false }
         )
-        datePickerDialog.setOnDismissListener {
-            showDatePicker = false
-        }
-
-        datePickerDialog.show()
 
     }
+
+
 
     Column(
 
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background)
-
-
-
     ) {
+
+
         Spacer(
             modifier = Modifier
                 .height(dimensionResource(R.dimen.top_padding))
         )
-        Divider(
+        HorizontalDivider(
             modifier = Modifier
                 .width(dimensionResource(R.dimen.divider_width))
                 .align(Alignment.CenterHorizontally),
-            color = LineColor,
             thickness = 1.dp,
-
-            )
+            color = LineColor
+        )
         Box(
             modifier = Modifier
                 .padding(top = dimensionResource(R.dimen.padding_medium))
@@ -121,81 +110,159 @@ fun ScheduleScreen(
                 .align(Alignment.CenterHorizontally)
         )
 
+        val initialPage = remember { ChronoUnit.DAYS.between(BASE_DATE, selectedDay).toInt() }
+        val pagerState = rememberPagerState(
+            initialPage = initialPage,
+            pageCount = { MAX_PAGE_COUNT }
+        )
 
+        LaunchedEffect(pagerState.currentPage) {
+            selectedDay = BASE_DATE.plusDays(pagerState.currentPage.toLong())
+        }
 
-        Divider(
+        HorizontalPager(
+            state = pagerState,
             modifier = Modifier
-                .padding(top = 22.dp)
-                .width(dimensionResource(R.dimen.divider_width))
-                .align(Alignment.CenterHorizontally),
-            color = LineColor,
-            thickness = dimensionResource(R.dimen.divider_thickness),
-
-            )
-        Column(
-            modifier = Modifier
-                .width(296.dp)
+                .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)
         ) {
-            if (FakeLessonSource.loadLessons().isEmpty()) {
-                Box(
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.CenterHorizontally)
+            ) {
+
+                LessonsList(
+                    onLessonClicked = onLessonClicked,
+                    selectedDay = selectedDay,
                     modifier = Modifier
-                        .padding(top = 21.dp)
                         .width(dimensionResource(R.dimen.schedule_screen_button_width))
-                        .height(95.dp)
-                        .background(color = Color.White, shape = RoundedCornerShape(size = 16.dp))
+                        .align(Alignment.CenterHorizontally)
+                )
+
+                HorizontalDivider(
+                    modifier = Modifier
+                        .padding(top = 22.dp)
+                        .width(dimensionResource(R.dimen.divider_width))
+                        .align(Alignment.CenterHorizontally),
+
+                    thickness = dimensionResource(R.dimen.divider_thickness),
+                    color = LineColor
+                )
+
+                Button(
+                    onClick = { /* TODO */ },
+                    modifier = Modifier
+                        .padding(top = 30.dp)
+                        .width(dimensionResource(R.dimen.schedule_screen_button_width))
+                        .height(52.dp)
+                        .align(Alignment.CenterHorizontally),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
                 ) {
                     Text(
-                        text = stringResource(R.string.lessons_not_found),
-                        color = Color.Black,
-                        fontSize = 20.sp,
+                        text = stringResource(R.string.add_lesson_button),
+                        style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier
-                            .padding(horizontal = 13.dp, vertical = 16.dp)
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
-            } else {
-
-                LessonBox(
-                    lessonId = 0,
-                    onClick = onLessonClicked
-                )
-
-                LessonBox(
-                    lessonId = 1,
-                    onClick = onLessonClicked
-                )
-
-                LessonBox(
-                    lessonId = 2,
-                    onClick = onLessonClicked
-                )
             }
 
-        }
-        Button(
-            onClick = { },
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 30.dp)
-                .width(dimensionResource(R.dimen.schedule_screen_button_width))
-                .height(52.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            )
-        ) {
-            Text(
-                text = stringResource(R.string.add_lesson_button),
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
         }
     }
 }
 
-const val TAG = "DAY_SLIDER"
+@Composable
+fun LessonsList(
+    onLessonClicked: (Lesson) -> Unit,
+    selectedDay: LocalDate,
+    modifier: Modifier = Modifier
+) {
+
+    /* TODO Подгрузка настоящих уроков */
+
+    val lessons = remember { FakeLessonSource.loadLessons() }
+
+
+    Column(
+        modifier = modifier
+    ) {
+        if (lessons.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .padding(top = 21.dp)
+                    .width(dimensionResource(R.dimen.schedule_screen_button_width))
+                    .height(dimensionResource(R.dimen.schedule_screen_lesson_size))
+                    .background(
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        shape = MaterialTheme.shapes.medium
+                    )
+            ) {
+                Text(
+                    text = stringResource(R.string.lessons_not_found),
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier
+                        .padding(horizontal = 13.dp, vertical = 16.dp)
+                )
+            }
+        } else {
+            LazyColumn {
+                items(lessons.size) {
+                    /* TODO Убрать временное решение */
+                    Log.v(TAG, lessons[it].toString())
+                    if (lessons[it].startTime.dayOfYear == selectedDay.dayOfYear &&
+                        lessons[it].startTime.year == selectedDay.year) {
+                        LessonBox(
+                            lesson = lessons[it],
+                            onClick = onLessonClicked
+                        )
+                    }
+
+                }
+            }
+
+        }
+
+    }
+}
+
+
+@Composable
+fun CalendarDatePicker(
+    selectedDay: LocalDate,
+    selectedDayUpdate: (LocalDate) -> Unit,
+    showDatePickerUpdate: () -> Unit
+) {
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+
+    val datePickerDialog = DatePickerDialog(
+        context,
+        { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+            selectedDayUpdate(LocalDate.of(year, month + 1, dayOfMonth))
+            showDatePickerUpdate()
+        },
+        selectedDay.year,
+        selectedDay.monthValue - 1,
+        selectedDay.dayOfMonth
+    )
+
+
+    // Минимальная дата доступная в календаре
+    calendar.set(2024, Calendar.JANUARY, 1)
+    datePickerDialog.datePicker.minDate = calendar.timeInMillis
+
+    datePickerDialog.setOnDismissListener {
+        showDatePickerUpdate()
+    }
+
+    datePickerDialog.show()
+}
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -206,24 +273,22 @@ fun DaySlider(
 ) {
     Log.v(TAG, selectedDay.toString())
 
-    val baseDate = LocalDate.of(1900, 1, 1)
 
-    val initialPage = remember { ChronoUnit.WEEKS.between(baseDate, selectedDay).toInt() }
+    val initialPage = remember { ChronoUnit.WEEKS.between(BASE_DATE, selectedDay).toInt() }
 
     var lastPage = remember { initialPage }
 
 //    val startOfWeek = selectedWeek.minusDays(selectedDay.dayOfWeek.value.toLong() - 1)
 //    val daysOfWeek = remember(selectedWeek) { List(7) { startOfWeek.plusDays(it.toLong()) } }
-
     val pagerState = rememberPagerState(
         initialPage = initialPage,
-        pageCount = { Int.MAX_VALUE }
+        pageCount = { MAX_PAGE_COUNT }
     )
 
     LaunchedEffect(selectedDay) {
-        val newPage = ChronoUnit.WEEKS.between(baseDate, selectedDay).toInt()
+        val newPage = ChronoUnit.WEEKS.between(BASE_DATE, selectedDay).toInt()
         if (pagerState.currentPage != newPage) {
-            pagerState.scrollToPage(newPage)
+            pagerState.animateScrollToPage(newPage)
         }
     }
 
@@ -234,13 +299,12 @@ fun DaySlider(
         modifier = modifier
             .padding(top = 16.dp)
             .width(dimensionResource(R.dimen.schedule_screen_button_width)),
-
-        ) { index ->
+    ) { index ->
         Log.v(TAG, index.toString())
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(7.dp)
         ) {
-            val weekStart = baseDate.plusWeeks(index.toLong())
+            val weekStart = BASE_DATE.plusWeeks(index.toLong())
             val daysOfWeek = List(7) { dayIndex -> weekStart.plusDays(dayIndex.toLong()) }
 
             items(daysOfWeek.size) { index ->
@@ -253,7 +317,6 @@ fun DaySlider(
             }
         }
     }
-
 
 
 }
@@ -311,18 +374,18 @@ fun Day(day: LocalDate, selected: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-fun LessonBox(lessonId: Int, onClick: (Int) -> Unit, modifier: Modifier = Modifier) {
-    val lesson = FakeLessonSource.loadLessons()[lessonId]
+fun LessonBox(lesson: Lesson, onClick: (Lesson) -> Unit, modifier: Modifier = Modifier) {
+
     Box(
         modifier = Modifier
             .padding(top = 21.dp)
             .width(dimensionResource(R.dimen.schedule_screen_button_width))
-            .height(95.dp)
+            .height(dimensionResource(R.dimen.schedule_screen_lesson_size))
             .background(
                 color = MaterialTheme.colorScheme.secondaryContainer,
                 shape = MaterialTheme.shapes.medium
             )
-            .clickable { onClick(lessonId) }
+            .clickable { onClick(lesson) }
     )
     {
         Column(
@@ -356,9 +419,11 @@ fun LessonBox(lessonId: Int, onClick: (Int) -> Unit, modifier: Modifier = Modifi
                         .substringAfter(", ")
                 Text(
                     text = "$startTimeCutted - $endTimeCutted",
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.Medium,
-                    textAlign = TextAlign.Left
+                    textAlign = TextAlign.Left,
+                    modifier = Modifier
+                        .padding(start = 4.dp)
                 )
             }
             Text(
@@ -377,10 +442,7 @@ fun LessonBox(lessonId: Int, onClick: (Int) -> Unit, modifier: Modifier = Modifi
     }
 }
 
-@Preview(
-    showSystemUi = true,
-    showBackground = true
-)
+@Preview
 @Composable
 fun ScheduleScreenPreview() {
     RepetonTheme {

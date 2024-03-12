@@ -33,4 +33,9 @@
     <string name="lessons_not_found">На сегодня уроков не найдено</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="error_lesson_loading">Ошибка загрузки урока</string>
+    <string name="get_otp_by_sms">Получить код в SMS</string>
+    <string name="phone_number">Номер телефона</string>
+    <string name="enter_the_otp">Enter the OTP</string>
+    <string name="otp_verify">Otp Verify</string>
 </resources>

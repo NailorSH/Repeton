@@ -5,7 +5,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.nailorsh.repeton.domain.AuthViewModel
 import com.nailorsh.repeton.domain.RepetonViewModel
+import com.nailorsh.repeton.ui.screens.AuthorizationScreen
 import com.nailorsh.repeton.ui.screens.ChatsScreen
 import com.nailorsh.repeton.ui.screens.LessonScreen
 import com.nailorsh.repeton.ui.screens.ProfileScreen
@@ -15,20 +17,26 @@ import com.nailorsh.repeton.ui.screens.SearchScreen
 @Composable
 fun NavGraph(
     navHostController: NavHostController,
-    viewModel: RepetonViewModel,
-    modifier: Modifier = Modifier
+    repetonViewModel: RepetonViewModel,
+    modifier: Modifier = Modifier,
+    authViewModel: AuthViewModel
 ) {
     NavHost(
         navController = navHostController,
-        startDestination = AppSections.HOME.route,
+        startDestination = AppSections.AUTH.route,
         modifier = modifier
     ) {
+        composable(AppSections.AUTH.route) {
+            AuthorizationScreen { phoneNumber, otp ->
+                authViewModel.onAuthResult(phoneNumber, otp)
+            }
+        }
         composable(AppSections.SEARCH.route) {
             SearchScreen(
-                getSearchResults = viewModel::getTutors,
-                typingGetSearchResults = viewModel::typingTutorSearch,
+                getSearchResults = repetonViewModel::getTutors,
+                typingGetSearchResults = repetonViewModel::typingTutorSearch,
 //                getSearchResults = viewModel::getTutors,
-                searchUiState = viewModel.searchUiState
+                searchUiState = repetonViewModel.searchUiState
             )
         }
         composable(AppSections.HOME.route) {
@@ -40,8 +48,8 @@ fun NavGraph(
         }
         composable(AppSections.CHATS.route) {
             ChatsScreen(
-                getChats = viewModel::getChats,
-                chatsUiState = viewModel.chatsUiState
+                getChats = repetonViewModel::getChats,
+                chatsUiState = repetonViewModel.chatsUiState
             )
         }
         composable(AppSections.PROFILE.route) {

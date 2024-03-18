@@ -38,4 +38,8 @@
     <string name="phone_number">Номер телефона</string>
     <string name="enter_the_otp">Enter the OTP</string>
     <string name="otp_verify">Otp Verify</string>
+    <string name="enter_phone_number">Введите Ваш номер телефона</string>
+    <string name="verification_successful">Verification Successful</string>
+    <string name="wrong_otp">Wrong Otp</string>
+    <string name="auth">Авторизация</string>
 </resources>

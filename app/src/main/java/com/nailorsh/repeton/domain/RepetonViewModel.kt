@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.nailorsh.repeton.RepetonApplication
-import com.nailorsh.repeton.data.RepetonRepository
+import com.nailorsh.repeton.data.repositories.RepetonRepository
 import com.nailorsh.repeton.model.Chat
 import com.nailorsh.repeton.model.Lesson
 import com.nailorsh.repeton.model.Tutor

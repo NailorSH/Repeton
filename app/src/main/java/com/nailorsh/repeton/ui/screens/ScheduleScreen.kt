@@ -37,7 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.data.FakeLessonSource
+import com.nailorsh.repeton.data.sources.FakeLessonSource
 import com.nailorsh.repeton.ui.theme.AddLessonButtonColor
 import com.nailorsh.repeton.ui.theme.LineColor
 import com.nailorsh.repeton.ui.theme.RepetonTheme

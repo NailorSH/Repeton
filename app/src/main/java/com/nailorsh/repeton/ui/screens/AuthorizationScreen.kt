@@ -31,7 +31,7 @@ import com.nailorsh.repeton.ui.components.OtpTextField
 
 @Composable
 fun AuthorizationScreen(
-    onClick: (mobileNum: String, otp: String) -> Unit
+    onClick: (phoneNumber: String, otp: String) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -65,6 +65,9 @@ fun PhoneNumberInput(
                     text = stringResource(R.string.phone_number),
                     style = MaterialTheme.typography.titleMedium
                 )
+            },
+            placeholder = {
+                Text(text = stringResource(R.string.enter_phone_number))
             },
             textStyle = MaterialTheme.typography.titleMedium,
             leadingIcon = {

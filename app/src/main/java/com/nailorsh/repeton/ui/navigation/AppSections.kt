@@ -9,6 +9,7 @@ enum class AppSections(
     @DrawableRes val icon: Int,
     val route: String
 ) {
+    AUTH(R.string.auth, R.drawable.home_icon, "auth"),
     SEARCH(R.string.search_tutors, R.drawable.search_icon, "search"),
     HOME(R.string.home, R.drawable.home_icon, "home"),
     CHATS(R.string.chats, R.drawable.chat_icon, "chats"),

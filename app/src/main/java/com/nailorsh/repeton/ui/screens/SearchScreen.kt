@@ -21,8 +21,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,7 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.data.FakeTutorsSource
+import com.nailorsh.repeton.data.sources.FakeTutorsSource
 import com.nailorsh.repeton.domain.SearchUiState
 import com.nailorsh.repeton.model.Tutor
 import com.nailorsh.repeton.ui.components.ExpandableText
@@ -60,12 +58,6 @@ import com.nailorsh.repeton.ui.theme.TitleColor
 import com.nailorsh.repeton.ui.theme.White
 import com.nailorsh.repeton.ui.theme.WriteButtonBackgroundColor
 import com.nailorsh.repeton.ui.theme.WriteButtonTextColor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlin.coroutines.cancellation.CancellationException
 
 @Composable
 fun SearchScreen(

@@ -1,7 +1,5 @@
 package com.nailorsh.repeton.ui.screens
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -16,20 +14,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.data.FakeLessonSource
-import com.nailorsh.repeton.data.FakeRepetonRepository
-import com.nailorsh.repeton.data.RepetonRepository
+import com.nailorsh.repeton.data.repositories.FakeRepetonRepository
 import com.nailorsh.repeton.domain.CurrentLessonUiState
 import com.nailorsh.repeton.domain.RepetonViewModel
 import com.nailorsh.repeton.model.Lesson
-import com.nailorsh.repeton.ui.components.LoadingScreen
 import com.nailorsh.repeton.ui.components.RepetonButton
 import com.nailorsh.repeton.ui.theme.*
 import java.time.format.DateTimeFormatter

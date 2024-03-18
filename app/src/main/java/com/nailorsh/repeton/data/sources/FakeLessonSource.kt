@@ -1,4 +1,4 @@
-package com.nailorsh.repeton.data
+package com.nailorsh.repeton.data.sources
 
 import com.nailorsh.repeton.model.Lesson
 import java.time.LocalDateTime

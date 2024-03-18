@@ -1,5 +1,8 @@
-package com.nailorsh.repeton.data
+package com.nailorsh.repeton.data.repositories
 
+import com.nailorsh.repeton.data.sources.FakeChatsSource
+import com.nailorsh.repeton.data.sources.FakeLessonSource
+import com.nailorsh.repeton.data.sources.FakeTutorsSource
 import com.nailorsh.repeton.model.Chat
 import com.nailorsh.repeton.model.Lesson
 import com.nailorsh.repeton.model.Tutor

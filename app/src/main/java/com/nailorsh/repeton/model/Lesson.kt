@@ -4,6 +4,7 @@ package com.nailorsh.repeton.model
 import java.time.LocalDateTime
 
 data class Lesson(
+    val id: Int,
     val subject: String,
     val title: String,
     val description: String?,

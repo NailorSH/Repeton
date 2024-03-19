@@ -6,9 +6,10 @@ import kotlin.random.Random
 
 
 fun getRandomStartDateTime(): LocalDateTime {
-    val day = Random.nextInt(1, 8) // Случайный день между 1 и 7 января
-    val hour = Random.nextInt(12, 21) // Случайный час между 12:00 и 20:00
-    return LocalDateTime.of(2024, day, 1, 12, 0)
+
+    return LocalDateTime.now()
+        .plusDays(Random.nextInt(1, 8).toLong())
+        .plusHours(Random.nextInt(0, 24).toLong())
 }
 
 object FakeLessonSource {
@@ -16,6 +17,7 @@ object FakeLessonSource {
         return listOf(
             getRandomStartDateTime().let { startTime ->
                 Lesson(
+                    id = 0,
                     subject = "Mathematics",
                     title = "Algebra Basics",
                     description = "Introduction to algebraic concepts.",
@@ -28,6 +30,7 @@ object FakeLessonSource {
             },
             getRandomStartDateTime().let { startTime ->
                 Lesson(
+                    id = 1,
                     subject = "Physics",
                     title = "Kinematics",
                     description = "Study of motion.",
@@ -40,6 +43,7 @@ object FakeLessonSource {
             },
             getRandomStartDateTime().let { startTime ->
                 Lesson(
+                    id = 2,
                     subject = "History",
                     title = "The French Revolution",
                     description = "A deep dive into the causes of the French Revolution.",
@@ -52,6 +56,7 @@ object FakeLessonSource {
             },
             getRandomStartDateTime().let { startTime ->
                 Lesson(
+                    id = 3,
                     subject = "Literature",
                     title = "Shakespeare's Plays",
                     description = "Exploring the major plays of William Shakespeare.",
@@ -64,6 +69,7 @@ object FakeLessonSource {
             },
             getRandomStartDateTime().let { startTime ->
                 Lesson(
+                    id = 4,
                     subject = "Computer Science",
                     title = "Introduction to Programming",
                     description = null,
@@ -76,6 +82,7 @@ object FakeLessonSource {
             },
             getRandomStartDateTime().let { startTime ->
                 Lesson(
+                    id = 5,
                     subject = "Art",
                     title = "Impressionism",
                     description = "Understanding the Impressionist art movement.",

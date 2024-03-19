@@ -8,8 +8,8 @@ import com.nailorsh.repeton.model.Chat
 import com.nailorsh.repeton.model.Lesson
 import com.nailorsh.repeton.model.Tutor
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import java.lang.Thread.sleep
 import javax.inject.Inject
 
 class FakeRepetonRepository @Inject constructor() : RepetonRepository {
@@ -26,7 +26,7 @@ class FakeRepetonRepository @Inject constructor() : RepetonRepository {
     }
 
     override suspend fun getLesson(id: Int): Lesson = withContext(Dispatchers.IO) {
-        sleep(15000)
+        delay(2000)
         FakeLessonSource.loadLessons()[id]
     }
 }

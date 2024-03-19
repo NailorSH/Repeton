@@ -1,4 +1,4 @@
-package com.nailorsh.repeton.ui.screens
+package com.nailorsh.repeton.ui.screens.auth
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,8 +17,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -55,6 +57,7 @@ fun PhoneNumberInput(
     onButtonClicked: (String) -> Unit
 ) {
     val phoneNumber = remember { mutableStateOf("") }
+    var isError by remember { mutableStateOf(false) }
 
     Column {
         OutlinedTextField(
@@ -80,6 +83,7 @@ fun PhoneNumberInput(
                 keyboardType = KeyboardType.Phone,
                 imeAction = ImeAction.Done
             ),
+            isError = isError,
             modifier = Modifier.fillMaxWidth(0.9f)
         )
 
@@ -87,7 +91,13 @@ fun PhoneNumberInput(
 
         Button(
             modifier = Modifier.fillMaxWidth(0.9f),
-            onClick = { onButtonClicked(phoneNumber.value) }
+            onClick = {
+                if (phoneNumber.value.isNotEmpty()) {
+                    onButtonClicked(phoneNumber.value)
+                } else {
+                    isError = true
+                }
+            }
         ) {
             Text(
                 modifier = Modifier.padding(5.dp),

@@ -42,4 +42,18 @@
     <string name="verification_successful">Verification Successful</string>
     <string name="wrong_otp">Wrong Otp</string>
     <string name="auth">Авторизация</string>
+    <string name="verification_failed_try_again">Verification failed, try again</string>
+    <string name="quota_exceeded">Number of requests exceeded</string>
+    <string name="code_sent">Code sent</string>
+    <string name="invalid_code">Invalid code</string>
+    <string name="code_will_be_sent">Сode will be sent</string>
+    <string name="verification_complete">Verification complete</string>
+    <string name="phone_auth_success">Phone auth success</string>
+    <string name="verify_phone">Verify phone</string>
+    <string name="gif_momo_sign_up_message">Repeton will send an SMS message (carrier charges may apply) to verify your phone number.</string>
+    <string name="next">Next</string>
+    <string name="code">Code</string>
+    <string name="enter_digits_code">Enter the 6-digit code</string>
+    <string name="generic_error">Something wrong happened. Please try again.</string>
+    <string name="try_">Try again</string>
 </resources>

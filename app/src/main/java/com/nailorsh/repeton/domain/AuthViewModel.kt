@@ -1,47 +1,48 @@
 package com.nailorsh.repeton.domain
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.nailorsh.repeton.RepetonApplication
-import com.nailorsh.repeton.data.repositories.AuthRepository
+import androidx.lifecycle.viewModelScope
+import com.nailorsh.repeton.domain.repositories.AuthService
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-data class AuthState(
-    val isAuthSuccessful: Boolean = false
-)
-class AuthViewModel(private val authRepository: AuthRepository): ViewModel() {
+sealed class Response {
+    object NotInitialized : Response()
+    class Loading(val message: String?) : Response()
+    class Success(val message: String?) : Response()
+    class Error(val exception: Throwable?) : Response()
+}
 
-    private val _state = MutableStateFlow(AuthState())
-    val state = _state.asStateFlow()
+@HiltViewModel
+class AuthViewModel @Inject constructor(
+    private val accountService: AuthService
+) : ViewModel() {
+    val signUpState: MutableStateFlow<Response> = accountService.signUpState
 
-    fun onAuthResult(phoneNumber: String, otp: String) {
-        if (phoneNumber.isNotEmpty()) {
-            authRepository.sendVerificationCode(phoneNumber)
-        }
-        if (otp.isNotEmpty()) {
-            authRepository.verifyOtp(otp)
-            _state.update { it.copy(
-                isAuthSuccessful = true,
-            ) }
-        }
+    private val _number: MutableStateFlow<String> = MutableStateFlow("")
+    val number: StateFlow<String> get() = _number
+
+    private val _code: MutableStateFlow<String> = MutableStateFlow("")
+    val code: StateFlow<String> get() = _code
+
+    fun authenticatePhone(phone: String) {
+        accountService.authenticate(phone)
     }
 
-    fun resetState() {
-        _state.update { AuthState() }
+    fun onNumberChange(number: String) {
+        _number.value = number
     }
 
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application =
-                    (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as RepetonApplication)
-                val authRepository = application.container.authRepository
-                AuthViewModel(authRepository = authRepository)
-            }
+    fun onCodeChange(code: String) {
+        _code.value = code.take(6)
+    }
+
+    fun verifyOtp(code: String) {
+        viewModelScope.launch {
+            accountService.onVerifyOtp(code)
         }
     }
 }

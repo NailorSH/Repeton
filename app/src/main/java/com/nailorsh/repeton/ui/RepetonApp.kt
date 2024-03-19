@@ -19,8 +19,8 @@ import com.nailorsh.repeton.ui.theme.RepetonTheme
 @Composable
 fun RepetonApp(
     navController: NavHostController = rememberNavController(),
-    repetonViewModel: RepetonViewModel = viewModel(factory = RepetonViewModel.Factory),
-    authViewModel: AuthViewModel = viewModel(factory = AuthViewModel.Factory)
+    repetonViewModel: RepetonViewModel = viewModel(),
+    authViewModel: AuthViewModel = viewModel()
 ) {
     RepetonTheme {
         Scaffold(

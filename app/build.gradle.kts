@@ -1,7 +1,9 @@
 plugins {
+    kotlin("kapt")
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -51,7 +53,13 @@ android {
     }
 }
 
+val daggerVersion = "2.51"
+
 dependencies {
+
+    // Dagger Hilt
+    implementation("com.google.dagger:hilt-android:$daggerVersion")
+    kapt("com.google.dagger:hilt-compiler:$daggerVersion")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
@@ -79,4 +87,9 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-analytics-ktx")
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
 }

@@ -40,7 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.data.FakeTutorsSource
+import com.nailorsh.repeton.data.sources.FakeTutorsSource
 import com.nailorsh.repeton.domain.SearchUiState
 import com.nailorsh.repeton.model.Tutor
 import com.nailorsh.repeton.ui.components.ExpandableText
@@ -61,6 +61,7 @@ import com.nailorsh.repeton.ui.theme.WriteButtonTextColor
 
 @Composable
 fun SearchScreen(
+    typingGetSearchResults: (String) -> Unit,
     getSearchResults: () -> Unit,
     searchUiState: SearchUiState,
     modifier: Modifier = Modifier,
@@ -93,12 +94,16 @@ fun SearchScreen(
                     }
                 ),
                 value = query,
-                onValueChanged = { query = it },
+                onSearch = getSearchResults,
+                onValueChanged = {
+                    query = it
+                    typingGetSearchResults(it)
+                },
                 modifier = Modifier.fillMaxWidth()
             )
 
             when (searchUiState) {
-                is SearchUiState.None -> { }
+                is SearchUiState.None -> {}
                 is SearchUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
 
                 is SearchUiState.Success -> TutorList(
@@ -106,11 +111,18 @@ fun SearchScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                is SearchUiState.Error -> ErrorScreen(getSearchResults, modifier = modifier.fillMaxSize())
+                is SearchUiState.Error -> ErrorScreen(
+                    getSearchResults,
+                    modifier = modifier.fillMaxSize()
+                )
             }
         }
     }
 }
+
+
+
+
 
 @Composable
 fun TutorList(

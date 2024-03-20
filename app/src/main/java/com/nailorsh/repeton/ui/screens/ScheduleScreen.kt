@@ -1,5 +1,8 @@
 package com.nailorsh.repeton.ui.screens
 
+import CalendarDatePicker
+import DaySlider
+import LessonsList
 import android.app.DatePickerDialog
 import android.util.Log
 import android.widget.DatePicker
@@ -143,6 +146,11 @@ fun ScheduleScreen(
             pageCount = { MAX_PAGE_COUNT }
         )
 
+
+        LaunchedEffect(selectedDay) {
+
+        }
+
         LaunchedEffect(pagerState.currentPage) {
             selectedDay = BASE_DATE.plusDays(pagerState.currentPage.toLong())
         }
@@ -222,263 +230,7 @@ fun ScheduleScreen(
     }
 }
 
-@Composable
-fun LessonsList(
-    onLessonClicked: (Lesson) -> Unit,
-    lessons: List<Lesson>,
-    modifier: Modifier = Modifier
-) {
 
-
-    Column(
-        modifier = modifier
-    ) {
-        if (lessons.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .padding(top = 21.dp)
-                    .width(dimensionResource(R.dimen.schedule_screen_button_width))
-                    .height(dimensionResource(R.dimen.schedule_screen_lesson_size))
-                    .background(
-                        color = MaterialTheme.colorScheme.secondaryContainer,
-                        shape = MaterialTheme.shapes.medium
-                    )
-            ) {
-                Text(
-                    text = stringResource(R.string.lessons_not_found),
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier
-                        .padding(horizontal = 13.dp, vertical = 16.dp)
-                )
-            }
-        } else {
-            LazyColumn {
-                items(lessons.size) {
-                    LessonBox(
-                        lesson = lessons[it],
-                        onClick = onLessonClicked
-                    )
-                }
-
-            }
-        }
-
-    }
-
-}
-
-
-
-@Composable
-fun CalendarDatePicker(
-    selectedDay: LocalDate,
-    selectedDayUpdate: (LocalDate) -> Unit,
-    showDatePickerUpdate: () -> Unit
-) {
-    val context = LocalContext.current
-    val calendar = Calendar.getInstance()
-
-    val datePickerDialog = DatePickerDialog(
-        context,
-        { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-            selectedDayUpdate(LocalDate.of(year, month + 1, dayOfMonth))
-            showDatePickerUpdate()
-        },
-        selectedDay.year,
-        selectedDay.monthValue - 1,
-        selectedDay.dayOfMonth
-    )
-
-
-    // Минимальная дата доступная в календаре
-    calendar.set(2024, Calendar.JANUARY, 1)
-    datePickerDialog.datePicker.minDate = calendar.timeInMillis
-
-    datePickerDialog.setOnDismissListener {
-        showDatePickerUpdate()
-    }
-
-    datePickerDialog.show()
-}
-
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun DaySlider(
-    selectedDay: LocalDate,
-    onDaySelected: (LocalDate) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Log.v(TAG, selectedDay.toString())
-
-
-    val initialPage = remember { ChronoUnit.WEEKS.between(BASE_DATE, selectedDay).toInt() }
-
-    val pagerState = rememberPagerState(
-        initialPage = initialPage,
-        pageCount = { MAX_PAGE_COUNT }
-    )
-
-    LaunchedEffect(selectedDay) {
-        val newPage = ChronoUnit.WEEKS.between(BASE_DATE, selectedDay).toInt()
-        if (pagerState.currentPage != newPage) {
-            pagerState.animateScrollToPage(newPage)
-        }
-    }
-
-
-
-    HorizontalPager(
-        state = pagerState,
-        pageSpacing = dimensionResource(R.dimen.schedule_screen_days_padding),
-        modifier = modifier
-            .padding(top = 16.dp)
-            .width(dimensionResource(R.dimen.schedule_screen_button_width)),
-    ) { index ->
-        Log.v(TAG, index.toString())
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.schedule_screen_days_padding))
-        ) {
-            val weekStart = BASE_DATE.plusWeeks(index.toLong())
-            val daysOfWeek = List(7) { dayIndex -> weekStart.plusDays(dayIndex.toLong()) }
-
-            items(daysOfWeek.size) { index ->
-                Day(
-                    day = daysOfWeek[index],
-                    selectedDay = selectedDay,
-                ) {
-                    onDaySelected(daysOfWeek[index])
-                }
-            }
-        }
-    }
-
-
-}
-
-@Composable
-fun Day(day: LocalDate, selectedDay: LocalDate, onSelectDay: () -> Unit) {
-    val selected = day.equals(selectedDay)
-    val backgroundColor =
-        if (selected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.tertiaryContainer
-    val textColor =
-        if (selected) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onTertiaryContainer
-    val numberTextStyle = MaterialTheme.typography.headlineSmall
-    val dayTextStyle = MaterialTheme.typography.labelSmall
-    val dayFontWeight = FontWeight.W400
-
-    Box(
-        modifier = Modifier
-            .width(36.dp)
-            .height(48.dp)
-            .background(color = backgroundColor, shape = MaterialTheme.shapes.small)
-            .border(width = 1.dp, color = Color.Black, shape = MaterialTheme.shapes.small)
-            .padding(horizontal = 2.dp)
-            .clickable(onClick = onSelectDay)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy((-4).dp)
-        ) {
-            Text(
-                text = day.dayOfMonth.toString(),
-                color = textColor,
-                textAlign = TextAlign.Center,
-                style = numberTextStyle,
-                modifier = Modifier.padding(top = 6.dp),
-            )
-            Text(
-                text = when (day.dayOfWeek) {
-                    DayOfWeek.MONDAY -> stringResource(R.string.mon)
-                    DayOfWeek.TUESDAY -> stringResource(R.string.tue)
-                    DayOfWeek.WEDNESDAY -> stringResource(R.string.wed)
-                    DayOfWeek.THURSDAY -> stringResource(R.string.thu)
-                    DayOfWeek.FRIDAY -> stringResource(R.string.fri)
-                    DayOfWeek.SATURDAY -> stringResource(R.string.sat)
-                    DayOfWeek.SUNDAY -> stringResource(R.string.sun)
-                    else -> ""
-                },
-                color = textColor,
-                textAlign = TextAlign.Center,
-                style = dayTextStyle,
-                fontWeight = dayFontWeight
-            )
-        }
-    }
-}
-
-@Composable
-fun LessonBox(lesson: Lesson, onClick: (Lesson) -> Unit, modifier: Modifier = Modifier) {
-
-    Box(
-        modifier = Modifier
-            .padding(top = 21.dp)
-            .width(dimensionResource(R.dimen.schedule_screen_button_width))
-            .height(dimensionResource(R.dimen.schedule_screen_lesson_size))
-            .background(
-                color = MaterialTheme.colorScheme.secondaryContainer,
-                shape = MaterialTheme.shapes.medium
-            )
-            .clickable { onClick(lesson) }
-    )
-    {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 13.dp)
-
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            )
-            {
-                Text(
-                    text = lesson.subject,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    style = MaterialTheme.typography.headlineSmall,
-
-                    )
-
-
-                // Время начала и конца занятия
-                val startTimeCutted =
-                    lesson.startTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT))
-                        .substringAfter(", ")
-                val endTimeCutted =
-                    lesson.endTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT))
-                        .substringAfter(", ")
-                Text(
-                    text = "$startTimeCutted - $endTimeCutted",
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.Medium,
-                    textAlign = TextAlign.Left,
-                    modifier = Modifier
-                        .padding(start = 4.dp)
-                )
-            }
-            Text(
-                text = lesson.teacherName,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                style = MaterialTheme.typography.bodyMedium,
-                letterSpacing = 0.25.sp,
-            )
-            Text(
-                text = lesson.title,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
-                fontWeight = FontWeight.SemiBold
-            )
-        }
-    }
-}
 
 @Preview
 @Composable

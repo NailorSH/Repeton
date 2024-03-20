@@ -92,8 +92,6 @@ fun ScheduleScreen(
 
 
     LaunchedEffect(dayPagerState.currentPage) {
-        Log.v(TAG, dayPagerState.currentPage.toString())
-        Log.v(TAG, selectionSource.toString())
         if (selectionSource == SelectionSource.None) {
             selectionSource = SelectionSource.DayPager
             selectedDay = BASE_DATE.plusDays(dayPagerState.currentPage.toLong())
@@ -104,7 +102,6 @@ fun ScheduleScreen(
     LaunchedEffect(selectedDay) {
 
         getLessons(selectedDay)
-        Log.d(TAG, selectionSource.toString())
         when(selectionSource) {
             SelectionSource.DayPager -> {
                 weekPagerState.animateScrollToPage(ChronoUnit.WEEKS.between(BASE_DATE, selectedDay).toInt())

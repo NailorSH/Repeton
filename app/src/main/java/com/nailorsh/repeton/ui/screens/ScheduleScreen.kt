@@ -3,26 +3,18 @@ package com.nailorsh.repeton.ui.screens
 import CalendarDatePicker
 import DaySlider
 import LessonsList
-import android.app.DatePickerDialog
 import android.util.Log
-import android.widget.DatePicker
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
@@ -38,15 +30,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.data.repositories.FakeRepetonRepository
 import com.nailorsh.repeton.domain.RepetonViewModel
@@ -56,16 +44,17 @@ import com.nailorsh.repeton.ui.components.ErrorScreen
 import com.nailorsh.repeton.ui.components.LoadingScreen
 import com.nailorsh.repeton.ui.theme.LineColor
 import com.nailorsh.repeton.ui.theme.RepetonTheme
-import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.time.temporal.ChronoUnit
-import java.util.Calendar
 
 const val TAG = "SCHEDULE_SCREEN"
 const val MAX_PAGE_COUNT = 10000
 val BASE_DATE: LocalDate = LocalDate.of(2024, 1, 1)
+
+private enum class SelectionSource {
+    DayPager, DaySlider, Calendar, None
+}
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -78,14 +67,63 @@ fun ScheduleScreen(
     var selectedDay by remember {
         mutableStateOf(LocalDate.now())
     }
+
+    val dayPagerState = rememberPagerState(
+        initialPage = ChronoUnit.DAYS.between(BASE_DATE, selectedDay).toInt(),
+        pageCount = { MAX_PAGE_COUNT }
+    )
+
+    val weekPagerState = rememberPagerState(
+        initialPage = ChronoUnit.WEEKS.between(BASE_DATE, selectedDay).toInt(),
+        pageCount = { MAX_PAGE_COUNT }
+    )
+
+    var selectionSource by remember { mutableStateOf(SelectionSource.None) }
+
     if (showDatePicker) {
         CalendarDatePicker(
             selectedDay = selectedDay,
             selectedDayUpdate = { selectedDay = it },
-            showDatePickerUpdate = { showDatePicker = false }
+            showDatePickerUpdate = { showDatePicker = false },
+            changeSelectionSource = { selectionSource = SelectionSource.Calendar }
         )
+    }
+
+
+
+    LaunchedEffect(dayPagerState.currentPage) {
+        Log.v(TAG, dayPagerState.currentPage.toString())
+        Log.v(TAG, selectionSource.toString())
+        if (selectionSource == SelectionSource.None) {
+            selectionSource = SelectionSource.DayPager
+            selectedDay = BASE_DATE.plusDays(dayPagerState.currentPage.toLong())
+        }
 
     }
+
+    LaunchedEffect(selectedDay) {
+
+        getLessons(selectedDay)
+        Log.d(TAG, selectionSource.toString())
+        when(selectionSource) {
+            SelectionSource.DayPager -> {
+                weekPagerState.animateScrollToPage(ChronoUnit.WEEKS.between(BASE_DATE, selectedDay).toInt())
+            }
+
+            SelectionSource.Calendar -> {
+                dayPagerState.animateScrollToPage(ChronoUnit.DAYS.between(BASE_DATE, selectedDay).toInt())
+                weekPagerState.animateScrollToPage(ChronoUnit.WEEKS.between(BASE_DATE, selectedDay).toInt())
+            }
+
+            SelectionSource.DaySlider -> {
+                dayPagerState.animateScrollToPage(ChronoUnit.DAYS.between(BASE_DATE, selectedDay).toInt())
+            }
+
+            SelectionSource.None -> { }
+        }
+        selectionSource = SelectionSource.None
+    }
+
 
 
 
@@ -136,27 +174,16 @@ fun ScheduleScreen(
         DaySlider(
             selectedDay = selectedDay,
             onDaySelected = { selectedDay = it },
+            changeSelectionSource = { selectionSource = SelectionSource.DaySlider },
+            weekPagerState = weekPagerState,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
         )
 
-        val initialPage = remember { ChronoUnit.DAYS.between(BASE_DATE, selectedDay).toInt() }
-        val pagerState = rememberPagerState(
-            initialPage = initialPage,
-            pageCount = { MAX_PAGE_COUNT }
-        )
 
-
-        LaunchedEffect(selectedDay) {
-
-        }
-
-        LaunchedEffect(pagerState.currentPage) {
-            selectedDay = BASE_DATE.plusDays(pagerState.currentPage.toLong())
-        }
 
         HorizontalPager(
-            state = pagerState,
+            state = dayPagerState,
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)

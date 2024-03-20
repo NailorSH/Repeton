@@ -10,8 +10,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.model.Lesson
-import com.nailorsh.repeton.ui.screens.LessonBox
-
 @Composable
 fun LessonsList(
     onLessonClicked: (Lesson) -> Unit,

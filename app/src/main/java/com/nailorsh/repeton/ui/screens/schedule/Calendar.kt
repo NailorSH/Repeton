@@ -9,7 +9,8 @@ import java.util.*
 fun CalendarDatePicker(
     selectedDay: LocalDate,
     selectedDayUpdate: (LocalDate) -> Unit,
-    showDatePickerUpdate: () -> Unit
+    showDatePickerUpdate: () -> Unit,
+    changeSelectionSource: () -> Unit
 ) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
@@ -17,6 +18,7 @@ fun CalendarDatePicker(
     val datePickerDialog = DatePickerDialog(
         context,
         { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+            changeSelectionSource()
             selectedDayUpdate(LocalDate.of(year, month + 1, dayOfMonth))
             showDatePickerUpdate()
         },

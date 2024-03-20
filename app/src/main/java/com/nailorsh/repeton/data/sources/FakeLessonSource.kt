@@ -8,8 +8,8 @@ import kotlin.random.Random
 fun getRandomStartDateTime(): LocalDateTime {
 
     return LocalDateTime.now()
-        .plusDays(Random.nextInt(1, 8).toLong())
-        .plusHours(Random.nextInt(0, 24).toLong())
+        .plusDays(Random.nextInt(0, 1).toLong())
+        .plusHours(Random.nextInt(0, 1).toLong())
 }
 
 object FakeLessonSource {
@@ -35,8 +35,8 @@ object FakeLessonSource {
                     title = "Kinematics",
                     description = "Study of motion.",
                     teacherName = "Marie Curie",
-                    startTime = startTime,
-                    endTime = startTime.plusMinutes(90),
+                    startTime = startTime.plusMinutes(90),
+                    endTime = startTime.plusMinutes(180),
                     homeworkLink = null,
                     additionalMaterials = "http://materials.example.com/kinematics"
                 )
@@ -48,8 +48,8 @@ object FakeLessonSource {
                     title = "The French Revolution",
                     description = "A deep dive into the causes of the French Revolution.",
                     teacherName = "Jean Valjean",
-                    startTime = startTime,
-                    endTime = startTime.plusMinutes(90),
+                    startTime = startTime.plusDays(1),
+                    endTime = startTime.plusDays(1).plusMinutes(90),
                     homeworkLink = "http://homework.example.com/french-revolution",
                     additionalMaterials = null
                 )
@@ -61,8 +61,8 @@ object FakeLessonSource {
                     title = "Shakespeare's Plays",
                     description = "Exploring the major plays of William Shakespeare.",
                     teacherName = "Elizabeth Bennett",
-                    startTime = startTime,
-                    endTime = startTime.plusMinutes(90),
+                    startTime = startTime.plusDays(2),
+                    endTime = startTime.plusDays(2).plusMinutes(90),
                     homeworkLink = null,
                     additionalMaterials = "http://materials.example.com/shakespeare"
                 )
@@ -74,8 +74,8 @@ object FakeLessonSource {
                     title = "Introduction to Programming",
                     description = null,
                     teacherName = "Alan Turing",
-                    startTime = startTime,
-                    endTime = startTime.plusMinutes(90),
+                    startTime = startTime.plusDays(2).plusMinutes(90),
+                    endTime = startTime.plusDays(2).plusMinutes(180),
                     homeworkLink = "http://homework.example.com/programming",
                     additionalMaterials = null
                 )
@@ -87,8 +87,8 @@ object FakeLessonSource {
                     title = "Impressionism",
                     description = "Understanding the Impressionist art movement.",
                     teacherName = "Claude Monet",
-                    startTime = startTime,
-                    endTime = startTime.plusMinutes(90),
+                    startTime = startTime.minusDays(1),
+                    endTime = startTime.minusDays(1).plusMinutes(90),
                     homeworkLink = null,
                     additionalMaterials = "http://materials.example.com/impressionism"
                 )

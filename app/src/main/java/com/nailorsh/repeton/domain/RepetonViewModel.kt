@@ -15,6 +15,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.net.HttpRetryException
+import java.time.LocalDate
 import javax.inject.Inject
 
 sealed interface SearchUiState {
@@ -60,13 +61,12 @@ class RepetonViewModel @Inject constructor(
         private set
 
     init {
-        getLessons()
+        getLessons(LocalDate.now())
     }
 
     fun getLessons() {
         viewModelScope.launch {
             scheduleUiState = ScheduleUiState.Loading
-            delay(2000)
             scheduleUiState = try {
                 ScheduleUiState.Success(repetonRepository.getLessons())
             } catch (e: IOException) {
@@ -74,6 +74,20 @@ class RepetonViewModel @Inject constructor(
             } catch (e: HttpRetryException) {
                 ScheduleUiState.Error
             }
+        }
+    }
+
+    fun getLessons(day : LocalDate) {
+        viewModelScope.launch {
+            scheduleUiState = ScheduleUiState.Loading
+            scheduleUiState = try {
+                ScheduleUiState.Success(repetonRepository.getLessons(day))
+            } catch (e: IOException) {
+                ScheduleUiState.Error
+            } catch (e: HttpRetryException) {
+                ScheduleUiState.Error
+            }
+
         }
     }
 

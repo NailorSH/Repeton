@@ -45,8 +45,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.data.sources.FakeLessonSource
+import com.nailorsh.repeton.data.repositories.FakeRepetonRepository
+import com.nailorsh.repeton.domain.RepetonViewModel
+import com.nailorsh.repeton.domain.ScheduleUiState
 import com.nailorsh.repeton.model.Lesson
+import com.nailorsh.repeton.ui.components.ErrorScreen
+import com.nailorsh.repeton.ui.components.LoadingScreen
 import com.nailorsh.repeton.ui.theme.LineColor
 import com.nailorsh.repeton.ui.theme.RepetonTheme
 import java.time.DayOfWeek
@@ -63,6 +67,8 @@ val BASE_DATE: LocalDate = LocalDate.of(2024, 1, 1)
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ScheduleScreen(
+    scheduleUiState: ScheduleUiState,
+    getLessons: (LocalDate) -> Unit,
     onLessonClicked: (Lesson) -> Unit
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
@@ -153,13 +159,33 @@ fun ScheduleScreen(
                     .align(Alignment.CenterHorizontally)
             ) {
 
-                LessonsList(
-                    onLessonClicked = onLessonClicked,
-                    selectedDay = selectedDay,
-                    modifier = Modifier
-                        .width(dimensionResource(R.dimen.schedule_screen_button_width))
-                        .align(Alignment.CenterHorizontally)
-                )
+                // Отображение списка занятий
+                when (scheduleUiState) {
+                    is ScheduleUiState.Success -> {
+                        LessonsList(
+                            onLessonClicked = onLessonClicked,
+                            lessons = scheduleUiState.lessons,
+                            modifier = Modifier
+                                .width(dimensionResource(R.dimen.schedule_screen_button_width))
+                                .align(Alignment.CenterHorizontally)
+                        )
+                    }
+                    is ScheduleUiState.Loading -> {
+                        LoadingScreen(
+                            modifier = Modifier
+                                .fillMaxSize()
+                        )
+                    }
+                    else -> {
+                        ErrorScreen(
+                            retryAction = { getLessons(selectedDay) },
+                            modifier = Modifier
+                                .fillMaxSize()
+                        )
+                    }
+                }
+
+
 
                 HorizontalDivider(
                     modifier = Modifier
@@ -172,7 +198,7 @@ fun ScheduleScreen(
                 )
 
                 Button(
-                    onClick = { /* TODO */ },
+                    onClick = { /* TODO Добавление нового занятия */ },
                     modifier = Modifier
                         .padding(top = 30.dp)
                         .width(dimensionResource(R.dimen.schedule_screen_button_width))
@@ -199,13 +225,9 @@ fun ScheduleScreen(
 @Composable
 fun LessonsList(
     onLessonClicked: (Lesson) -> Unit,
-    selectedDay: LocalDate,
+    lessons: List<Lesson>,
     modifier: Modifier = Modifier
 ) {
-
-    /* TODO Подгрузка настоящих уроков */
-
-    val lessons = remember { FakeLessonSource.loadLessons() }
 
 
     Column(
@@ -233,24 +255,19 @@ fun LessonsList(
         } else {
             LazyColumn {
                 items(lessons.size) {
-                    /* TODO Убрать временное решение */
-                    Log.v(TAG, lessons[it].toString())
-                    if (lessons[it].startTime.dayOfYear == selectedDay.dayOfYear &&
-                        lessons[it].startTime.year == selectedDay.year
-                    ) {
-                        LessonBox(
-                            lesson = lessons[it],
-                            onClick = onLessonClicked
-                        )
-                    }
-
+                    LessonBox(
+                        lesson = lessons[it],
+                        onClick = onLessonClicked
+                    )
                 }
-            }
 
+            }
         }
 
     }
+
 }
+
 
 
 @Composable
@@ -298,10 +315,6 @@ fun DaySlider(
 
     val initialPage = remember { ChronoUnit.WEEKS.between(BASE_DATE, selectedDay).toInt() }
 
-    var lastPage = remember { initialPage }
-
-//    val startOfWeek = selectedWeek.minusDays(selectedDay.dayOfWeek.value.toLong() - 1)
-//    val daysOfWeek = remember(selectedWeek) { List(7) { startOfWeek.plusDays(it.toLong()) } }
     val pagerState = rememberPagerState(
         initialPage = initialPage,
         pageCount = { MAX_PAGE_COUNT }
@@ -318,13 +331,14 @@ fun DaySlider(
 
     HorizontalPager(
         state = pagerState,
+        pageSpacing = dimensionResource(R.dimen.schedule_screen_days_padding),
         modifier = modifier
             .padding(top = 16.dp)
             .width(dimensionResource(R.dimen.schedule_screen_button_width)),
     ) { index ->
         Log.v(TAG, index.toString())
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(7.dp)
+            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.schedule_screen_days_padding))
         ) {
             val weekStart = BASE_DATE.plusWeeks(index.toLong())
             val daysOfWeek = List(7) { dayIndex -> weekStart.plusDays(dayIndex.toLong()) }
@@ -332,7 +346,7 @@ fun DaySlider(
             items(daysOfWeek.size) { index ->
                 Day(
                     day = daysOfWeek[index],
-                    selected = daysOfWeek[index].equals(selectedDay)
+                    selectedDay = selectedDay,
                 ) {
                     onDaySelected(daysOfWeek[index])
                 }
@@ -344,7 +358,8 @@ fun DaySlider(
 }
 
 @Composable
-fun Day(day: LocalDate, selected: Boolean, onClick: () -> Unit) {
+fun Day(day: LocalDate, selectedDay: LocalDate, onSelectDay: () -> Unit) {
+    val selected = day.equals(selectedDay)
     val backgroundColor =
         if (selected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.tertiaryContainer
     val textColor =
@@ -359,7 +374,8 @@ fun Day(day: LocalDate, selected: Boolean, onClick: () -> Unit) {
             .height(48.dp)
             .background(color = backgroundColor, shape = MaterialTheme.shapes.small)
             .border(width = 1.dp, color = Color.Black, shape = MaterialTheme.shapes.small)
-            .clickable(onClick = onClick)
+            .padding(horizontal = 2.dp)
+            .clickable(onClick = onSelectDay)
     ) {
         Column(
             modifier = Modifier
@@ -469,20 +485,9 @@ fun LessonBox(lesson: Lesson, onClick: (Lesson) -> Unit, modifier: Modifier = Mo
 fun ScheduleScreenPreview() {
     RepetonTheme {
         ScheduleScreen(
-            onLessonClicked = { }
-        )
-    }
-}
-
-@Preview(
-    showSystemUi = true,
-    showBackground = true
-)
-@Composable
-fun ScheduleScreenPreviewDark() {
-    RepetonTheme(darkTheme = true) {
-        ScheduleScreen(
-            onLessonClicked = { }
+            onLessonClicked = { },
+            getLessons = { },
+            scheduleUiState = RepetonViewModel(FakeRepetonRepository()).scheduleUiState
         )
     }
 }

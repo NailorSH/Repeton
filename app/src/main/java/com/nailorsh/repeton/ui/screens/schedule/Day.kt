@@ -17,12 +17,23 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 
 @Composable
-fun Day(day: LocalDate, selectedDay: LocalDate, onSelectDay: () -> Unit) {
+fun Day(day: LocalDate, selectedDay: LocalDate, hasLessons: Boolean, onSelectDay: () -> Unit) {
     val selected = day.equals(selectedDay)
     val backgroundColor =
-        if (selected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.tertiaryContainer
+        if (selected)
+            MaterialTheme.colorScheme.tertiary
+        else if (hasLessons)
+            MaterialTheme.colorScheme.tertiaryContainer
+        else MaterialTheme.colorScheme.surfaceContainerHighest
+
     val textColor =
-        if (selected) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onTertiaryContainer
+        if (selected)
+            MaterialTheme.colorScheme.onTertiary
+        else if (hasLessons)
+            MaterialTheme.colorScheme.onTertiaryContainer
+        else MaterialTheme.colorScheme.onSurfaceVariant
+
+
     val numberTextStyle = MaterialTheme.typography.headlineSmall
     val dayTextStyle = MaterialTheme.typography.labelSmall
     val dayFontWeight = FontWeight.W400

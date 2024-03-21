@@ -60,7 +60,7 @@ fun NavGraph(
             ScheduleScreen(
                 scheduleUiState = repetonViewModel.scheduleUiState,
                 // Вызов getLessons по указанной дате
-                getLessons = { repetonViewModel.getLessons(it) },
+                getLessons = { repetonViewModel.getLessons() },
                 onLessonClicked = { lesson ->
                     navHostController.navigate("lesson/${lesson.id}")
                 }

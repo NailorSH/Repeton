@@ -19,12 +19,12 @@ class FakeRepetonRepository @Inject constructor() : RepetonRepository {
     }
 
     override suspend fun getLessons(): List<Lesson> = withContext(Dispatchers.IO) {
-        delay(2000)
+//        delay(5000)
         FakeLessonSource.loadLessons()
     }
 
     override suspend fun getLessons(day: LocalDate): List<Lesson> = withContext(Dispatchers.IO) {
-        delay(2000)
+//        delay(2000)
         FakeLessonSource.loadLessons().filter {
             it.startTime.year == day.year && it.startTime.dayOfYear == day.dayOfYear
         }

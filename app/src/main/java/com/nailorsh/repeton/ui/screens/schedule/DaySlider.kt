@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
+import com.nailorsh.repeton.model.Lesson
 import com.nailorsh.repeton.ui.screens.BASE_DATE
 import com.nailorsh.repeton.ui.screens.MAX_PAGE_COUNT
 import com.nailorsh.repeton.ui.screens.TAG
@@ -27,6 +28,7 @@ fun DaySlider(
     onDaySelected: (LocalDate) -> Unit,
     weekPagerState: PagerState,
     changeSelectionSource: () -> Unit,
+    lessonsMap: Map<LocalDate, List<Lesson>>,
     modifier: Modifier = Modifier
 ) {
 
@@ -49,6 +51,7 @@ fun DaySlider(
                 Day(
                     day = daysOfWeek[index],
                     selectedDay = selectedDay,
+                    hasLessons = lessonsMap[daysOfWeek[index]] != null,
                 ) {
                     changeSelectionSource()
                     onDaySelected(daysOfWeek[index])

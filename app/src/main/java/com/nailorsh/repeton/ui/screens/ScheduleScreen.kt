@@ -60,7 +60,7 @@ private enum class SelectionSource {
 @Composable
 fun ScheduleScreen(
     scheduleUiState: ScheduleUiState,
-    getLessons: (LocalDate) -> Unit,
+    getLessons: () -> Unit,
     onLessonClicked: (Lesson) -> Unit
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
@@ -80,6 +80,10 @@ fun ScheduleScreen(
 
     var selectionSource by remember { mutableStateOf(SelectionSource.None) }
 
+    var lessonsMap : Map<LocalDate, List<Lesson>> = remember { emptyMap() }
+
+
+
     if (showDatePicker) {
         CalendarDatePicker(
             selectedDay = selectedDay,
@@ -92,7 +96,7 @@ fun ScheduleScreen(
 
 
     LaunchedEffect(dayPagerState.currentPage) {
-        if (selectionSource == SelectionSource.None) {
+        if (selectionSource == SelectionSource.None || selectionSource == SelectionSource.DayPager) {
             selectionSource = SelectionSource.DayPager
             selectedDay = BASE_DATE.plusDays(dayPagerState.currentPage.toLong())
         }
@@ -101,7 +105,10 @@ fun ScheduleScreen(
 
     LaunchedEffect(selectedDay) {
 
-        getLessons(selectedDay)
+
+//        getLessons(BASE_DATE.plusDays(dayPagerState.targetPage.toLong()))
+
+
         when(selectionSource) {
             SelectionSource.DayPager -> {
                 weekPagerState.animateScrollToPage(ChronoUnit.WEEKS.between(BASE_DATE, selectedDay).toInt())
@@ -116,10 +123,11 @@ fun ScheduleScreen(
                 dayPagerState.animateScrollToPage(ChronoUnit.DAYS.between(BASE_DATE, selectedDay).toInt())
             }
 
-            SelectionSource.None -> { }
+            SelectionSource.None -> {  }
         }
         selectionSource = SelectionSource.None
     }
+
 
 
 
@@ -168,91 +176,100 @@ fun ScheduleScreen(
         }
 
 
-        DaySlider(
-            selectedDay = selectedDay,
-            onDaySelected = { selectedDay = it },
-            changeSelectionSource = { selectionSource = SelectionSource.DaySlider },
-            weekPagerState = weekPagerState,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-        )
 
 
 
-        HorizontalPager(
-            state = dayPagerState,
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.CenterHorizontally)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.CenterHorizontally)
-            ) {
+        when (scheduleUiState) {
+            is ScheduleUiState.Success -> {
+                lessonsMap = remember { scheduleUiState.lessons }
 
-                // Отображение списка занятий
-                when (scheduleUiState) {
-                    is ScheduleUiState.Success -> {
+                DaySlider(
+                    selectedDay = selectedDay,
+                    onDaySelected = { selectedDay = it },
+                    changeSelectionSource = { selectionSource = SelectionSource.DaySlider },
+                    weekPagerState = weekPagerState,
+                    lessonsMap = lessonsMap,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                )
+
+                HorizontalPager(
+                    state = dayPagerState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.CenterHorizontally)
+                ) {page ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.CenterHorizontally)
+                    ) {
+
+                        // Отображение списка занятий
+                        val day = BASE_DATE.plusDays(page.toLong())
                         LessonsList(
                             onLessonClicked = onLessonClicked,
-                            lessons = scheduleUiState.lessons,
+                            lessons = lessonsMap.getOrDefault(day, emptyList()),
                             modifier = Modifier
                                 .width(dimensionResource(R.dimen.schedule_screen_button_width))
                                 .align(Alignment.CenterHorizontally)
                         )
-                    }
-                    is ScheduleUiState.Loading -> {
-                        LoadingScreen(
+
+                        HorizontalDivider(
                             modifier = Modifier
-                                .fillMaxSize()
+                                .padding(top = 22.dp)
+                                .width(dimensionResource(R.dimen.divider_width))
+                                .align(Alignment.CenterHorizontally),
+
+                            thickness = dimensionResource(R.dimen.divider_thickness),
+                            color = LineColor
                         )
-                    }
-                    else -> {
-                        ErrorScreen(
-                            retryAction = { getLessons(selectedDay) },
+
+                        Button(
+                            onClick = { /* TODO Добавление нового занятия */ },
                             modifier = Modifier
-                                .fillMaxSize()
-                        )
+                                .padding(top = 30.dp)
+                                .width(dimensionResource(R.dimen.schedule_screen_button_width))
+                                .height(52.dp)
+                                .align(Alignment.CenterHorizontally),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            )
+                        ) {
+                            Text(
+                                text = stringResource(R.string.add_lesson_button),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
                     }
-                }
 
-
-
-                HorizontalDivider(
-                    modifier = Modifier
-                        .padding(top = 22.dp)
-                        .width(dimensionResource(R.dimen.divider_width))
-                        .align(Alignment.CenterHorizontally),
-
-                    thickness = dimensionResource(R.dimen.divider_thickness),
-                    color = LineColor
-                )
-
-                Button(
-                    onClick = { /* TODO Добавление нового занятия */ },
-                    modifier = Modifier
-                        .padding(top = 30.dp)
-                        .width(dimensionResource(R.dimen.schedule_screen_button_width))
-                        .height(52.dp)
-                        .align(Alignment.CenterHorizontally),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    )
-                ) {
-                    Text(
-                        text = stringResource(R.string.add_lesson_button),
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
                 }
             }
 
+            is ScheduleUiState.Loading -> {
+                LoadingScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
+            }
+            else -> {
+                ErrorScreen(
+                    retryAction = { getLessons() },
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
+            }
         }
+
+
+
     }
 }
+
+
 
 
 

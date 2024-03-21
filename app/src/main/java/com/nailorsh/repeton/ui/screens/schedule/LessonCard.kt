@@ -1,8 +1,7 @@
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,17 +16,20 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 @Composable
-fun LessonBox(lesson: Lesson, onClick: (Lesson) -> Unit, modifier: Modifier = Modifier) {
+fun LessonCard(lesson: Lesson, onClick: (Lesson) -> Unit, modifier: Modifier = Modifier) {
 
-    Box(
+    ElevatedCard(
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+        ),
         modifier = Modifier
-            .padding(top = 21.dp)
+            .padding(top = 10.dp, bottom = 10.dp)
             .width(dimensionResource(R.dimen.schedule_screen_button_width))
             .height(dimensionResource(R.dimen.schedule_screen_lesson_size))
-            .background(
-                color = MaterialTheme.colorScheme.secondaryContainer,
-                shape = MaterialTheme.shapes.medium
-            )
+
             .clickable { onClick(lesson) }
     )
     {

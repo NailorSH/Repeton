@@ -17,7 +17,10 @@ fun LessonsList(
     modifier: Modifier = Modifier
 ) {
 
-
+    Spacer(
+        modifier = Modifier
+            .height(10.dp)
+    )
     Column(
         modifier = modifier
     ) {
@@ -43,7 +46,7 @@ fun LessonsList(
         } else {
             LazyColumn {
                 items(lessons.size) {
-                    LessonBox(
+                    LessonCard(
                         lesson = lessons[it],
                         onClick = onLessonClicked
                     )

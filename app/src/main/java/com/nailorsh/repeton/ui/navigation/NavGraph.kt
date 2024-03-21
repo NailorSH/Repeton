@@ -14,6 +14,7 @@ import com.nailorsh.repeton.ui.screens.ProfileScreen
 import com.nailorsh.repeton.ui.screens.ScheduleScreen
 import com.nailorsh.repeton.ui.screens.SearchScreen
 import com.nailorsh.repeton.ui.screens.auth.PhoneLoginUI
+import java.time.LocalDate
 
 @Composable
 fun NavGraph(
@@ -55,10 +56,15 @@ fun NavGraph(
             )
         }
         composable(AppSections.HOME.route) {
+
             ScheduleScreen(
+                scheduleUiState = repetonViewModel.scheduleUiState,
+                // Вызов getLessons по указанной дате
+                getLessons = { repetonViewModel.getLessons() },
                 onLessonClicked = { lesson ->
                     navHostController.navigate("lesson/${lesson.id}")
                 }
+
             )
         }
         composable(AppSections.CHATS.route) {

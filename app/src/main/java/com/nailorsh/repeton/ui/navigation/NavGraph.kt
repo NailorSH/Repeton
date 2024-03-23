@@ -32,10 +32,15 @@ fun NavGraph(
             )
         }
         composable(AppSections.HOME.route) {
+
             ScheduleScreen(
+                scheduleUiState = repetonViewModel.scheduleUiState,
+                // Вызов getLessons по указанной дате
+                getLessons = { repetonViewModel.getLessons() },
                 onLessonClicked = { lesson ->
                     navHostController.navigate("lesson/${lesson.id}")
                 }
+
             )
         }
         composable(AppSections.CHATS.route) {

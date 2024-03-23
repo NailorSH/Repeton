@@ -1,5 +1,6 @@
 package com.nailorsh.repeton.domain
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,6 +16,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.net.HttpRetryException
+import java.time.LocalDate
 import javax.inject.Inject
 
 sealed interface SearchUiState {
@@ -32,7 +34,7 @@ sealed interface CurrentLessonUiState {
 }
 
 sealed interface ScheduleUiState {
-    data class Success(val lessons: List<Lesson>) : ScheduleUiState
+    data class Success(val lessons: Map<LocalDate, List<Lesson>>) : ScheduleUiState
     object Error : ScheduleUiState
     object Loading : ScheduleUiState
 }
@@ -59,6 +61,9 @@ class RepetonViewModel @Inject constructor(
     var currentLessonUiState: CurrentLessonUiState by mutableStateOf(CurrentLessonUiState.Loading)
         private set
 
+    private var lessonsCache = mutableMapOf<LocalDate, MutableList<Lesson>>()
+
+
     init {
         getLessons()
     }
@@ -66,16 +71,36 @@ class RepetonViewModel @Inject constructor(
     fun getLessons() {
         viewModelScope.launch {
             scheduleUiState = ScheduleUiState.Loading
-            delay(2000)
-            scheduleUiState = try {
-                ScheduleUiState.Success(repetonRepository.getLessons())
-            } catch (e: IOException) {
-                ScheduleUiState.Error
-            } catch (e: HttpRetryException) {
-                ScheduleUiState.Error
+            try {
+                val lessons = repetonRepository.getLessons()
+                lessons.forEach { lesson ->
+                    val day = LocalDate.from(lesson.startTime)
+                    lessonsCache[day] = (lessonsCache[day] ?: mutableListOf()).also {
+                        it.add(lesson)
+                    }
+                }
+                val todayLessons = lessonsCache ?: emptyMap<LocalDate, MutableList<Lesson>>()
+                scheduleUiState = ScheduleUiState.Success(todayLessons)
+            } catch (e: Exception) {
+                scheduleUiState = ScheduleUiState.Error
             }
         }
     }
+//
+//    fun getLessons(day: LocalDate) {
+//        viewModelScope.launch {
+//            scheduleUiState = ScheduleUiState.Loading
+//            scheduleUiState = try {
+//                ScheduleUiState.Success(lessonsCache.getOrDefault(day, listOf()))
+//            } catch (e: IOException) {
+//                ScheduleUiState.Error
+//            } catch (e: HttpRetryException) {
+//                ScheduleUiState.Error
+//            }
+//
+//        }
+//    }
+
 
     fun getLesson(lessonId: Int) {
         viewModelScope.launch {
@@ -90,7 +115,8 @@ class RepetonViewModel @Inject constructor(
             }
         }
     }
-    private  var tutorSearchJob: Job? = null
+
+    private var tutorSearchJob: Job? = null
 
     fun typingTutorSearch(prefix: String) {
         with(prefix) {

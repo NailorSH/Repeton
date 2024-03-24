@@ -10,8 +10,8 @@ import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import com.nailorsh.repeton.MainActivity
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.domain.Response
 import com.nailorsh.repeton.domain.repositories.AuthService
+import com.nailorsh.repeton.domain.viewmodels.Response
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject

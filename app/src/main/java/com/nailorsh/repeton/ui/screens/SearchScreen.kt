@@ -41,13 +41,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.data.sources.FakeTutorsSource
-import com.nailorsh.repeton.domain.SearchUiState
+import com.nailorsh.repeton.domain.viewmodels.SearchUiState
 import com.nailorsh.repeton.model.Tutor
+import com.nailorsh.repeton.ui.components.ErrorScreen
 import com.nailorsh.repeton.ui.components.ExpandableText
 import com.nailorsh.repeton.ui.components.IconWithText
 import com.nailorsh.repeton.ui.components.LikeButton
 import com.nailorsh.repeton.ui.components.LoadingScreen
-import com.nailorsh.repeton.ui.components.ErrorScreen
 import com.nailorsh.repeton.ui.components.SearchBarWithFilter
 import com.nailorsh.repeton.ui.theme.AmbientColor
 import com.nailorsh.repeton.ui.theme.BodyColor

@@ -1,4 +1,4 @@
-package com.nailorsh.repeton.domain
+package com.nailorsh.repeton.domain.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -5,7 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.nailorsh.repeton.domain.RepetonViewModel
+import com.nailorsh.repeton.domain.viewmodels.RepetonViewModel
+import com.nailorsh.repeton.domain.viewmodels.TutorSearchViewModel
 import com.nailorsh.repeton.ui.screens.ChatsScreen
 import com.nailorsh.repeton.ui.screens.LessonScreen
 import com.nailorsh.repeton.ui.screens.ProfileScreen
@@ -16,6 +17,7 @@ import com.nailorsh.repeton.ui.screens.SearchScreen
 fun NavGraph(
     navHostController: NavHostController,
     repetonViewModel: RepetonViewModel,
+    tutorSearchViewModel: TutorSearchViewModel,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -25,10 +27,10 @@ fun NavGraph(
     ) {
         composable(AppSections.SEARCH.route) {
             SearchScreen(
-                getSearchResults = repetonViewModel::getTutors,
-                typingGetSearchResults = repetonViewModel::typingTutorSearch,
+                getSearchResults = tutorSearchViewModel::getTutors,
+                typingGetSearchResults = tutorSearchViewModel::typingTutorSearch,
 //                getSearchResults = viewModel::getTutors,
-                searchUiState = repetonViewModel.searchUiState
+                searchUiState = tutorSearchViewModel.searchUiState
             )
         }
         composable(AppSections.HOME.route) {

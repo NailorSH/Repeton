@@ -1,6 +1,5 @@
-package com.nailorsh.repeton.domain
+package com.nailorsh.repeton.domain.viewmodels
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,22 +8,13 @@ import androidx.lifecycle.viewModelScope
 import com.nailorsh.repeton.domain.repositories.RepetonRepository
 import com.nailorsh.repeton.model.Chat
 import com.nailorsh.repeton.model.Lesson
-import com.nailorsh.repeton.model.Tutor
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.net.HttpRetryException
 import java.time.LocalDate
 import javax.inject.Inject
-
-sealed interface SearchUiState {
-    data class Success(val tutors: List<Tutor>) : SearchUiState
-    object Error : SearchUiState
-    object Loading : SearchUiState
-    object None : SearchUiState
-}
 
 
 sealed interface CurrentLessonUiState {
@@ -49,9 +39,6 @@ sealed interface ChatsUiState {
 class RepetonViewModel @Inject constructor(
     private val repetonRepository: RepetonRepository
 ) : ViewModel() {
-    var searchUiState: SearchUiState by mutableStateOf(SearchUiState.None)
-        private set
-
     var scheduleUiState: ScheduleUiState by mutableStateOf(ScheduleUiState.Loading)
         private set
 
@@ -86,7 +73,7 @@ class RepetonViewModel @Inject constructor(
             }
         }
     }
-//
+
 //    fun getLessons(day: LocalDate) {
 //        viewModelScope.launch {
 //            scheduleUiState = ScheduleUiState.Loading
@@ -101,7 +88,6 @@ class RepetonViewModel @Inject constructor(
 //        }
 //    }
 
-
     fun getLesson(lessonId: Int) {
         viewModelScope.launch {
             currentLessonUiState = CurrentLessonUiState.Loading
@@ -112,44 +98,6 @@ class RepetonViewModel @Inject constructor(
                 CurrentLessonUiState.Error
             } catch (e: HttpRetryException) {
                 CurrentLessonUiState.Error
-            }
-        }
-    }
-
-    private var tutorSearchJob: Job? = null
-
-    fun typingTutorSearch(prefix: String) {
-        with(prefix) {
-            when {
-                length > 1 -> {
-                    tutorSearchJob?.cancel()
-                    tutorSearchJob = viewModelScope.launch {
-                        delay(600) //debounce
-                        searchUiState = SearchUiState.Loading
-                        delay(2000)
-                        searchUiState = try {
-                            SearchUiState.Success(repetonRepository.getTutors())
-                        } catch (e: IOException) {
-                            SearchUiState.Error
-                        } catch (e: HttpRetryException) {
-                            SearchUiState.Error
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    fun getTutors() {
-        viewModelScope.launch {
-            searchUiState = SearchUiState.Loading
-            delay(2000)
-            searchUiState = try {
-                SearchUiState.Success(repetonRepository.getTutors())
-            } catch (e: IOException) {
-                SearchUiState.Error
-            } catch (e: HttpRetryException) {
-                SearchUiState.Error
             }
         }
     }
@@ -167,15 +115,4 @@ class RepetonViewModel @Inject constructor(
             }
         }
     }
-
-//    companion object {
-//        val Factory: ViewModelProvider.Factory = viewModelFactory {
-//            initializer {
-//                val application =
-//                    (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as RepetonApplication)
-//                val repetonRepository = application.container.repetonRepository
-//                RepetonViewModel(repetonRepository = repetonRepository)
-//            }
-//        }
-//    }
 }

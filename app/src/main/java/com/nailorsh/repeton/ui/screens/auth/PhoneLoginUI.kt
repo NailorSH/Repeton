@@ -17,8 +17,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.domain.AuthViewModel
-import com.nailorsh.repeton.domain.Response
+import com.nailorsh.repeton.domain.viewmodels.AuthViewModel
+import com.nailorsh.repeton.domain.viewmodels.Response
 
 @Composable
 fun PhoneLoginUI(

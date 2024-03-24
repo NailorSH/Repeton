@@ -3,7 +3,6 @@ package com.nailorsh.repeton.ui.screens
 import CalendarDatePicker
 import DaySlider
 import LessonsList
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,8 +36,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.data.repositories.FakeRepetonRepository
-import com.nailorsh.repeton.domain.RepetonViewModel
-import com.nailorsh.repeton.domain.ScheduleUiState
+import com.nailorsh.repeton.domain.viewmodels.RepetonViewModel
+import com.nailorsh.repeton.domain.viewmodels.ScheduleUiState
 import com.nailorsh.repeton.model.Lesson
 import com.nailorsh.repeton.ui.components.ErrorScreen
 import com.nailorsh.repeton.ui.components.LoadingScreen

@@ -2,9 +2,23 @@ package com.nailorsh.repeton.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -20,11 +34,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.data.repositories.FakeRepetonRepository
-import com.nailorsh.repeton.domain.CurrentLessonUiState
-import com.nailorsh.repeton.domain.RepetonViewModel
+import com.nailorsh.repeton.domain.viewmodels.CurrentLessonUiState
+import com.nailorsh.repeton.domain.viewmodels.RepetonViewModel
 import com.nailorsh.repeton.model.Lesson
 import com.nailorsh.repeton.ui.components.RepetonButton
-import com.nailorsh.repeton.ui.theme.*
+import com.nailorsh.repeton.ui.theme.HomeWorkButtonColor
+import com.nailorsh.repeton.ui.theme.LineColor
+import com.nailorsh.repeton.ui.theme.RepetonTheme
+import com.nailorsh.repeton.ui.theme.ScreenBackground
+import com.nailorsh.repeton.ui.theme.SubjectColor
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 

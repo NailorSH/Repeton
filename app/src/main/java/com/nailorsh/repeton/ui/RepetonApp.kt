@@ -10,9 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.nailorsh.repeton.domain.AuthViewModel
-import com.nailorsh.repeton.domain.RepetonViewModel
-import com.nailorsh.repeton.domain.Response
+import com.nailorsh.repeton.domain.viewmodels.AuthViewModel
+import com.nailorsh.repeton.domain.viewmodels.RepetonViewModel
+import com.nailorsh.repeton.domain.viewmodels.Response
+import com.nailorsh.repeton.domain.viewmodels.TutorSearchViewModel
 import com.nailorsh.repeton.ui.navigation.AppSections
 import com.nailorsh.repeton.ui.navigation.NavGraph
 import com.nailorsh.repeton.ui.navigation.RepetonBottomBar
@@ -24,6 +25,7 @@ import com.nailorsh.repeton.ui.theme.RepetonTheme
 fun RepetonApp(
     navController: NavHostController = rememberNavController(),
     repetonViewModel: RepetonViewModel = viewModel(),
+    tutorSearchViewModel: TutorSearchViewModel = viewModel(),
     authViewModel: AuthViewModel = viewModel()
 ) {
     RepetonTheme {
@@ -46,6 +48,7 @@ fun RepetonApp(
                 NavGraph(
                     navHostController = navController,
                     repetonViewModel = repetonViewModel,
+                    tutorSearchViewModel = tutorSearchViewModel,
                     modifier = Modifier.padding(innerPaddingModifier)
                 )
             }

@@ -2,7 +2,7 @@ package com.nailorsh.repeton.domain.repositories
 
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
-import com.nailorsh.repeton.domain.Response
+import com.nailorsh.repeton.domain.viewmodels.Response
 import kotlinx.coroutines.flow.MutableStateFlow
 
 interface AuthService {

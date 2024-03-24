@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.nailorsh.repeton.domain.ChatsUiState
+import com.nailorsh.repeton.domain.viewmodels.ChatsUiState
 import com.nailorsh.repeton.model.Chat
 import com.nailorsh.repeton.ui.components.PlugScreen
 import com.nailorsh.repeton.ui.theme.RepetonTheme

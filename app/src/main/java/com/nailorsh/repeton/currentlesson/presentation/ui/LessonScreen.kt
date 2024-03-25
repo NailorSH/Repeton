@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.core.ui.components.RepetonButton
 import com.nailorsh.repeton.core.ui.theme.HomeWorkButtonColor
@@ -39,7 +40,6 @@ import com.nailorsh.repeton.core.ui.theme.LineColor
 import com.nailorsh.repeton.core.ui.theme.RepetonTheme
 import com.nailorsh.repeton.core.ui.theme.ScreenBackground
 import com.nailorsh.repeton.core.ui.theme.SubjectColor
-import com.nailorsh.repeton.currentlesson.data.FakeCurrentLessonRepository
 import com.nailorsh.repeton.currentlesson.data.model.Lesson
 import com.nailorsh.repeton.currentlesson.presentation.viewmodel.CurrentLessonUiState
 import com.nailorsh.repeton.currentlesson.presentation.viewmodel.CurrentLessonViewModel
@@ -49,8 +49,9 @@ import java.time.format.FormatStyle
 @Composable
 fun LessonScreen(
     lessonId: Int,
-    viewModel: CurrentLessonViewModel = CurrentLessonViewModel(FakeCurrentLessonRepository()),
-    modifier: Modifier = Modifier) {
+    viewModel: CurrentLessonViewModel = viewModel(),
+    modifier: Modifier = Modifier
+) {
 
     LaunchedEffect(lessonId) {
         viewModel.getLesson(lessonId)
@@ -67,9 +68,11 @@ fun LessonScreen(
                 )
             }
         }
+
         is CurrentLessonUiState.Success -> {
             LessonContent(lessonState.lesson)
         }
+
         CurrentLessonUiState.Error -> {
             Box(
                 modifier = Modifier.fillMaxSize()

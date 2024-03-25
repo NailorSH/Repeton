@@ -15,11 +15,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class FirebaseAuthServiceRepository @Inject constructor(
+class FirebaseAuthRepository @Inject constructor(
     private val auth: FirebaseAuth,
     private val context: MainActivity
-) : AuthServiceRepository {
-    private val TAG = AuthServiceRepository::class.java.simpleName
+) : AuthRepository {
+    private val TAG = AuthRepository::class.java.simpleName
 
     var verificationOtp: String = ""
     var resentToken: PhoneAuthProvider.ForceResendingToken? = null

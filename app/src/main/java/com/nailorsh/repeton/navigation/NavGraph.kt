@@ -61,7 +61,10 @@ fun NavGraph(
 
         composable(AppSections.LESSON.route) { backStackEntry ->
             backStackEntry.arguments?.getString("id")?.let { id ->
-                LessonScreen(lessonId = id.toInt())
+                LessonScreen(
+                    lessonId = id.toInt(),
+                    viewModel = currentLessonViewModel
+                )
             }
         }
     }

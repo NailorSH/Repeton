@@ -1,7 +1,7 @@
 package com.nailorsh.repeton.auth
 
-import com.nailorsh.repeton.auth.data.AuthServiceRepository
-import com.nailorsh.repeton.auth.data.FirebaseAuthServiceRepository
+import com.nailorsh.repeton.auth.data.AuthRepository
+import com.nailorsh.repeton.auth.data.FirebaseAuthRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -12,6 +12,6 @@ import dagger.hilt.components.SingletonComponent
 abstract class AuthServiceModule {
     @Binds
     abstract fun bindAuthService(
-        authServiceRepositoryImpl: FirebaseAuthServiceRepository
-    ): AuthServiceRepository
+        authServiceRepositoryImpl: FirebaseAuthRepository
+    ): AuthRepository
 }

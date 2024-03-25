@@ -2,7 +2,7 @@ package com.nailorsh.repeton.auth.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nailorsh.repeton.auth.data.AuthServiceRepository
+import com.nailorsh.repeton.auth.data.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +18,7 @@ sealed class Response {
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authService: AuthServiceRepository
+    private val authService: AuthRepository
 ) : ViewModel() {
     val signUpState: MutableStateFlow<Response> = authService.signUpState
 

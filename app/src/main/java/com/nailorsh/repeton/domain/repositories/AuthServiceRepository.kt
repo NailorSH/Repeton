@@ -5,7 +5,7 @@ import com.google.firebase.auth.PhoneAuthProvider
 import com.nailorsh.repeton.domain.viewmodels.Response
 import kotlinx.coroutines.flow.MutableStateFlow
 
-interface AuthService {
+interface AuthServiceRepository {
     val signUpState: MutableStateFlow<Response>
     fun authenticate(phone: String)
     fun onCodeSent(

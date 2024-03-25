@@ -10,17 +10,17 @@ import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import com.nailorsh.repeton.MainActivity
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.domain.repositories.AuthService
+import com.nailorsh.repeton.domain.repositories.AuthServiceRepository
 import com.nailorsh.repeton.domain.viewmodels.Response
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class AuthServiceImpl @Inject constructor(
+class FirebaseAuthServiceRepository @Inject constructor(
     private val auth: FirebaseAuth,
     private val context: MainActivity
-) : AuthService {
-    private val TAG = AuthService::class.java.simpleName
+) : AuthServiceRepository {
+    private val TAG = AuthServiceRepository::class.java.simpleName
 
     var verificationOtp: String = ""
     var resentToken: PhoneAuthProvider.ForceResendingToken? = null

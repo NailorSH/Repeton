@@ -35,9 +35,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.data.repositories.FakeRepetonRepository
-import com.nailorsh.repeton.domain.viewmodels.RepetonViewModel
+import com.nailorsh.repeton.data.repositories.FakeScheduleRepository
 import com.nailorsh.repeton.domain.viewmodels.ScheduleUiState
+import com.nailorsh.repeton.domain.viewmodels.ScheduleViewModel
 import com.nailorsh.repeton.model.Lesson
 import com.nailorsh.repeton.ui.components.ErrorScreen
 import com.nailorsh.repeton.ui.components.LoadingScreen
@@ -279,7 +279,7 @@ fun ScheduleScreenPreview() {
         ScheduleScreen(
             onLessonClicked = { },
             getLessons = { },
-            scheduleUiState = RepetonViewModel(FakeRepetonRepository()).scheduleUiState
+            scheduleUiState = ScheduleViewModel(FakeScheduleRepository()).scheduleUiState
         )
     }
 }

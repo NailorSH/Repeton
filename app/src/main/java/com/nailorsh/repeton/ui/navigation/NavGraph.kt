@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.nailorsh.repeton.domain.viewmodels.RepetonViewModel
+import com.nailorsh.repeton.domain.viewmodels.ScheduleViewModel
 import com.nailorsh.repeton.domain.viewmodels.TutorSearchViewModel
 import com.nailorsh.repeton.ui.screens.ChatsScreen
 import com.nailorsh.repeton.ui.screens.LessonScreen
@@ -18,6 +19,7 @@ fun NavGraph(
     navHostController: NavHostController,
     repetonViewModel: RepetonViewModel,
     tutorSearchViewModel: TutorSearchViewModel,
+    scheduleViewModel: ScheduleViewModel,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -36,9 +38,9 @@ fun NavGraph(
         composable(AppSections.HOME.route) {
 
             ScheduleScreen(
-                scheduleUiState = repetonViewModel.scheduleUiState,
+                scheduleUiState = scheduleViewModel.scheduleUiState,
                 // Вызов getLessons по указанной дате
-                getLessons = { repetonViewModel.getLessons() },
+                getLessons = { scheduleViewModel.getLessons() },
                 onLessonClicked = { lesson ->
                     navHostController.navigate("lesson/${lesson.id}")
                 }

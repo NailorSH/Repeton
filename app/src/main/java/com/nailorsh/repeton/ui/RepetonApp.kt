@@ -11,6 +11,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.nailorsh.repeton.domain.viewmodels.AuthViewModel
+import com.nailorsh.repeton.domain.viewmodels.MessengerViewModel
 import com.nailorsh.repeton.domain.viewmodels.RepetonViewModel
 import com.nailorsh.repeton.domain.viewmodels.Response
 import com.nailorsh.repeton.domain.viewmodels.ScheduleViewModel
@@ -28,6 +29,7 @@ fun RepetonApp(
     repetonViewModel: RepetonViewModel = viewModel(),
     tutorSearchViewModel: TutorSearchViewModel = viewModel(),
     scheduleViewModel: ScheduleViewModel = viewModel(),
+    messengerViewModel: MessengerViewModel = viewModel(),
     authViewModel: AuthViewModel = viewModel()
 ) {
     RepetonTheme {
@@ -52,6 +54,7 @@ fun RepetonApp(
                     repetonViewModel = repetonViewModel,
                     tutorSearchViewModel = tutorSearchViewModel,
                     scheduleViewModel = scheduleViewModel,
+                    messengerViewModel = messengerViewModel,
                     modifier = Modifier.padding(innerPaddingModifier)
                 )
             }

@@ -6,10 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nailorsh.repeton.domain.repositories.RepetonRepository
-import com.nailorsh.repeton.model.Chat
 import com.nailorsh.repeton.model.Lesson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.net.HttpRetryException
@@ -22,20 +20,10 @@ sealed interface CurrentLessonUiState {
     object Loading : CurrentLessonUiState
 }
 
-sealed interface ChatsUiState {
-    data class Success(val chats: List<Chat>) : ChatsUiState
-    object Error : ChatsUiState
-    object Loading : ChatsUiState
-}
-
 @HiltViewModel
 class RepetonViewModel @Inject constructor(
     private val repetonRepository: RepetonRepository
 ) : ViewModel() {
-
-    var chatsUiState: ChatsUiState by mutableStateOf(ChatsUiState.Loading)
-        private set
-
     var currentLessonUiState: CurrentLessonUiState by mutableStateOf(CurrentLessonUiState.Loading)
         private set
 
@@ -49,20 +37,6 @@ class RepetonViewModel @Inject constructor(
                 CurrentLessonUiState.Error
             } catch (e: HttpRetryException) {
                 CurrentLessonUiState.Error
-            }
-        }
-    }
-
-    fun getChats() {
-        viewModelScope.launch {
-            chatsUiState = ChatsUiState.Loading
-            delay(2000)
-            chatsUiState = try {
-                ChatsUiState.Success(repetonRepository.getChats())
-            } catch (e: IOException) {
-                ChatsUiState.Error
-            } catch (e: HttpRetryException) {
-                ChatsUiState.Error
             }
         }
     }

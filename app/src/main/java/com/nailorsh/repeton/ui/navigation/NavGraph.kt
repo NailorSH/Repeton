@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.nailorsh.repeton.domain.viewmodels.MessengerViewModel
 import com.nailorsh.repeton.domain.viewmodels.RepetonViewModel
 import com.nailorsh.repeton.domain.viewmodels.ScheduleViewModel
 import com.nailorsh.repeton.domain.viewmodels.TutorSearchViewModel
@@ -20,6 +21,7 @@ fun NavGraph(
     repetonViewModel: RepetonViewModel,
     tutorSearchViewModel: TutorSearchViewModel,
     scheduleViewModel: ScheduleViewModel,
+    messengerViewModel: MessengerViewModel,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -49,8 +51,8 @@ fun NavGraph(
         }
         composable(AppSections.CHATS.route) {
             ChatsScreen(
-                getChats = repetonViewModel::getChats,
-                chatsUiState = repetonViewModel.chatsUiState
+                getChats = messengerViewModel::getChats,
+                chatsUiState = messengerViewModel.chatsUiState
             )
         }
         composable(AppSections.PROFILE.route) {

@@ -11,7 +11,7 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 abstract class MessengerModule {
     @Binds
-    abstract fun bindScheduleRepository(
+    abstract fun bindMessengerRepository(
         messengerRepositoryImpl: FakeMessengerRepository
     ): MessengerRepository
 }

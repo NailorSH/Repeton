@@ -33,9 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.data.repositories.FakeRepetonRepository
+import com.nailorsh.repeton.data.repositories.FakeCurrentLessonRepository
 import com.nailorsh.repeton.domain.viewmodels.CurrentLessonUiState
-import com.nailorsh.repeton.domain.viewmodels.RepetonViewModel
+import com.nailorsh.repeton.domain.viewmodels.CurrentLessonViewModel
 import com.nailorsh.repeton.model.Lesson
 import com.nailorsh.repeton.ui.components.RepetonButton
 import com.nailorsh.repeton.ui.theme.HomeWorkButtonColor
@@ -49,7 +49,7 @@ import java.time.format.FormatStyle
 @Composable
 fun LessonScreen(
     lessonId: Int,
-    viewModel: RepetonViewModel = RepetonViewModel(FakeRepetonRepository()),
+    viewModel: CurrentLessonViewModel = CurrentLessonViewModel(FakeCurrentLessonRepository()),
     modifier: Modifier = Modifier) {
 
     LaunchedEffect(lessonId) {

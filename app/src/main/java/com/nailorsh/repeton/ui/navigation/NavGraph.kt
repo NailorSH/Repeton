@@ -5,8 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.nailorsh.repeton.domain.viewmodels.CurrentLessonViewModel
 import com.nailorsh.repeton.domain.viewmodels.MessengerViewModel
-import com.nailorsh.repeton.domain.viewmodels.RepetonViewModel
 import com.nailorsh.repeton.domain.viewmodels.ScheduleViewModel
 import com.nailorsh.repeton.domain.viewmodels.TutorSearchViewModel
 import com.nailorsh.repeton.ui.screens.ChatsScreen
@@ -18,7 +18,7 @@ import com.nailorsh.repeton.ui.screens.SearchScreen
 @Composable
 fun NavGraph(
     navHostController: NavHostController,
-    repetonViewModel: RepetonViewModel,
+    currentLessonViewModel: CurrentLessonViewModel,
     tutorSearchViewModel: TutorSearchViewModel,
     scheduleViewModel: ScheduleViewModel,
     messengerViewModel: MessengerViewModel,

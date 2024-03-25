@@ -11,8 +11,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.nailorsh.repeton.domain.viewmodels.AuthViewModel
+import com.nailorsh.repeton.domain.viewmodels.CurrentLessonViewModel
 import com.nailorsh.repeton.domain.viewmodels.MessengerViewModel
-import com.nailorsh.repeton.domain.viewmodels.RepetonViewModel
 import com.nailorsh.repeton.domain.viewmodels.Response
 import com.nailorsh.repeton.domain.viewmodels.ScheduleViewModel
 import com.nailorsh.repeton.domain.viewmodels.TutorSearchViewModel
@@ -26,7 +26,7 @@ import com.nailorsh.repeton.ui.theme.RepetonTheme
 @Composable
 fun RepetonApp(
     navController: NavHostController = rememberNavController(),
-    repetonViewModel: RepetonViewModel = viewModel(),
+    currentLessonViewModel: CurrentLessonViewModel = viewModel(),
     tutorSearchViewModel: TutorSearchViewModel = viewModel(),
     scheduleViewModel: ScheduleViewModel = viewModel(),
     messengerViewModel: MessengerViewModel = viewModel(),
@@ -51,7 +51,7 @@ fun RepetonApp(
             ) { innerPaddingModifier ->
                 NavGraph(
                     navHostController = navController,
-                    repetonViewModel = repetonViewModel,
+                    currentLessonViewModel = currentLessonViewModel,
                     tutorSearchViewModel = tutorSearchViewModel,
                     scheduleViewModel = scheduleViewModel,
                     messengerViewModel = messengerViewModel,

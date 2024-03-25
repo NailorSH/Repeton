@@ -2,6 +2,6 @@ package com.nailorsh.repeton.domain.repositories
 
 import com.nailorsh.repeton.model.Lesson
 
-interface RepetonRepository {
+interface CurrentLessonRepository {
     suspend fun getLesson(id: Int): Lesson
 }

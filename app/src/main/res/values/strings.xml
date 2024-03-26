@@ -31,31 +31,38 @@
     <string name="sun">вс</string>
     <string name="retry">Повторить</string>
     <string name="lessons_not_found">На сегодня уроков не найдено</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="error_lesson_loading">Ошибка загрузки урока</string>
     <string name="get_otp_by_sms">Получить код в SMS</string>
     <string name="phone_number">Номер телефона</string>
-    <string name="enter_the_otp">Enter the OTP</string>
-    <string name="otp_verify">Otp Verify</string>
-    <string name="enter_phone_number">Введите Ваш номер телефона</string>
-    <string name="verification_successful">Verification Successful</string>
-    <string name="wrong_otp">Wrong Otp</string>
+    <string name="enter_the_otp">Введите код из СМС</string>
+    <string name="otp_verify">Проверить код</string>
+    <string name="enter_phone_number">Введите номер телефона</string>
+    <string name="verification_successful">Проверка прошла успешно</string>
+    <string name="wrong_otp">Неверный код</string>
     <string name="auth">Авторизация</string>
-    <string name="verification_failed_try_again">Verification failed, try again</string>
-    <string name="quota_exceeded">Number of requests exceeded</string>
-    <string name="code_sent">Code sent</string>
-    <string name="invalid_code">Invalid code</string>
-    <string name="code_will_be_sent">Сode will be sent</string>
-    <string name="verification_complete">Verification complete</string>
-    <string name="phone_auth_success">Phone auth success</string>
-    <string name="verify_phone">Verify phone</string>
-    <string name="gif_momo_sign_up_message">Repeton will send an SMS message (carrier charges may apply) to verify your phone number.</string>
-    <string name="next">Next</string>
-    <string name="code">Code</string>
-    <string name="enter_digits_code">Enter the 6-digit code</string>
-    <string name="generic_error">Something wrong happened. Please try again.</string>
-    <string name="try_">Try again</string>
+    <string name="verification_failed_try_again">Проверка не удалась, попробуйте снова</string>
+    <string name="quota_exceeded">Превышено количество запросов</string>
+    <string name="code_sent">Код отправлен</string>
+    <string name="invalid_code">Неверный код</string>
+    <string name="code_will_be_sent">Код будет отправлен</string>
+    <string name="verification_complete">Проверка завершена</string>
+    <string name="phone_auth_success">Успешный вход по телефону</string>
+    <string name="verify_phone">Войти по номеру телефона</string>
+
+    <string name="gif_momo_sign_up_message">
+        Repeton отправит SMS-сообщение (могут взиматься платежи от оператора) для проверки вашего номера телефона.
+    </string>
+
+    <string name="next">Далее</string>
+    <string name="code">Код</string>
+    <string name="enter_digits_code">Введите 6-значный код</string>
+    <string name="generic_error">Что-то пошло не так. Пожалуйста, попробуйте еще раз.</string>
+    <string name="try_">Попробуйте снова</string>
     <string name="add_lesson">Добавить занятие</string>
     <string name="today">Сегодня</string>
+    <string name="wrong_phone_number">Неверно набранный номер</string>
+
+    <string name="waiting_for_sms_auto_detection">
+        Ожидание автоматического обнаружения отправленного SMS на номер:
+    </string>
 </resources>

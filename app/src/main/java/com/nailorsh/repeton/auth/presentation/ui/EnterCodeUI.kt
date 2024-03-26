@@ -45,12 +45,13 @@ fun EnterCodeUI(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Waiting to automatically detect an SMS sent to $phone"
+            text = "${stringResource(R.string.waiting_for_sms_auto_detection)} $phone"
         )
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = code, onValueChange = onCodeChange,
+            value = code,
+            onValueChange = onCodeChange,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Go

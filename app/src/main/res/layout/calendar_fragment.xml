@@ -6,7 +6,7 @@
               android:background="?attr/fullscreenBackgroundColor"
               android:orientation="vertical"
               android:padding="16dp"
-              tools:context=".ui.screens.fragments.CalendarFragment">
+    tools:context=".schedule.presentation.ui.fragment.CalendarFragment">
 
     <CalendarView
             android:id="@+id/calendar_view"
@@ -30,7 +30,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Добавить занятие" />
+            android:text="@string/add_lesson" />
 
 
         <Button
@@ -39,7 +39,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Сегодня" />
+            android:text="@string/today" />
     </LinearLayout>
 
 </LinearLayout>

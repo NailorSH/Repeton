@@ -105,8 +105,6 @@ fun ScheduleScreen(
     LaunchedEffect(selectedDay) {
 
 
-//        getLessons(BASE_DATE.plusDays(dayPagerState.targetPage.toLong()))
-
 
         when(selectionSource) {
             SelectionSource.DayPager -> {

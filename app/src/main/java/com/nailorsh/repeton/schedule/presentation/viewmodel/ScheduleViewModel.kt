@@ -51,17 +51,4 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
-//    fun getLessons(day: LocalDate) {
-//        viewModelScope.launch {
-//            scheduleUiState = ScheduleUiState.Loading
-//            scheduleUiState = try {
-//                ScheduleUiState.Success(lessonsCache.getOrDefault(day, listOf()))
-//            } catch (e: IOException) {
-//                ScheduleUiState.Error
-//            } catch (e: HttpRetryException) {
-//                ScheduleUiState.Error
-//            }
-//
-//        }
-//    }
 }

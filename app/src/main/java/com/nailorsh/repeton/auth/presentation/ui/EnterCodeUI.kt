@@ -45,7 +45,7 @@ fun EnterCodeUI(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Waiting to automatically detect an SMS sent to $phone"
+            text = "${stringResource(R.string.waiting_for_sms_auto_detection)} $phone"
         )
         Spacer(modifier = Modifier.height(16.dp))
 

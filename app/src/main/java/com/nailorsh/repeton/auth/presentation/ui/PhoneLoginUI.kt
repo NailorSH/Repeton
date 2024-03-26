@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.auth.presentation.viewmodel.AuthViewModel
@@ -44,6 +46,8 @@ fun PhoneLoginUI(
         // Nothing happening yet
         is Response.NotInitialized -> {
             EnterPhoneNumberUI(
+                modifier = Modifier
+                    .padding(vertical = 56.dp, horizontal = 24.dp),
                 onClick = {
                     focusManager.clearFocus()
                     viewModel.authenticatePhone(phone)
@@ -74,7 +78,6 @@ fun PhoneLoginUI(
                     })
 
             } else {
-
                 // If the loading state is different form the code sent state,
                 // show a progress indicator
                 Column(

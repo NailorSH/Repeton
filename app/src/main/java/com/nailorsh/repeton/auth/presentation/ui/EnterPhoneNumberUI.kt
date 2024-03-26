@@ -30,9 +30,9 @@ import com.nailorsh.repeton.R
 
 @Composable
 fun EnterPhoneNumberUI(
-    modifier: Modifier = Modifier
-        .padding(vertical = 56.dp, horizontal = 24.dp),
-    onClick: () -> Unit, phone: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    phone: String,
     onPhoneChange: (String) -> Unit,
     onDone: (KeyboardActionScope.() -> Unit)?
 ) {
@@ -54,10 +54,10 @@ fun EnterPhoneNumberUI(
         Spacer(modifier = Modifier.height(20.dp))
 
         PhoneNumberTextField(
-            isError = isError,
             phone = phone,
             onNumberChange = onPhoneChange,
-            onDone = onDone
+            onDone = onDone,
+            isError = isError
         )
 
         Button(
@@ -67,7 +67,6 @@ fun EnterPhoneNumberUI(
                 } else {
                     isError = true
                 }
-
             },
             modifier = Modifier.padding(16.dp)
         ) {
@@ -96,7 +95,6 @@ fun PhoneNumberTextField(
             Icon(Icons.Default.Phone, contentDescription = "")
         },
         isError = isError,
-//        prefix = { Text(text = "+7") },
-//        supportingText = { if(isError) Text(text = "Неверно набранный номер") }
+        supportingText = { if (isError) Text(text = stringResource(R.string.wrong_phone_number)) }
     )
 }

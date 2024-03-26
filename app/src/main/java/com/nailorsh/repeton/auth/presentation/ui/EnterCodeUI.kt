@@ -50,7 +50,8 @@ fun EnterCodeUI(
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = code, onValueChange = onCodeChange,
+            value = code,
+            onValueChange = onCodeChange,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Go

@@ -84,16 +84,30 @@ fun PhoneNumberTextField(
     isError: Boolean
 ) {
     OutlinedTextField(
-        value = phone, onValueChange = onNumberChange,
+        value = phone,
+        onValueChange = onNumberChange,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Phone,
             imeAction = ImeAction.Done
         ),
+        label = {
+            Text(
+                text = stringResource(R.string.phone_number),
+                style = MaterialTheme.typography.titleMedium
+            )
+        },
+        placeholder = {
+            Text(text = stringResource(R.string.enter_phone_number))
+        },
         keyboardActions = KeyboardActions(onDone = onDone),
         singleLine = true,
         leadingIcon = {
-            Icon(Icons.Default.Phone, contentDescription = "")
+            Icon(
+                Icons.Default.Phone,
+                contentDescription = stringResource(R.string.phone_number)
+            )
         },
+        textStyle = MaterialTheme.typography.titleMedium,
         isError = isError,
         supportingText = { if (isError) Text(text = stringResource(R.string.wrong_phone_number)) }
     )

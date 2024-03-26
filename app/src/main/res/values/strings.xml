@@ -36,7 +36,7 @@
     <string name="phone_number">Номер телефона</string>
     <string name="enter_the_otp">Введите код из СМС</string>
     <string name="otp_verify">Проверить код</string>
-    <string name="enter_phone_number">Введите Ваш номер телефона</string>
+    <string name="enter_phone_number">Введите номер телефона</string>
     <string name="verification_successful">Проверка прошла успешно</string>
     <string name="wrong_otp">Неверный код</string>
     <string name="auth">Авторизация</string>
@@ -47,7 +47,7 @@
     <string name="code_will_be_sent">Код будет отправлен</string>
     <string name="verification_complete">Проверка завершена</string>
     <string name="phone_auth_success">Успешный вход по телефону</string>
-    <string name="verify_phone">Подтвердить телефон</string>
+    <string name="verify_phone">Войти по номеру телефона</string>
 
     <string name="gif_momo_sign_up_message">
         Repeton отправит SMS-сообщение (могут взиматься платежи от оператора) для проверки вашего номера телефона.

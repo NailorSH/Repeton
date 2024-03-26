@@ -56,4 +56,6 @@
     <string name="enter_digits_code">Enter the 6-digit code</string>
     <string name="generic_error">Something wrong happened. Please try again.</string>
     <string name="try_">Try again</string>
+    <string name="add_lesson">Добавить занятие</string>
+    <string name="today">Сегодня</string>
 </resources>

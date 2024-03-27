@@ -9,7 +9,6 @@ import javax.inject.Inject
 
 class FakeCurrentLessonRepository @Inject constructor() : CurrentLessonRepository {
     override suspend fun getLesson(id: Int): Lesson = withContext(Dispatchers.IO) {
-        delay(2000)
         FakeLessonSource.loadLessons()[id]
     }
 }

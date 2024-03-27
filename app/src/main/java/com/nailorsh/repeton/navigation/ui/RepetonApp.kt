@@ -33,7 +33,7 @@ fun RepetonApp(
 ) {
     RepetonTheme {
         val authUiState by authViewModel.signUpState.collectAsState()
-        if (authUiState is Response.Success) {
+        if (true) {
             Scaffold(
                 bottomBar = {
                     RepetonBottomBar(

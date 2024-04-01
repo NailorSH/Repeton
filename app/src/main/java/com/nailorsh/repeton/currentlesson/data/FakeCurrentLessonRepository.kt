@@ -11,4 +11,8 @@ class FakeCurrentLessonRepository @Inject constructor() : CurrentLessonRepositor
     override suspend fun getLesson(id: Int): Lesson = withContext(Dispatchers.IO) {
         FakeLessonSource.loadLessons()[id]
     }
+
+    override suspend fun addLesson(lesson: Lesson) = withContext(Dispatchers.IO) {
+        FakeLessonSource.addLesson(lesson)
+    }
 }

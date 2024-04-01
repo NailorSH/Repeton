@@ -37,7 +37,7 @@ fun LessonsList(
         if (lessons.isEmpty()) {
             Box(
                 modifier = Modifier
-                    .padding(top = 21.dp)
+                    .padding(top = 16.dp)
                     .width(dimensionResource(R.dimen.schedule_screen_button_width))
                     .height(dimensionResource(R.dimen.schedule_screen_lesson_size))
                     .background(
@@ -55,6 +55,8 @@ fun LessonsList(
             }
         } else {
             LazyColumn(
+                modifier = Modifier
+                    .padding(top = 6.dp)
             ) {
                 items(items = lessons, key = {lesson -> lesson.id}) { lesson ->
                     LessonCard(lesson = lesson, onClick = onLessonClicked)

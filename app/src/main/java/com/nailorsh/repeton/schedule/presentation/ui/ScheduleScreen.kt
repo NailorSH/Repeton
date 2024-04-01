@@ -73,7 +73,7 @@ fun ScheduleScreen(
 
     var selectionSource by remember { mutableStateOf(SelectionSource.None) }
 
-    var lessonsMap : Map<LocalDate, List<Lesson>> = remember { emptyMap() }
+    var lessonsMap: Map<LocalDate, List<Lesson>> = remember { emptyMap() }
 
 
 
@@ -99,8 +99,7 @@ fun ScheduleScreen(
     LaunchedEffect(selectedDay) {
 
 
-
-        when(selectionSource) {
+        when (selectionSource) {
             SelectionSource.DayPager -> {
                 weekPagerState.animateScrollToPage(ChronoUnit.WEEKS.between(BASE_DATE, selectedDay).toInt())
             }
@@ -114,7 +113,7 @@ fun ScheduleScreen(
                 dayPagerState.animateScrollToPage(ChronoUnit.DAYS.between(BASE_DATE, selectedDay).toInt())
             }
 
-            SelectionSource.None -> {  }
+            SelectionSource.None -> {}
         }
         selectionSource = SelectionSource.None
     }
@@ -189,7 +188,7 @@ fun ScheduleScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.CenterHorizontally)
-                ) {page ->
+                ) { page ->
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -203,41 +202,48 @@ fun ScheduleScreen(
                             lessons = lessonsMap.getOrDefault(day, emptyList()),
                             modifier = Modifier
                                 .width(dimensionResource(R.dimen.schedule_screen_button_width))
-                                .weight(1f)
+                                .weight(0.7f)
                                 .align(Alignment.CenterHorizontally)
                         )
 
-                        HorizontalDivider(
+                        Column(
                             modifier = Modifier
-                                .padding(top = 22.dp)
-                                .width(dimensionResource(R.dimen.divider_width))
-                                .align(Alignment.CenterHorizontally),
-
-                            thickness = dimensionResource(R.dimen.divider_thickness),
-                            color = LineColor
-                        )
-
-                        Button(
-                            onClick = { /* TODO Добавление нового занятия */ },
-                            modifier = Modifier
-                                .padding(top = 32.dp, bottom = 64.dp)
-                                .width(dimensionResource(R.dimen.schedule_screen_button_width))
-                                .height(52.dp)
-                                .align(Alignment.CenterHorizontally),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.onPrimary
-                            )
+                                .weight(0.3f)
+                                .align(Alignment.CenterHorizontally)
                         ) {
-                            Text(
-                                text = stringResource(R.string.add_lesson_button),
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
-                        }
-                    }
 
+                            HorizontalDivider(
+                                modifier = Modifier
+                                    .padding(top = 22.dp)
+                                    .width(dimensionResource(R.dimen.divider_width))
+                                    .align(Alignment.CenterHorizontally),
+
+                                thickness = dimensionResource(R.dimen.divider_thickness),
+                                color = LineColor
+                            )
+
+                            Button(
+                                onClick = { /* TODO Добавление нового занятия */ },
+                                modifier = Modifier
+                                    .padding(top = 32.dp)
+                                    .width(dimensionResource(R.dimen.schedule_screen_button_width))
+                                    .height(52.dp)
+                                    .align(Alignment.CenterHorizontally),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = MaterialTheme.colorScheme.onPrimary
+                                )
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.add_lesson_button),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                )
+                            }
+                        }
+
+                    }
                 }
             }
 
@@ -247,6 +253,7 @@ fun ScheduleScreen(
                         .fillMaxSize()
                 )
             }
+
             else -> {
                 ErrorScreen(
                     retryAction = { getLessons() },
@@ -257,12 +264,8 @@ fun ScheduleScreen(
         }
 
 
-
     }
 }
-
-
-
 
 
 @Preview

@@ -58,8 +58,8 @@ fun LessonScreen(
         viewModel.getLesson(lessonId)
     }
 
-    val lessonState = viewModel.currentLessonUiState
-    when (lessonState) {
+
+    when (val lessonState = viewModel.currentLessonUiState) {
         is CurrentLessonUiState.Loading -> {
             Box(
                 modifier = Modifier.fillMaxSize()

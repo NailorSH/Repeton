@@ -36,8 +36,6 @@ fun AdditionalMaterialsCard(additionalMaterials: String?, modifier: Modifier = M
                     .shadow(elevation = 1.dp)
                     .fillMaxWidth()
                     .heightIn(min = 50.dp)
-
-
             ) {
                 Text(
                     text = additionalMaterials ?: stringResource(R.string.no_additional_materials),

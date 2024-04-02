@@ -33,14 +33,10 @@ fun LessonSubject(subject: String, modifier: Modifier = Modifier) {
                 color = MaterialTheme.colorScheme.primaryContainer,
                 shape = RoundedCornerShape(8.dp)
             )
-            .padding(horizontal = dimensionResource(R.dimen.padding_medium), vertical = dimensionResource(R.dimen.padding_small))
-
-
-
-
-
-
-
+            .padding(
+                horizontal = dimensionResource(R.dimen.padding_medium),
+                vertical = dimensionResource(R.dimen.padding_small)
+            )
 
 
     ) {

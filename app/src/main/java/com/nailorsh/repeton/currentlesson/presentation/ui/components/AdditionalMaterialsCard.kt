@@ -2,6 +2,10 @@ package com.nailorsh.repeton.currentlesson.presentation.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.AbsoluteCutCornerShape
+import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,21 +30,21 @@ fun AdditionalMaterialsCard(additionalMaterials: String?, modifier: Modifier = M
 
             )
             Spacer(modifier = Modifier.height(12.dp))
-            Box(
+            Card(
+                shape = AbsoluteCutCornerShape(0.dp),
                 modifier = Modifier
-                    .background(color = MaterialTheme.colorScheme.secondaryContainer)
                     .shadow(elevation = 1.dp)
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 16.dp)
                     .heightIn(min = 50.dp)
 
 
             ) {
                 Text(
                     text = additionalMaterials ?: stringResource(R.string.no_additional_materials),
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    style = MaterialTheme.typography.bodyLarge
 
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .padding(8.dp)
                 )
             }
 

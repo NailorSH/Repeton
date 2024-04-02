@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,7 +36,7 @@ fun LessonsList(
         if (lessons.isEmpty()) {
             Box(
                 modifier = Modifier
-                    .padding(top = 21.dp)
+                    .padding(top = 16.dp)
                     .width(dimensionResource(R.dimen.schedule_screen_button_width))
                     .height(dimensionResource(R.dimen.schedule_screen_lesson_size))
                     .background(
@@ -52,12 +53,12 @@ fun LessonsList(
                 )
             }
         } else {
-            LazyColumn {
-                items(lessons.size) {
-                    LessonCard(
-                        lesson = lessons[it],
-                        onClick = onLessonClicked
-                    )
+            LazyColumn(
+                modifier = Modifier
+                    .padding(top = 6.dp)
+            ) {
+                items(items = lessons, key = {lesson -> lesson.id}) { lesson ->
+                    LessonCard(lesson = lesson, onClick = onLessonClicked)
                 }
 
             }

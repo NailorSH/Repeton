@@ -65,4 +65,5 @@
     <string name="waiting_for_sms_auto_detection">
         Ожидание автоматического обнаружения отправленного SMS на номер:
     </string>
+    <string name="lessonscreen_timeinfo_descrpition">Время</string>
 </resources>

@@ -8,7 +8,7 @@ data class Lesson(
     val subject: String,
     val title: String,
     val description: String?,
-    val teacherName: String,
+    val teacherName: String, /* TODO Заменить на ID тутора и сделать запросы данных тутора для урока */
     val startTime: LocalDateTime,
     val endTime: LocalDateTime,
     val homeworkLink: String?,

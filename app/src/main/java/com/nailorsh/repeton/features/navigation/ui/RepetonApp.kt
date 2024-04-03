@@ -18,6 +18,7 @@ import com.nailorsh.repeton.features.currentlesson.presentation.viewmodel.Curren
 import com.nailorsh.repeton.features.messenger.presentation.viewmodel.MessengerViewModel
 import com.nailorsh.repeton.features.navigation.AppSections
 import com.nailorsh.repeton.features.navigation.NavGraph
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonViewModel
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleViewModel
 import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.TutorSearchViewModel
 
@@ -29,11 +30,12 @@ fun RepetonApp(
     tutorSearchViewModel: TutorSearchViewModel = viewModel(),
     scheduleViewModel: ScheduleViewModel = viewModel(),
     messengerViewModel: MessengerViewModel = viewModel(),
-    authViewModel: AuthViewModel = viewModel()
+    authViewModel: AuthViewModel = viewModel(),
+    newLessonViewModel: NewLessonViewModel = viewModel(),
 ) {
     RepetonTheme {
         val authUiState by authViewModel.signUpState.collectAsState()
-        if (authUiState is Response.Success) {
+        if (true) {
             Scaffold(
                 bottomBar = {
                     RepetonBottomBar(
@@ -54,6 +56,7 @@ fun RepetonApp(
                     tutorSearchViewModel = tutorSearchViewModel,
                     scheduleViewModel = scheduleViewModel,
                     messengerViewModel = messengerViewModel,
+                    newLessonViewModel = newLessonViewModel,
                     modifier = Modifier.padding(innerPaddingModifier)
                 )
             }

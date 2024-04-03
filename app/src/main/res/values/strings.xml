@@ -66,4 +66,11 @@
         Ожидание автоматического обнаружения отправленного SMS на номер:
     </string>
     <string name="lessonscreen_timeinfo_descrpition">Время</string>
+    <string name="new_lesson">Новое занятие</string>
+    <string name="new_lesson_screen_headline">Добавление занятия</string>
+    <string name="search_subject">Поиск предмета</string>
+    <string name="new_lesson_screen_subject_label">Предмет</string>
+    <string name="new_lesson_screen_subject_placeholder">Физика</string>
+    <string name="required_field">*Обязательное поле</string>
+    <string name="new_lesson_route_title">Добавление занятия</string>
 </resources>

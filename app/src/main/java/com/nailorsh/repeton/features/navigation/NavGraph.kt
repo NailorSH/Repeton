@@ -9,6 +9,8 @@ import com.nailorsh.repeton.features.currentlesson.presentation.ui.LessonScreen
 import com.nailorsh.repeton.features.currentlesson.presentation.viewmodel.CurrentLessonViewModel
 import com.nailorsh.repeton.features.messenger.presentation.ui.ChatsScreen
 import com.nailorsh.repeton.features.messenger.presentation.viewmodel.MessengerViewModel
+import com.nailorsh.repeton.features.newlesson.presentation.ui.NewLessonScreen
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonViewModel
 import com.nailorsh.repeton.features.schedule.presentation.ui.ScheduleScreen
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleViewModel
 import com.nailorsh.repeton.features.studentprofile.presentation.ui.ProfileScreen
@@ -22,6 +24,7 @@ fun NavGraph(
     tutorSearchViewModel: TutorSearchViewModel,
     scheduleViewModel: ScheduleViewModel,
     messengerViewModel: MessengerViewModel,
+    newLessonViewModel: NewLessonViewModel,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -45,6 +48,9 @@ fun NavGraph(
                 getLessons = { scheduleViewModel.getLessons() },
                 onLessonClicked = { lesson ->
                     navHostController.navigate("lesson/${lesson.id}")
+                },
+                onNewLessonClicked = {
+                    navHostController.navigate(AppSections.NEW_LESSON.route)
                 }
 
             )
@@ -66,6 +72,14 @@ fun NavGraph(
                     viewModel = currentLessonViewModel
                 )
             }
+        }
+
+        composable(AppSections.NEW_LESSON.route) {
+            NewLessonScreen(
+                newLessonUiState = newLessonViewModel.newLessonUiState,
+                onNavigateBack = { navHostController.navigateUp() },
+                onSaveLessons = { /* TODO Сохранение урока */ }
+            )
         }
     }
 }

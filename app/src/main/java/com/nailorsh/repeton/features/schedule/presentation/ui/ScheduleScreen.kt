@@ -60,7 +60,8 @@ private enum class SelectionSource {
 fun ScheduleScreen(
     scheduleUiState: ScheduleUiState,
     getLessons: () -> Unit,
-    onLessonClicked: (Lesson) -> Unit
+    onLessonClicked: (Lesson) -> Unit,
+    onNewLessonClicked: () -> Unit
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     var selectedDay by remember {
@@ -229,7 +230,7 @@ fun ScheduleScreen(
                             )
 
                             Button(
-                                onClick = { /* TODO Добавление нового занятия */ },
+                                onClick = { onNewLessonClicked() },
                                 modifier = Modifier
                                     .padding(top = 32.dp)
                                     .width(dimensionResource(R.dimen.schedule_screen_button_width))
@@ -281,7 +282,8 @@ fun ScheduleScreenPreview() {
         ScheduleScreen(
             onLessonClicked = { },
             getLessons = { },
-            scheduleUiState = ScheduleViewModel(FakeScheduleRepository()).scheduleUiState
+            scheduleUiState = ScheduleViewModel(FakeScheduleRepository()).scheduleUiState,
+            onNewLessonClicked = { }
         )
     }
 }

@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.nailorsh.repeton.core.ui.theme.RepetonTheme
-import com.nailorsh.repeton.navigation.ui.RepetonApp
+import com.nailorsh.repeton.features.navigation.ui.RepetonApp
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

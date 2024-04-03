@@ -34,9 +34,9 @@ import com.nailorsh.repeton.features.currentlesson.presentation.viewmodel.Curren
 
 @Composable
 fun LessonScreen(
+    lessonId: Int,
     modifier: Modifier = Modifier,
     viewModel: CurrentLessonViewModel = viewModel(),
-    lessonId: Int,
 ) {
 
     LaunchedEffect(lessonId) {

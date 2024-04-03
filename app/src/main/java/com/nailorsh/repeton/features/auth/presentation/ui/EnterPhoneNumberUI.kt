@@ -2,12 +2,12 @@ package com.nailorsh.repeton.features.auth.presentation.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -91,19 +91,15 @@ fun EnterPhoneNumberUI(
         }
 
         OutlinedButton(onClick = onGuestModeButtonClicked) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.footprint),
-                    contentDescription = null
-                )
-                Text(
-                    text = stringResource(R.string.guest_mode),
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
+            Icon(
+                painter = painterResource(R.drawable.footprint),
+                contentDescription = null
+            )
+            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
+            Text(
+                text = stringResource(R.string.guest_mode),
+                style = MaterialTheme.typography.titleMedium
+            )
         }
     }
 }

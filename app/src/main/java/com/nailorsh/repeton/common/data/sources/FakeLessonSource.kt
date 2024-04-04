@@ -18,7 +18,7 @@ object FakeLessonSource {
         getRandomStartDateTime().let { startTime ->
             Lesson(
                 id = 0,
-                subject = "Mathematics",
+                subject = FakeSubjectsSource.getSubjects(1),
                 title = "Algebra Basics",
                 description = "Introduction to algebraic concepts.",
                 teacherName = "Alex Johnson",
@@ -31,7 +31,7 @@ object FakeLessonSource {
         getRandomStartDateTime().let { startTime ->
             Lesson(
                 id = 1,
-                subject = "Physics",
+                subject = FakeSubjectsSource.getSubjects(3),
                 title = "Kinematics",
                 description = "Study of motion.",
                 teacherName = "Marie Curie",
@@ -44,7 +44,7 @@ object FakeLessonSource {
         getRandomStartDateTime().let { startTime ->
             Lesson(
                 id = 2,
-                subject = "History",
+                subject = FakeSubjectsSource.getSubjects(5),
                 title = "The French Revolution",
                 description = "A deep dive into the causes of the French Revolution.",
                 teacherName = "Jean Valjean",
@@ -57,7 +57,7 @@ object FakeLessonSource {
         getRandomStartDateTime().let { startTime ->
             Lesson(
                 id = 3,
-                subject = "Literature",
+                subject = FakeSubjectsSource.getSubjects(7),
                 title = "Shakespeare's Plays",
                 description = "Exploring the major plays of William Shakespeare.",
                 teacherName = "Elizabeth Bennett",
@@ -70,7 +70,7 @@ object FakeLessonSource {
         getRandomStartDateTime().let { startTime ->
             Lesson(
                 id = 4,
-                subject = "Computer Science",
+                subject = FakeSubjectsSource.getSubjects(4),
                 title = "Introduction to Programming",
                 description = null,
                 teacherName = "Alan Turing",
@@ -83,7 +83,7 @@ object FakeLessonSource {
         getRandomStartDateTime().let { startTime ->
             Lesson(
                 id = 5,
-                subject = "Art",
+                subject = FakeSubjectsSource.getSubjects(8),
                 title = "Impressionism",
                 description = "Understanding the Impressionist art movement.",
                 teacherName = "Claude Monet",

@@ -1,14 +1,7 @@
 package com.nailorsh.repeton.features.schedule.presentation.ui.components
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -19,15 +12,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.common.data.models.Lesson
+import com.nailorsh.repeton.features.studentprofile.presentation.ui.HorizontalLine
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 @Composable
-fun LessonCard(lesson: Lesson, onClick: (Lesson) -> Unit, modifier: Modifier = Modifier) {
+internal fun LessonCard(lesson: Lesson, onClick: (Lesson) -> Unit, modifier: Modifier = Modifier) {
 
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
@@ -47,25 +42,28 @@ fun LessonCard(lesson: Lesson, onClick: (Lesson) -> Unit, modifier: Modifier = M
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 13.dp)
-
+                .padding(start = 12.dp)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 10.dp),
+                    .padding(top = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             )
             {
                 Text(
-                    text = lesson.subject,
+                    text = lesson.subject.subjectName,
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                     style = MaterialTheme.typography.headlineSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(0.65f),
+                )
 
-                    )
-
-
+                Spacer(
+                    Modifier.weight(0.05f)
+                )
                 // Время начала и конца занятия
                 val startTimeCutted =
                     lesson.startTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT))
@@ -74,12 +72,13 @@ fun LessonCard(lesson: Lesson, onClick: (Lesson) -> Unit, modifier: Modifier = M
                     lesson.endTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT))
                         .substringAfter(", ")
                 Text(
-                    text = "$startTimeCutted - $endTimeCutted",
+                    text = "$startTimeCutted -\n$endTimeCutted",
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Left,
                     modifier = Modifier
-                        .padding(start = 4.dp)
+                        .padding(start = 4.dp, top = 4.dp)
+                        .weight(0.3f)
                 )
             }
             Text(
@@ -87,12 +86,16 @@ fun LessonCard(lesson: Lesson, onClick: (Lesson) -> Unit, modifier: Modifier = M
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 style = MaterialTheme.typography.bodyMedium,
                 letterSpacing = 0.25.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
             Text(
                 text = lesson.title,
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }

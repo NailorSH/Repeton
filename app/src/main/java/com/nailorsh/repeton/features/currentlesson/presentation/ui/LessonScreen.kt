@@ -94,7 +94,7 @@ fun LessonContent(lesson: Lesson, modifier: Modifier = Modifier) {
             )
             Spacer(modifier = Modifier.height(24.dp))
             LessonSubject(
-                lesson.subject,
+                lesson.subject.subjectName,
                 modifier = Modifier.padding(start = 8.dp)
             )
             LessonCard(lesson, Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium)))

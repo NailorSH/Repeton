@@ -13,12 +13,11 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.common.data.models.Lesson
-import com.nailorsh.repeton.features.schedule.presentation.ui.BASE_DATE
 import java.time.LocalDate
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DaySlider(
+internal fun DaySlider(
     selectedDay: LocalDate,
     onDaySelected: (LocalDate) -> Unit,
     weekPagerState: PagerState,

@@ -1,8 +1,7 @@
 package com.nailorsh.repeton.features.newlesson.presentation.ui.components
 
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandIn
+import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,6 +10,8 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -25,6 +26,7 @@ import com.nailorsh.repeton.R
 import com.nailorsh.repeton.core.ui.components.LoadingScreen
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonUiState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubjectTextField(
     subject: String,
@@ -33,7 +35,12 @@ fun SubjectTextField(
     onExpandedChange: (Boolean) -> Unit,
     newLessonUiState: NewLessonUiState,
 ) {
-    Column {
+
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = onExpandedChange
+    ) {
         OutlinedTextField(
             singleLine = true,
             value = subject,
@@ -55,16 +62,38 @@ fun SubjectTextField(
                 imeAction = ImeAction.Done
             ),
             trailingIcon = {
-                IconButton(
-                    onClick = { onExpandedChange(!expanded) }
+                AnimatedVisibility(
+                    visible = !expanded,
+                    enter = expandHorizontally(),
+                    exit = shrinkHorizontally()
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = "Список предметов"
-                    )
+                    IconButton(
+                        onClick = { onExpandedChange(true) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowDown,
+                            contentDescription = stringResource(R.string.new_lesson_screen_show_subject_list)
+                        )
+                    }
                 }
-            }
+                AnimatedVisibility(
+                    visible = expanded,
+                    enter = expandHorizontally(),
+                    exit = shrinkHorizontally()
+                ) {
+                    IconButton(
+                        onClick = { onExpandedChange(false) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowUp,
+                            contentDescription = stringResource(R.string.new_lesson_screen_hide_subject_list)
+                        )
+                    }
+                }
+            },
+            modifier = Modifier.menuAnchor()
         )
+
 
         val subjects = when (newLessonUiState) {
             NewLessonUiState.Error -> listOf()
@@ -72,31 +101,28 @@ fun SubjectTextField(
             is NewLessonUiState.Success -> newLessonUiState.subjects
         }
 
-        AnimatedVisibility(visible = expanded) {
+        val filteredSubjects = subjects.filter {
+            it.subjectName.lowercase().startsWith(subject.lowercase())
+        }.sortedWith(compareBy { it.subjectName })
 
-            DropdownMenu(
+        if (filteredSubjects.isNotEmpty()) {
+
+            ExposedDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { onExpandedChange(false) },
-                properties = PopupProperties(
-                    focusable = false,
-                )
-
+                modifier = Modifier.heightIn(max = 250.dp)
             ) {
-                subjects.filter {
-                    it.lowercase().startsWith(subject.lowercase())
-                }.sorted().forEach {
+                filteredSubjects.forEach {
                     DropdownMenuItem(
-                        text = { Text(text = it) },
+                        text = { Text(text = it.subjectName) },
                         onClick = {
-                            onSubjectChange(it)
+                            onSubjectChange(it.subjectName)
                             onExpandedChange(false)
                         }
                     )
                 }
             }
-
         }
-
 
     }
 

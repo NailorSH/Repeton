@@ -73,4 +73,10 @@
     <string name="new_lesson_screen_subject_placeholder">Физика</string>
     <string name="required_field">*Обязательное поле</string>
     <string name="new_lesson_route_title">Добавление занятия</string>
+    <string name="new_lesson_screen_show_subject_list">Открыть список предметов</string>
+    <string name="new_lesson_screen_hide_subject_list">Скрыть список предметов</string>
+    <string name="new_lesson_screen_topic_label">Тема</string>
+    <string name="new_lesson_screen_topic_placeholder">Кинематика</string>
+    <string name="new_lesson_screen_date_label">Дата проведения</string>
+    <string name="new_lesson_screen_datepick_icon">Выбор даты</string>
 </resources>

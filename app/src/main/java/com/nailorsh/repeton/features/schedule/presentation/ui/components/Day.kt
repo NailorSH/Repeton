@@ -26,7 +26,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 
 @Composable
-fun Day(day: LocalDate, selectedDay: LocalDate, hasLessons: Boolean, onSelectDay: () -> Unit) {
+internal fun Day(day: LocalDate, selectedDay: LocalDate, hasLessons: Boolean, onSelectDay: () -> Unit) {
     val selected = day.equals(selectedDay)
     val backgroundColor =
         if (selected)

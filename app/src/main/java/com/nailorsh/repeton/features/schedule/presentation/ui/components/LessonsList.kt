@@ -20,7 +20,7 @@ import com.nailorsh.repeton.R
 import com.nailorsh.repeton.common.data.models.Lesson
 
 @Composable
-fun LessonsList(
+internal fun LessonsList(
     onLessonClicked: (Lesson) -> Unit,
     lessons: List<Lesson>,
     modifier: Modifier = Modifier

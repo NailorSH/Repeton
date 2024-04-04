@@ -8,7 +8,7 @@ import java.time.LocalDate
 import java.util.Calendar
 
 @Composable
-fun CalendarDatePicker(
+internal fun CalendarDatePicker(
     selectedDay: LocalDate,
     selectedDayUpdate: (LocalDate) -> Unit,
     showDatePickerUpdate: () -> Unit,

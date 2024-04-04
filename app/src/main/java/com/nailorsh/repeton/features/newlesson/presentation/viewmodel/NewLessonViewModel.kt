@@ -6,6 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.nailorsh.repeton.common.data.models.Lesson
+import com.nailorsh.repeton.common.data.models.Subject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -14,8 +17,7 @@ import javax.inject.Inject
 
 
 sealed interface NewLessonUiState {
-    /* TODO Заменить String на Subject */
-    data class Success(val subjects: List<String>) : NewLessonUiState
+    data class Success(val subjects: List<Subject>) : NewLessonUiState
     object Error : NewLessonUiState
     object Loading : NewLessonUiState
 }
@@ -45,4 +47,11 @@ class NewLessonViewModel @Inject constructor(
             }
         }
     }
+
+    fun saveNewLesson(lesson : Lesson) {
+        viewModelScope.launch {
+            newLessonRepository.saveNewLesson(lesson)
+        }
+    }
+
 }

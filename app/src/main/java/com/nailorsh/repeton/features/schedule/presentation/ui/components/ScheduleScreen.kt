@@ -1,4 +1,4 @@
-package com.nailorsh.repeton.features.schedule.presentation.ui
+package com.nailorsh.repeton.features.schedule.presentation.ui.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -38,9 +38,6 @@ import com.nailorsh.repeton.core.ui.components.LoadingScreen
 import com.nailorsh.repeton.core.ui.theme.LineColor
 import com.nailorsh.repeton.core.ui.theme.RepetonTheme
 import com.nailorsh.repeton.features.schedule.data.FakeScheduleRepository
-import com.nailorsh.repeton.features.schedule.presentation.ui.components.CalendarDatePicker
-import com.nailorsh.repeton.features.schedule.presentation.ui.components.DaySlider
-import com.nailorsh.repeton.features.schedule.presentation.ui.components.LessonsList
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleUiState
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleViewModel
 import java.time.LocalDate

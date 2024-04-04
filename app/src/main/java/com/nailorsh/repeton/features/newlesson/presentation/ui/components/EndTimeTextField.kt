@@ -4,21 +4,28 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.nailorsh.repeton.R
-import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter.ofLocalizedDateTime
+import java.time.format.DateTimeFormatter.ofLocalizedTime
+import java.time.format.FormatStyle
 
 
 @Composable
-fun DateTextField(
-    date: LocalDate,
+fun EndTimeTextField(
+    time: LocalTime,
     onClick: () -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -41,7 +48,7 @@ fun DateTextField(
         ),
         readOnly = true,
         singleLine = true,
-        value = date.toString(),
+        value = time.format(ofLocalizedTime(FormatStyle.SHORT)),
         onValueChange = {},
         label = { stringResource(R.string.new_lesson_screen_date_label) },
         supportingText = { Text(stringResource(R.string.required_field)) },
@@ -51,7 +58,7 @@ fun DateTextField(
         ),
         leadingIcon = {
             Icon(
-                imageVector = Icons.Default.DateRange,
+                painter = painterResource(R.drawable.nest_clock_400w),
                 contentDescription = stringResource(R.string.new_lesson_screen_datepick_icon)
             )
         },

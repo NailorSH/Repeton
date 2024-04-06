@@ -1,4 +1,4 @@
-package com.nailorsh.repeton.features.newlesson.presentation.ui.components
+package com.nailorsh.repeton.features.newlesson.presentation.ui.components.first
 
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField

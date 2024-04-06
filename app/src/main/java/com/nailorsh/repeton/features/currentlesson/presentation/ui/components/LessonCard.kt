@@ -25,7 +25,7 @@ fun LessonCard(lesson: Lesson, modifier: Modifier = Modifier) {
                 .padding(8.dp)
         ) {
             Text(
-                text = lesson.title,
+                text = lesson.topic,
                 style = MaterialTheme.typography.displaySmall
             )
             Spacer(modifier = Modifier.height(8.dp))

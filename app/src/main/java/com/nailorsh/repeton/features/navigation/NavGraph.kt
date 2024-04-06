@@ -10,6 +10,7 @@ import com.nailorsh.repeton.features.currentlesson.presentation.viewmodel.Curren
 import com.nailorsh.repeton.features.messenger.presentation.ui.ChatsScreen
 import com.nailorsh.repeton.features.messenger.presentation.viewmodel.MessengerViewModel
 import com.nailorsh.repeton.features.newlesson.presentation.ui.NewLessonScreen
+import com.nailorsh.repeton.features.newlesson.presentation.ui.NewLessonScreenSecond
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonViewModel
 import com.nailorsh.repeton.features.schedule.presentation.ui.components.ScheduleScreen
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleViewModel
@@ -81,6 +82,28 @@ fun NavGraph(
                     newLessonViewModel.clearData()
                 },
                 onSaveRequiredFields = newLessonViewModel::saveRequiredFields,
+                onNavigateNext = {
+                    navHostController.navigate(AppSections.NEW_LESSON_SECOND.route)
+                    newLessonViewModel.getSubjects()
+                },
+                subject = newLessonViewModel._subject,
+                topic = newLessonViewModel._topic,
+                startTime = newLessonViewModel._startTime,
+                endTime = newLessonViewModel._endTime
+            )
+        }
+
+        composable(AppSections.NEW_LESSON_SECOND.route) {
+            NewLessonScreenSecond(
+                newLessonSecondUiState = newLessonViewModel.newLessonSecondUiState,
+                onNavigateBack = {
+                    navHostController.navigateUp()
+                },
+                onNavigateSuccessfulSave = {
+                    navHostController.popBackStack(route = AppSections.HOME.route, inclusive = false)
+                    newLessonViewModel.clearData()
+                },
+                onSaveLesson = newLessonViewModel::saveLesson
             )
         }
     }

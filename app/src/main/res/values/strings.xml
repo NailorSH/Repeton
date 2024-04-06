@@ -86,4 +86,15 @@
     <string name="new_lesson_screen_timepicker_confirm">Подтвердить</string>
     <string name="new_lesson_screen_timepicker_cancel">Отменить</string>
     <string name="cancel">Отмена</string>
+    <string name="new_lesson_screen_save_new_lesson">Сохранить</string>
+    <string name="new_lesson_screen_description_label">Описание</string>
+    <string name="new_lesson_screen_description_placeholder">Линейные дифференциальные уравнения первого порядка</string>
+    <string name="optional_field">Необязательное поле</string>
+    <string name="new_lesson_second_route_title">Добавление занятия (вторая страница)</string>
+    <string name="new_lesson_screen_homework_label">Домашнее задание</string>
+    <string name="new_lesson_screen_homework_placeholder">Здесь вы можете прикрепить фотографии и файлы...</string>
+    <string name="new_lesson_screen_additional_materials_label">Дополнительные материалы</string>
+    <string name="new_lesson_screen_additional_materials_placeholder">Ссылки на полезную литературу...</string>
+    <string name="camera_permission_denied">Разрешение на использование камеры не предоставлено</string>
+    <string name="file_selection_failed">Не удалось выбрать файл</string>
 </resources>

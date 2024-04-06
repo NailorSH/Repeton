@@ -4,19 +4,15 @@ import com.nailorsh.repeton.features.newlesson.data.NewLessonRepository
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.android.play.integrity.internal.i
-import com.nailorsh.repeton.R
+import com.nailorsh.repeton.common.data.models.Homework
 import com.nailorsh.repeton.common.data.models.Lesson
 import com.nailorsh.repeton.common.data.models.Subject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.net.HttpRetryException
-import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -32,6 +28,12 @@ sealed interface NewLessonUiState {
 
 }
 
+sealed interface NewLessonSecondUiState {
+    object None : NewLessonSecondUiState
+
+    object Saved : NewLessonSecondUiState
+}
+
 @HiltViewModel
 class NewLessonViewModel @Inject constructor(
     private val newLessonRepository: NewLessonRepository
@@ -39,27 +41,31 @@ class NewLessonViewModel @Inject constructor(
     var newLessonUiState: NewLessonUiState by mutableStateOf(NewLessonUiState.Loading)
         private set
 
-    private lateinit var _subject: Subject
-    private lateinit var _title: String
-    private lateinit var _startTime: LocalDateTime
-    private lateinit var _endTime: LocalDateTime
-    private lateinit var _subjects: List<Subject>
+    var newLessonSecondUiState : NewLessonSecondUiState by mutableStateOf(NewLessonSecondUiState.None)
+        private set
+
+    var _subject = Subject(-1, "")
+        private set
+    var _topic = ""
+        private set
+    var _startTime = LocalDateTime.now().plusMinutes(1)
+        private set
+    var _endTime = LocalDateTime.now().plusMinutes(30)
+        private set
+
+    private var _description : String? = null
+    private var _additionalMaterials : String? = null
+    private var _homework : Homework? = null
+    private lateinit var _subjects : List<Subject>
 
     init {
-        getSubjects()
-    }
-
-    companion object {
-        const val ERROR_FOR_SUBJECT_TEXT_FIELD = 0
-        const val ERROR_FOR_TOPIC_TEXT_FIELD = 1
-        const val ERROR_FOR_DATE_TEXT_FIELD = 2
-        const val ERROR_FOR_START_TIME_TEXT_FIELD = 3
-        const val ERROR_FOR_END_TIME_TEXT_FIELD = 4
+        clearData()
     }
 
     fun getSubjects() {
         viewModelScope.launch {
             newLessonUiState = NewLessonUiState.Loading
+            newLessonSecondUiState = NewLessonSecondUiState.None
             newLessonUiState = try {
                 /* TODO Добавить репозиторий для NewLesson и метод получения всех доступных предметов */
                 _subjects = newLessonRepository.getSubjects()
@@ -72,18 +78,34 @@ class NewLessonViewModel @Inject constructor(
         }
     }
 
-    fun saveNewLesson(lesson: Lesson) {
+    fun saveLesson(description : String?, homework: Homework?, additionalMaterials : String?) {
         viewModelScope.launch {
-            newLessonRepository.saveNewLesson(lesson)
+            _description = description
+            _homework = homework
+            _additionalMaterials = additionalMaterials
+            newLessonRepository.saveNewLesson(Lesson(
+                subject = _subject,
+                topic = _topic,
+                startTime = _startTime,
+                endTime = _endTime,
+                teacherName = "Placeholder",
+                description = _description,
+                homework = _homework,
+                additionalMaterials = _additionalMaterials
+            ))
+            newLessonSecondUiState = NewLessonSecondUiState.Saved
         }
     }
 
     fun clearData() {
         getSubjects()
-        _subject = Subject(0, "")
-        _title = ""
-        _startTime = LocalDateTime.now()
-        _endTime = LocalDateTime.now()
+        _subject = Subject(-1, "")
+        _topic = ""
+        _startTime = LocalDateTime.now().plusMinutes(1)
+        _endTime = LocalDateTime.now().plusMinutes(30)
+        _description = null
+        _homework = null
+        _additionalMaterials = null
     }
 
     fun saveRequiredFields(subject: String, title: String, startTime: LocalDateTime, endTime: LocalDateTime) {
@@ -93,22 +115,17 @@ class NewLessonViewModel @Inject constructor(
             val resultSubject = newLessonRepository.getSubject(subject)
             if (resultSubject == null) {
                 error = true
+                _subject = Subject(-1, "")
             }
 
             if (error) {
                 newLessonUiState = NewLessonUiState.ErrorSaving(error, _subjects)
             } else {
                 _subject = resultSubject!!
-                _title = title
+                _topic = title
                 _startTime = startTime
                 _endTime = endTime
-                newLessonRepository.saveNewLesson(Lesson(
-                    subject = _subject,
-                    title = _title,
-                    startTime = _startTime,
-                    endTime = _endTime,
-                    teacherName = "Placeholder"
-                ))
+
                 newLessonUiState = NewLessonUiState.SuccessSaving
             }
         }

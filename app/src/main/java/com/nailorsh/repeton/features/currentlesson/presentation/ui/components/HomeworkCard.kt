@@ -16,10 +16,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
+import com.nailorsh.repeton.common.data.models.Homework
 
 
 @Composable
-fun HomeworkCard(hwLink: String?, modifier: Modifier = Modifier) {
+fun HomeworkCard(homework: Homework?, modifier: Modifier = Modifier) {
     Box(modifier) {
         Column(modifier = Modifier.padding(8.dp)) {
             Text(

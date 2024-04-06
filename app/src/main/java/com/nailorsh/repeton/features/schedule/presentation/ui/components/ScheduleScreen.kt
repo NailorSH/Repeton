@@ -62,6 +62,7 @@ fun ScheduleScreen(
         mutableStateOf(LocalDate.now())
     }
 
+
     val dayPagerState = rememberPagerState(
         initialPage = ChronoUnit.DAYS.between(BASE_DATE, selectedDay).toInt(),
         pageCount = { MAX_PAGE_COUNT }

@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.common.data.models.Lesson
-import com.nailorsh.repeton.features.studentprofile.presentation.ui.HorizontalLine
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
@@ -90,7 +89,7 @@ internal fun LessonCard(lesson: Lesson, onClick: (Lesson) -> Unit, modifier: Mod
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
-                text = lesson.title,
+                text = lesson.topic,
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
                 fontWeight = FontWeight.SemiBold,

@@ -1,9 +1,6 @@
-package com.nailorsh.repeton.features.newlesson.presentation.ui.components
+package com.nailorsh.repeton.features.newlesson.presentation.ui.components.first
 
-import android.app.TimePickerDialog
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment

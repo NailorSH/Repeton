@@ -13,16 +13,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.common.data.models.Subject
-import com.nailorsh.repeton.core.ui.components.RepetonDivider
-import com.nailorsh.repeton.features.newlesson.presentation.ui.components.*
+import com.nailorsh.repeton.features.newlesson.data.FakeNewLessonRepository
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.TopBar
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.*
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonUiState
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonViewModel
 import java.time.*
@@ -33,7 +32,12 @@ const val TAG = "NEW_LESSON"
 @Composable
 fun NewLessonScreen(
     newLessonUiState: NewLessonUiState,
+    subject : Subject,
+    topic : String,
+    startTime : LocalDateTime,
+    endTime : LocalDateTime,
     onNavigateBack: () -> Unit,
+    onNavigateNext: () -> Unit,
     onSaveRequiredFields: (String, String, LocalDateTime, LocalDateTime) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -43,13 +47,11 @@ fun NewLessonScreen(
     var showStartTimePickerTextField by remember { mutableStateOf(false) }
     var showEndTimePickerTextField by remember { mutableStateOf(false) }
 
-    var subject by remember { mutableStateOf("") }
-    /* TODO сделать var subject_id : Int */
+    var localSubject by remember { mutableStateOf(subject.subjectName) }
 
-
-    var topic by remember { mutableStateOf("") }
-    var startTime by remember { mutableStateOf(LocalDateTime.now().plusMinutes(1)) }
-    var endTime by remember { mutableStateOf(startTime.plusMinutes(30)) }
+    var localTopic by remember { mutableStateOf(topic) }
+    var localStartTime by remember { mutableStateOf(startTime) }
+    var localEndTime by remember { mutableStateOf(endTime) }
     var expanded by remember { mutableStateOf(false) }
     var subjects by remember { mutableStateOf(listOf<Subject>()) }
 
@@ -58,24 +60,26 @@ fun NewLessonScreen(
     val filteredSubjects by remember {
         derivedStateOf {
             subjects.filter {
-                it.subjectName.lowercase().startsWith(subject.lowercase())
+                it.subjectName.lowercase().startsWith(localSubject.lowercase())
             }.sortedWith(compareBy { it.subjectName })
         }
 
     }
 
+    val focusManager = LocalFocusManager.current
+
 
 
     val (dateError, startTimeError, endTimeError) = remember {
         derivedStateOf {
-            val dateErrorValue = LocalDate.now() > startTime.toLocalDate()
-            val startTimeErrorValue = if (LocalDate.now() == startTime.toLocalDate()) {
-                LocalTime.now() > startTime.toLocalTime()
+            val dateErrorValue = LocalDate.now() > localStartTime.toLocalDate()
+            val startTimeErrorValue = if (LocalDate.now() == localStartTime.toLocalDate()) {
+                LocalTime.now() > localStartTime.toLocalTime()
             } else {
                 false
             }
             val endTimeErrorValue = if (!startTimeErrorValue) {
-                startTime.toLocalTime() >= endTime.toLocalTime()
+                localStartTime.toLocalTime() >= localEndTime.toLocalTime()
             } else {
                 false
             }
@@ -83,37 +87,47 @@ fun NewLessonScreen(
         }
     }.value
 
-    val focusManager = LocalFocusManager.current
 
-    when (newLessonUiState) {
-        NewLessonUiState.Error -> {}
-        is NewLessonUiState.ErrorSaving -> {
-            subjectError = newLessonUiState.error
-            subjects = newLessonUiState.subjects
-        }
+    var errorToast by remember { mutableStateOf(false) }
 
-        NewLessonUiState.Loading -> {
+    if (errorToast) {
+        errorToast = false
+        /* TODO Уведомление об ошибке */
+    }
 
-        }
+    LaunchedEffect(newLessonUiState) {
+        when (newLessonUiState) {
+            NewLessonUiState.Error -> {}
+            is NewLessonUiState.ErrorSaving -> {
+                subjectError = newLessonUiState.error
+                subjects = newLessonUiState.subjects
+                errorToast = true
+            }
 
-        is NewLessonUiState.Success -> {
-            subjects = newLessonUiState.subjects
-        }
+            NewLessonUiState.Loading -> {
 
-        NewLessonUiState.SuccessSaving -> {
-            /* TODO Сделать нормальное уведомление */
-            onNavigateBack()
+            }
+
+            is NewLessonUiState.Success -> {
+                subjects = newLessonUiState.subjects
+            }
+
+            NewLessonUiState.SuccessSaving -> {
+                /* TODO Сделать нормальное уведомление */
+                onNavigateNext()
+            }
         }
     }
+
     Log.d(TAG, "Loaded Subjects: $subjects")
     if (showDatePicker) {
 
 
         CalendarDialog(
-            date = startTime,
+            date = localStartTime,
             onDateChange = {
                 if (it != null) {
-                    startTime = startTime.with(
+                    localStartTime = localStartTime.with(
                         Instant
                             .ofEpochMilli(it)
                             .atZone(ZoneId.systemDefault())
@@ -133,14 +147,14 @@ fun NewLessonScreen(
         LessonTimePicker(
             onCancel = { showStartTimePicker = false },
             onConfirm = {
-                startTime = startTime.withHour(it.get(Calendar.HOUR_OF_DAY)).withMinute(it.get(Calendar.MINUTE))
+                localStartTime = localStartTime.withHour(it.get(Calendar.HOUR_OF_DAY)).withMinute(it.get(Calendar.MINUTE))
                 showStartTimePicker = false
                 showEndTimePickerTextField = true
-                endTime = startTime.plusMinutes(30)
+                localEndTime = localStartTime.plusMinutes(30)
                 showEndTimePicker = true
 
             },
-            initialTime = startTime.toLocalTime()
+            initialTime = localStartTime.toLocalTime()
         )
 
     }
@@ -150,11 +164,11 @@ fun NewLessonScreen(
         LessonTimePicker(
             onCancel = { showEndTimePicker = false },
             onConfirm = {
-                endTime = endTime.withHour(it.get(Calendar.HOUR_OF_DAY)).withMinute(it.get(Calendar.MINUTE))
+                localEndTime = localEndTime.withHour(it.get(Calendar.HOUR_OF_DAY)).withMinute(it.get(Calendar.MINUTE))
                 showEndTimePicker = false
             },
-            initialTime = endTime.toLocalTime(),
-            startTime = startTime.toLocalTime()
+            initialTime = localEndTime.toLocalTime(),
+            startTime = localStartTime.toLocalTime()
         )
     }
 
@@ -171,33 +185,9 @@ fun NewLessonScreen(
                 }
             )
     ) {
-        Spacer(modifier = Modifier.height(48.dp))
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-            ),
-            modifier = Modifier
-                .width(dimensionResource(R.dimen.schedule_screen_button_width))
-                .align(Alignment.CenterHorizontally)
-        ) {
-            Box(
-                contentAlignment = Alignment.Center, modifier = Modifier
-                    .height(48.dp)
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    style = MaterialTheme.typography.headlineSmall,
-                    text = stringResource(R.string.new_lesson_screen_headline),
-                    letterSpacing = 0.5.sp,
-                )
-            }
 
-        }
-        RepetonDivider(
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(vertical = dimensionResource(R.dimen.padding_medium))
+        TopBar(
+            modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
         Column(
@@ -209,9 +199,10 @@ fun NewLessonScreen(
         ) {
 
             SubjectTextField(
-                subject = subject,
+                subject = localSubject,
                 onSubjectChange = {
-                    subject = it
+                    localSubject = it
+                    subjectError = false
                 },
                 subjects = filteredSubjects,
                 expanded = expanded,
@@ -220,12 +211,12 @@ fun NewLessonScreen(
             )
 
             TopicTextField(
-                topic = topic,
-                onTopicChange = { topic = it }
+                topic = localTopic,
+                onTopicChange = { localTopic = it }
             )
 
             DateTextField(
-                date = startTime.toLocalDate(),
+                date = localStartTime.toLocalDate(),
                 firstSet = !showStartTimePickerTextField,
                 onClick = {
                     showDatePicker = true
@@ -237,7 +228,7 @@ fun NewLessonScreen(
                 enter = slideInHorizontally() + fadeIn(initialAlpha = 0.3f)
             ) {
                 StartTimeTextField(
-                    time = startTime.toLocalTime(),
+                    time = localStartTime.toLocalTime(),
                     firstSet = !showEndTimePickerTextField,
                     onClick = {
                         showStartTimePicker = true
@@ -251,7 +242,7 @@ fun NewLessonScreen(
                 enter = slideInHorizontally() + fadeIn(initialAlpha = 0.3f)
             ) {
                 EndTimeTextField(
-                    time = endTime.toLocalTime(),
+                    time = localEndTime.toLocalTime(),
                     onClick = { showEndTimePicker = true },
                     isError = endTimeError
                 )
@@ -276,12 +267,12 @@ fun NewLessonScreen(
                 }
 
                 Button(
-                    enabled = subject != "" && topic != ""
+                    enabled = localSubject != "" && localTopic != ""
                             && showEndTimePickerTextField &&
                             !dateError && !startTimeError && !endTimeError,
                     onClick = {
                         // Fields validation
-                        onSaveRequiredFields(subject, topic, startTime, endTime)
+                        onSaveRequiredFields(localSubject, localTopic, localStartTime, localEndTime)
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
@@ -327,14 +318,19 @@ fun getColorsForTextField(error: Boolean): TextFieldColors {
 }
 
 
-//@Preview
-//@Composable
-//fun NewLessonScreenPreview() {
-//    RepetonTheme {
-//        NewLessonScreen(
-//            newLessonUiState = NewLessonViewModel(FakeNewLessonRepository()).newLessonUiState,
-//            onNavigateBack = {},
-//            onSaveRequiredFields = {},
-//        )
-//    }
-//}
+@Preview
+@Composable
+fun NewLessonScreenPreview() {
+
+    NewLessonScreen(
+        newLessonUiState = NewLessonViewModel(FakeNewLessonRepository()).newLessonUiState,
+        onNavigateBack = {},
+        onSaveRequiredFields = { a, b, c, d -> },
+        onNavigateNext = {},
+        startTime = LocalDateTime.now().plusMinutes(1),
+        endTime = LocalDateTime.now().plusMinutes(30),
+        subject = Subject(-1, ""),
+        topic = ""
+    )
+
+}

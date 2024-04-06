@@ -14,5 +14,6 @@ enum class AppSections(
     CHATS(R.string.chats, R.drawable.chat_icon, "chats"),
     PROFILE(R.string.profile, R.drawable.profile_icon, "profile"),
     LESSON(R.string.lesson, R.drawable.home_icon, "lesson/{id}"),
-    NEW_LESSON(R.string.new_lesson_route_title, R.drawable.home_icon, "new_lesson")
+    NEW_LESSON(R.string.new_lesson_route_title, R.drawable.home_icon, "new_lesson"),
+    NEW_LESSON_SECOND(R.string.new_lesson_second_route_title, R.drawable.home_icon, "new_lesson_2")
 }

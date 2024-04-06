@@ -1,12 +1,11 @@
-package com.nailorsh.repeton.features.newlesson.presentation.ui.components
+package com.nailorsh.repeton.features.newlesson.presentation.ui.components.first
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -16,20 +15,17 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.features.newlesson.presentation.ui.getColorsForTextField
-import java.lang.Error
-import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatter.ofLocalizedDateTime
 import java.time.format.DateTimeFormatter.ofLocalizedTime
 import java.time.format.FormatStyle
 
 
 @Composable
-fun EndTimeTextField(
+fun StartTimeTextField(
     time: LocalTime,
-    isError: Boolean,
+    firstSet: Boolean,
     onClick: () -> Unit,
+    isError: Boolean,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -44,10 +40,10 @@ fun EndTimeTextField(
         colors = getColorsForTextField(isError),
         readOnly = true,
         singleLine = true,
-        value = time.format(ofLocalizedTime(FormatStyle.SHORT)),
+        value = if (firstSet) "" else time.format(ofLocalizedTime(FormatStyle.SHORT)),
         onValueChange = {},
-        placeholder = { Text(stringResource(R.string.new_lesson_screen_end_time)) },
-        label = { Text(stringResource(R.string.new_lesson_screen_end_time)) },
+        placeholder = { Text(stringResource(R.string.new_lesson_screen_start_time_label)) },
+        label = { Text(stringResource(R.string.new_lesson_screen_start_time_label)) },
         supportingText = { Text(stringResource(R.string.required_field)) },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
@@ -60,6 +56,7 @@ fun EndTimeTextField(
             )
         },
 
-    )
+        )
 }
+
 

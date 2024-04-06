@@ -13,11 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -52,7 +49,7 @@ private enum class SelectionSource {
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleScreen(
     scheduleUiState: ScheduleUiState,
@@ -125,7 +122,6 @@ fun ScheduleScreen(
 
 
 
-
     Column(
 
         modifier = Modifier
@@ -137,6 +133,10 @@ fun ScheduleScreen(
         Spacer(
             modifier = Modifier
                 .height(dimensionResource(R.dimen.top_padding))
+                .fillMaxWidth()
+                .clickable {
+                    getLessons()
+                }
         )
         HorizontalDivider(
             modifier = Modifier
@@ -175,7 +175,7 @@ fun ScheduleScreen(
 
         when (scheduleUiState) {
             is ScheduleUiState.Success -> {
-                lessonsMap = remember { scheduleUiState.lessons }
+                lessonsMap = scheduleUiState.lessons
 
                 DaySlider(
                     selectedDay = selectedDay,

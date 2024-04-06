@@ -1,5 +1,6 @@
 package com.nailorsh.repeton.common.data.sources
 
+import android.util.Log
 import com.nailorsh.repeton.common.data.models.Lesson
 import java.time.LocalDateTime
 import kotlin.random.Random
@@ -95,7 +96,9 @@ object FakeLessonSource {
     }
 
     fun addLesson(lesson: Lesson) {
+        Log.d("FAKE_LESSON", _lessons.toString())
         _lessons.add(lesson)
+        Log.d("FAKE_LESSON", _lessons.toString())
     }
 
 }

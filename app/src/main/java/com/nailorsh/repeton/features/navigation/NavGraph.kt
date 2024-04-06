@@ -36,7 +36,6 @@ fun NavGraph(
             SearchScreen(
                 getSearchResults = tutorSearchViewModel::getTutors,
                 typingGetSearchResults = tutorSearchViewModel::typingTutorSearch,
-//                getSearchResults = viewModel::getTutors,
                 searchUiState = tutorSearchViewModel.searchUiState
             )
         }
@@ -77,8 +76,11 @@ fun NavGraph(
         composable(AppSections.NEW_LESSON.route) {
             NewLessonScreen(
                 newLessonUiState = newLessonViewModel.newLessonUiState,
-                onNavigateBack = { navHostController.navigateUp() },
-                onSaveRequiredFields = newLessonViewModel::saveRequiredFields
+                onNavigateBack = {
+                    navHostController.navigateUp()
+                    newLessonViewModel.clearData()
+                },
+                onSaveRequiredFields = newLessonViewModel::saveRequiredFields,
             )
         }
     }

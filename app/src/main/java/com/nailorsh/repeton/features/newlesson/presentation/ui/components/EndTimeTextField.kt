@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.nailorsh.repeton.R
+import com.nailorsh.repeton.features.newlesson.presentation.ui.getColorsForTextField
 import java.lang.Error
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -40,15 +41,7 @@ fun EndTimeTextField(
                 indication = null
             ) { onClick() },
         enabled = false,
-        colors = OutlinedTextFieldDefaults.colors(
-            disabledTextColor = MaterialTheme.colorScheme.onSurface,
-            disabledBorderColor = MaterialTheme.colorScheme.outline,
-            disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            disabledLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            disabledSupportingTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-        ),
+        colors = getColorsForTextField(isError),
         readOnly = true,
         singleLine = true,
         value = time.format(ofLocalizedTime(FormatStyle.SHORT)),

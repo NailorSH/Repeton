@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 data class Lesson(
     // ID устанавливается при добавлении нового урока
-
+    var id : Int = 0,
     val subject: Subject,
     val title: String,
     val description: String? = null,
@@ -16,8 +16,6 @@ data class Lesson(
     val homeworkLink: String? = null,
     val additionalMaterials: String? = null
 ) {
-    var id : Int = 0
-    private set
 
     companion object {
         private var lessonsNum : Int = 0

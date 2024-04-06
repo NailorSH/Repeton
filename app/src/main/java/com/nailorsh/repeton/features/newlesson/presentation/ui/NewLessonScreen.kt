@@ -1,45 +1,31 @@
 package com.nailorsh.repeton.features.newlesson.presentation.ui
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.util.Log
-import android.widget.DatePicker
-import android.widget.TimePicker
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.common.data.models.Lesson
 import com.nailorsh.repeton.common.data.models.Subject
 import com.nailorsh.repeton.core.ui.components.RepetonDivider
-import com.nailorsh.repeton.core.ui.theme.RepetonTheme
-import com.nailorsh.repeton.features.newlesson.data.FakeNewLessonRepository
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.*
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonUiState
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonViewModel
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.*
 import java.util.*
 
 const val TAG = "NEW_LESSON"
@@ -48,7 +34,7 @@ const val TAG = "NEW_LESSON"
 fun NewLessonScreen(
     newLessonUiState: NewLessonUiState,
     onNavigateBack: () -> Unit,
-    onSaveRequiredFields: (String, String, LocalDateTime, LocalDateTime) -> Boolean,
+    onSaveRequiredFields: (String, String, LocalDateTime, LocalDateTime) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
@@ -61,24 +47,56 @@ fun NewLessonScreen(
     /* TODO сделать var subject_id : Int */
 
 
-
     var topic by remember { mutableStateOf("") }
-    var startTime by remember { mutableStateOf(LocalDateTime.now()) }
+    var startTime by remember { mutableStateOf(LocalDateTime.now().plusMinutes(1)) }
     var endTime by remember { mutableStateOf(startTime.plusMinutes(30)) }
     var expanded by remember { mutableStateOf(false) }
-    val interactionSource = remember { MutableInteractionSource() }
-    var subjects = listOf<Subject>()
-    var errors = List(5){ 0 }
+    var subjects by remember { mutableStateOf(listOf<Subject>()) }
+
+    var subjectError by remember { mutableStateOf(false) }
+
+    val (dateError, startTimeError, endTimeError) = remember {
+        derivedStateOf {
+            val dateErrorValue = LocalDate.now() > startTime.toLocalDate()
+            val startTimeErrorValue = if (LocalDate.now() == startTime.toLocalDate()) {
+                LocalTime.now() > startTime.toLocalTime()
+            } else {
+                false
+            }
+            val endTimeErrorValue = if (!startTimeErrorValue) {
+                startTime.toLocalTime() >= endTime.toLocalTime()
+            } else {
+                false
+            }
+            Triple(dateErrorValue, startTimeErrorValue, endTimeErrorValue)
+        }
+    }.value
 
     val focusManager = LocalFocusManager.current
 
-    when (newLessonUiState) {
-        NewLessonUiState.Error -> {}
-        is NewLessonUiState.ErrorSaving -> errors = newLessonUiState.errors
-        NewLessonUiState.Loading -> {}
-        is NewLessonUiState.Success -> subjects = newLessonUiState.subjects
-    }
+    LaunchedEffect(newLessonUiState) {
+        Log.d(TAG, newLessonUiState.toString())
+        when (newLessonUiState) {
+            NewLessonUiState.Error -> {}
+            is NewLessonUiState.ErrorSaving -> {
+                subjectError = newLessonUiState.error
+            }
 
+            NewLessonUiState.Loading -> {
+
+            }
+
+            is NewLessonUiState.Success -> {
+                subjects = newLessonUiState.subjects
+            }
+
+            NewLessonUiState.SuccessSaving -> {
+                /* TODO Сделать нормальное уведомление */
+                onNavigateBack()
+            }
+        }
+    }
+    Log.d(TAG, "Loaded Subjects: $subjects")
     if (showDatePicker) {
 
 
@@ -136,7 +154,7 @@ fun NewLessonScreen(
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.surfaceBright)
             .clickable(
-                interactionSource = interactionSource,
+                interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onClick = {
                     expanded = false
@@ -183,11 +201,14 @@ fun NewLessonScreen(
 
             SubjectTextField(
                 subject = subject,
-                onSubjectChange = { subject = it },
+                onSubjectChange = {
+                    subject = it
+                    subjectError = false
+                },
                 subjects = subjects,
                 expanded = expanded,
                 onExpandedChange = { expanded = it },
-                isError = errors[NewLessonViewModel.ERROR_FOR_SUBJECT_TEXT_FIELD] == 1
+                isError = subjectError
             )
 
             TopicTextField(
@@ -201,7 +222,7 @@ fun NewLessonScreen(
                 onClick = {
                     showDatePicker = true
                 },
-                isError = errors[NewLessonViewModel.ERROR_FOR_DATE_TEXT_FIELD] == 1
+                isError = dateError
             )
             AnimatedVisibility(
                 visible = showStartTimePickerTextField,
@@ -213,7 +234,7 @@ fun NewLessonScreen(
                     onClick = {
                         showStartTimePicker = true
                     },
-                    isError = errors[NewLessonViewModel.ERROR_FOR_START_TIME_TEXT_FIELD] == 1
+                    isError = startTimeError
                 )
             }
 
@@ -224,7 +245,7 @@ fun NewLessonScreen(
                 EndTimeTextField(
                     time = endTime.toLocalTime(),
                     onClick = { showEndTimePicker = true },
-                    isError = errors[NewLessonViewModel.ERROR_FOR_END_TIME_TEXT_FIELD] == 1
+                    isError = endTimeError
                 )
             }
 
@@ -247,7 +268,9 @@ fun NewLessonScreen(
                 }
 
                 Button(
-                    enabled = subject != "" && topic != "" && showEndTimePickerTextField,
+                    enabled = subject != "" && topic != ""
+                            && showEndTimePickerTextField &&
+                            !dateError && !startTimeError && !endTimeError,
                     onClick = {
                         // Fields validation
                         onSaveRequiredFields(subject, topic, startTime, endTime)
@@ -268,6 +291,31 @@ fun NewLessonScreen(
     }
 
 
+}
+
+@Composable
+fun getColorsForTextField(error: Boolean): TextFieldColors {
+    if (!error) {
+        return OutlinedTextFieldDefaults.colors(
+            disabledTextColor = MaterialTheme.colorScheme.onSurface,
+            disabledBorderColor = MaterialTheme.colorScheme.outline,
+            disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            disabledLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            disabledSupportingTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    } else {
+        return OutlinedTextFieldDefaults.colors(
+            disabledTextColor = MaterialTheme.colorScheme.error,
+            disabledBorderColor = MaterialTheme.colorScheme.error,
+            disabledPlaceholderColor = MaterialTheme.colorScheme.error,
+            disabledLabelColor = MaterialTheme.colorScheme.error,
+            disabledLeadingIconColor = MaterialTheme.colorScheme.error,
+            disabledTrailingIconColor = MaterialTheme.colorScheme.error,
+            disabledSupportingTextColor = MaterialTheme.colorScheme.error
+        )
+    }
 }
 
 

@@ -24,7 +24,9 @@ import javax.inject.Inject
 sealed interface NewLessonUiState {
     data class Success(val subjects: List<Subject>) : NewLessonUiState
 
-    data class ErrorSaving(val errors: List<Int>) : NewLessonUiState
+    data class ErrorSaving(val error: Boolean) : NewLessonUiState
+
+    object SuccessSaving : NewLessonUiState
     object Error : NewLessonUiState
     object Loading : NewLessonUiState
 
@@ -37,7 +39,10 @@ class NewLessonViewModel @Inject constructor(
     var newLessonUiState: NewLessonUiState by mutableStateOf(NewLessonUiState.Loading)
         private set
 
-    private lateinit var _lesson: Lesson
+    private lateinit var _subject: Subject
+    private lateinit var _title: String
+    private lateinit var _startTime: LocalDateTime
+    private lateinit var _endTime: LocalDateTime
     private lateinit var _subjects: List<Subject>
 
     init {
@@ -73,62 +78,39 @@ class NewLessonViewModel @Inject constructor(
         }
     }
 
-    fun saveRequiredFields(subject: String, title: String, startTime: LocalDateTime, endTime: LocalDateTime) : Boolean {
-
-        val errorsList = MutableList(5) { 0 }
-        var error: Boolean = false
-        var resultSubject: Subject = Subject(0, "")
-
-        if (this::_subjects.isInitialized) {
-            val sub = _subjects.firstOrNull { it.subjectName == subject }
-            if (sub == null) {
-                errorsList.add(ERROR_FOR_SUBJECT_TEXT_FIELD, 1)
-                error = true
-            } else {
-                resultSubject = sub
-                errorsList.add(ERROR_FOR_SUBJECT_TEXT_FIELD, 0)
-            }
-        }
-
-        if (startTime.toLocalDate() < LocalDate.now()) {
-            error = true
-            errorsList.add(ERROR_FOR_DATE_TEXT_FIELD, 1)
-            errorsList.add(ERROR_FOR_START_TIME_TEXT_FIELD, 0)
-            errorsList.add(ERROR_FOR_END_TIME_TEXT_FIELD, 0)
-        } else {
-            errorsList.add(ERROR_FOR_DATE_TEXT_FIELD, 0)
-            if (startTime < LocalDateTime.now()) {
-                error = true
-                errorsList.add(ERROR_FOR_START_TIME_TEXT_FIELD, 1)
-                errorsList.add(ERROR_FOR_END_TIME_TEXT_FIELD, 0)
-            } else {
-                errorsList.add(ERROR_FOR_START_TIME_TEXT_FIELD, 0)
-                if (endTime <= startTime) {
-                    error = true
-                    errorsList.add(ERROR_FOR_END_TIME_TEXT_FIELD, 1)
-                } else {
-                    errorsList.add(ERROR_FOR_END_TIME_TEXT_FIELD, 0)
-                }
-            }
-        }
-
-        if (error) {
-            newLessonUiState = NewLessonUiState.ErrorSaving(errorsList)
-        } else {
-            _lesson = Lesson(
-                subject = resultSubject,
-                title = title,
-                startTime = startTime,
-                endTime = endTime,
-                teacherName = "Placeholder"
-            )
-        }
-
-
-
-
-
-        return error
+    fun clearData() {
+        getSubjects()
+        _subject = Subject(0, "")
+        _title = ""
+        _startTime = LocalDateTime.now()
+        _endTime = LocalDateTime.now()
     }
 
+    fun saveRequiredFields(subject: String, title: String, startTime: LocalDateTime, endTime: LocalDateTime) {
+        viewModelScope.launch {
+            var error = false
+
+            val resultSubject = newLessonRepository.getSubject(subject)
+            if (resultSubject == null) {
+                error = true
+            }
+
+            if (error) {
+                newLessonUiState = NewLessonUiState.ErrorSaving(error)
+            } else {
+                _subject = resultSubject!!
+                _title = title
+                _startTime = startTime
+                _endTime = endTime
+                newLessonRepository.saveNewLesson(Lesson(
+                    subject = _subject,
+                    title = _title,
+                    startTime = _startTime,
+                    endTime = _endTime,
+                    teacherName = "Placeholder"
+                ))
+                newLessonUiState = NewLessonUiState.SuccessSaving
+            }
+        }
+    }
 }

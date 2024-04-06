@@ -1,5 +1,6 @@
 package com.nailorsh.repeton.features.newlesson.presentation.ui.components
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.shrinkHorizontally
@@ -28,13 +29,12 @@ fun SubjectTextField(
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     subjects: List<Subject>,
-    isError : Boolean,
+    isError: Boolean,
 ) {
 
 
-    val filteredSubjects = subjects.filter {
-        it.subjectName.lowercase().startsWith(subject.lowercase())
-    }.sortedWith(compareBy { it.subjectName })
+
+
 
 
     ExposedDropdownMenuBox(
@@ -98,7 +98,15 @@ fun SubjectTextField(
 
 
 
-        if (filteredSubjects.isNotEmpty()) {
+        if (subjects.isNotEmpty()) {
+            val filteredSubjects by remember {
+                derivedStateOf {
+                    subjects.filter {
+                        it.subjectName.lowercase().startsWith(subject.lowercase())
+                    }.sortedWith(compareBy { it.subjectName })
+                }
+
+            }
             ExposedDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { onExpandedChange(false) },

@@ -24,7 +24,15 @@ object FakeSubjectsSource {
         return _subjects[id]
     }
 
+    fun getSubjects(subjectName : String) : Subject? {
+        return _subjects.firstOrNull {
+            it.subjectName == subjectName
+        }
+    }
+
     fun getSubjects() : List<Subject> {
         return _subjects.toList()
     }
+
+
 }

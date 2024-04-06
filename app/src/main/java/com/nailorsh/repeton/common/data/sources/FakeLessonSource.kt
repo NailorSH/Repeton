@@ -14,10 +14,9 @@ fun getRandomStartDateTime(): LocalDateTime {
 object FakeLessonSource {
 
 
-    private var _lessons = mutableListOf(
+    internal var _lessons = mutableListOf(
         getRandomStartDateTime().let { startTime ->
             Lesson(
-                id = 0,
                 subject = FakeSubjectsSource.getSubjects(1),
                 title = "Algebra Basics",
                 description = "Introduction to algebraic concepts.",
@@ -30,7 +29,6 @@ object FakeLessonSource {
         },
         getRandomStartDateTime().let { startTime ->
             Lesson(
-                id = 1,
                 subject = FakeSubjectsSource.getSubjects(3),
                 title = "Kinematics",
                 description = "Study of motion.",
@@ -43,7 +41,6 @@ object FakeLessonSource {
         },
         getRandomStartDateTime().let { startTime ->
             Lesson(
-                id = 2,
                 subject = FakeSubjectsSource.getSubjects(5),
                 title = "The French Revolution",
                 description = "A deep dive into the causes of the French Revolution.",
@@ -56,7 +53,6 @@ object FakeLessonSource {
         },
         getRandomStartDateTime().let { startTime ->
             Lesson(
-                id = 3,
                 subject = FakeSubjectsSource.getSubjects(7),
                 title = "Shakespeare's Plays",
                 description = "Exploring the major plays of William Shakespeare.",
@@ -69,7 +65,6 @@ object FakeLessonSource {
         },
         getRandomStartDateTime().let { startTime ->
             Lesson(
-                id = 4,
                 subject = FakeSubjectsSource.getSubjects(4),
                 title = "Introduction to Programming",
                 description = null,
@@ -82,7 +77,6 @@ object FakeLessonSource {
         },
         getRandomStartDateTime().let { startTime ->
             Lesson(
-                id = 5,
                 subject = FakeSubjectsSource.getSubjects(8),
                 title = "Impressionism",
                 description = "Understanding the Impressionist art movement.",

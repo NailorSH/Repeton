@@ -10,13 +10,14 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
+import com.nailorsh.repeton.common.data.models.Subject
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,8 +27,14 @@ fun SubjectTextField(
     onSubjectChange: (String) -> Unit,
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
-    newLessonUiState: NewLessonUiState,
+    subjects: List<Subject>,
+    isError : Boolean,
 ) {
+
+
+    val filteredSubjects = subjects.filter {
+        it.subjectName.lowercase().startsWith(subject.lowercase())
+    }.sortedWith(compareBy { it.subjectName })
 
 
     ExposedDropdownMenuBox(
@@ -35,6 +42,7 @@ fun SubjectTextField(
         onExpandedChange = onExpandedChange
     ) {
         OutlinedTextField(
+            isError = isError,
             singleLine = true,
             value = subject,
             onValueChange = {
@@ -88,18 +96,9 @@ fun SubjectTextField(
         )
 
 
-        val subjects = when (newLessonUiState) {
-            NewLessonUiState.Error -> listOf()
-            NewLessonUiState.Loading -> listOf()
-            is NewLessonUiState.Success -> newLessonUiState.subjects
-        }
 
-        val filteredSubjects = subjects.filter {
-            it.subjectName.lowercase().startsWith(subject.lowercase())
-        }.sortedWith(compareBy { it.subjectName })
 
         if (filteredSubjects.isNotEmpty()) {
-
             ExposedDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { onExpandedChange(false) },

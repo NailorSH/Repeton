@@ -242,7 +242,6 @@ fun ScheduleScreen(
                                     text = stringResource(R.string.add_lesson_button),
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onPrimary
                                 )
                             }
                         }

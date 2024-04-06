@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.nailorsh.repeton.R
+import java.lang.Error
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -26,11 +27,13 @@ import java.time.format.FormatStyle
 @Composable
 fun EndTimeTextField(
     time: LocalTime,
+    isError: Boolean,
     onClick: () -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
     OutlinedTextField(
+        isError = isError,
         modifier = Modifier
             .clickable(
                 interactionSource = interactionSource,
@@ -50,7 +53,8 @@ fun EndTimeTextField(
         singleLine = true,
         value = time.format(ofLocalizedTime(FormatStyle.SHORT)),
         onValueChange = {},
-        label = { stringResource(R.string.new_lesson_screen_date_label) },
+        placeholder = { Text(stringResource(R.string.new_lesson_screen_end_time)) },
+        label = { Text(stringResource(R.string.new_lesson_screen_end_time)) },
         supportingText = { Text(stringResource(R.string.required_field)) },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
@@ -58,7 +62,7 @@ fun EndTimeTextField(
         ),
         leadingIcon = {
             Icon(
-                painter = painterResource(R.drawable.nest_clock_400w),
+                painter = painterResource(R.drawable.clock_icon),
                 contentDescription = stringResource(R.string.new_lesson_screen_datepick_icon)
             )
         },

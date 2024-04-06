@@ -79,4 +79,11 @@
     <string name="new_lesson_screen_topic_placeholder">Кинематика</string>
     <string name="new_lesson_screen_date_label">Дата проведения</string>
     <string name="new_lesson_screen_datepick_icon">Выбор даты</string>
+    <string name="new_lesson_screen_choose_start_time">Время начала занятия</string>
+    <string name="new_lesson_screen_choose_end_time">Время окончания занятия</string>
+    <string name="new_lesson_screen_start_time_label">Время начала</string>
+    <string name="new_lesson_screen_end_time">Время окончания</string>
+    <string name="new_lesson_screen_timepicker_confirm">Подтвердить</string>
+    <string name="new_lesson_screen_timepicker_cancel">Отменить</string>
+    <string name="cancel">Отмена</string>
 </resources>

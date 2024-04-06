@@ -78,7 +78,7 @@ fun NavGraph(
             NewLessonScreen(
                 newLessonUiState = newLessonViewModel.newLessonUiState,
                 onNavigateBack = { navHostController.navigateUp() },
-                onSaveLessons = { /* TODO Сохранение урока */ }
+                onSaveRequiredFields = newLessonViewModel::saveRequiredFields
             )
         }
     }

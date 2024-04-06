@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.nailorsh.repeton.R
+import java.lang.Error
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -26,11 +27,14 @@ import java.time.format.FormatStyle
 @Composable
 fun StartTimeTextField(
     time: LocalTime,
+    firstSet: Boolean,
     onClick: () -> Unit,
+    isError: Boolean,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
     OutlinedTextField(
+        isError = isError,
         modifier = Modifier
             .clickable(
                 interactionSource = interactionSource,
@@ -48,9 +52,10 @@ fun StartTimeTextField(
         ),
         readOnly = true,
         singleLine = true,
-        value = time.format(ofLocalizedTime(FormatStyle.SHORT)),
+        value = if (firstSet) "" else time.format(ofLocalizedTime(FormatStyle.SHORT)),
         onValueChange = {},
-        label = { stringResource(R.string.new_lesson_screen_date_label) },
+        placeholder = { Text(stringResource(R.string.new_lesson_screen_start_time_label)) },
+        label = { Text(stringResource(R.string.new_lesson_screen_start_time_label)) },
         supportingText = { Text(stringResource(R.string.required_field)) },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
@@ -58,13 +63,12 @@ fun StartTimeTextField(
         ),
         leadingIcon = {
             Icon(
-                painter = painterResource(R.drawable.nest_clock_400w),
+                painter = painterResource(R.drawable.clock_icon),
                 contentDescription = stringResource(R.string.new_lesson_screen_datepick_icon)
             )
         },
 
-    )
+        )
 }
 
-val d : Float = 0.2f
 

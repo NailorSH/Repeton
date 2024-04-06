@@ -99,20 +99,13 @@ fun SubjectTextField(
 
 
         if (subjects.isNotEmpty()) {
-            val filteredSubjects by remember {
-                derivedStateOf {
-                    subjects.filter {
-                        it.subjectName.lowercase().startsWith(subject.lowercase())
-                    }.sortedWith(compareBy { it.subjectName })
-                }
 
-            }
             ExposedDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { onExpandedChange(false) },
                 modifier = Modifier.heightIn(max = 250.dp)
             ) {
-                filteredSubjects.forEach {
+                subjects.forEach {
                     DropdownMenuItem(
                         text = { Text(text = it.subjectName) },
                         onClick = {

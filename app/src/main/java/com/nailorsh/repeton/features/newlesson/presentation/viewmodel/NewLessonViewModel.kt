@@ -24,7 +24,7 @@ import javax.inject.Inject
 sealed interface NewLessonUiState {
     data class Success(val subjects: List<Subject>) : NewLessonUiState
 
-    data class ErrorSaving(val error: Boolean) : NewLessonUiState
+    data class ErrorSaving(val error: Boolean, val subjects: List<Subject>) : NewLessonUiState
 
     object SuccessSaving : NewLessonUiState
     object Error : NewLessonUiState
@@ -96,7 +96,7 @@ class NewLessonViewModel @Inject constructor(
             }
 
             if (error) {
-                newLessonUiState = NewLessonUiState.ErrorSaving(error)
+                newLessonUiState = NewLessonUiState.ErrorSaving(error, _subjects)
             } else {
                 _subject = resultSubject!!
                 _title = title

@@ -55,6 +55,17 @@ fun NewLessonScreen(
 
     var subjectError by remember { mutableStateOf(false) }
 
+    val filteredSubjects by remember {
+        derivedStateOf {
+            subjects.filter {
+                it.subjectName.lowercase().startsWith(subject.lowercase())
+            }.sortedWith(compareBy { it.subjectName })
+        }
+
+    }
+
+
+
     val (dateError, startTimeError, endTimeError) = remember {
         derivedStateOf {
             val dateErrorValue = LocalDate.now() > startTime.toLocalDate()
@@ -74,26 +85,24 @@ fun NewLessonScreen(
 
     val focusManager = LocalFocusManager.current
 
-    LaunchedEffect(newLessonUiState) {
-        Log.d(TAG, newLessonUiState.toString())
-        when (newLessonUiState) {
-            NewLessonUiState.Error -> {}
-            is NewLessonUiState.ErrorSaving -> {
-                subjectError = newLessonUiState.error
-            }
+    when (newLessonUiState) {
+        NewLessonUiState.Error -> {}
+        is NewLessonUiState.ErrorSaving -> {
+            subjectError = newLessonUiState.error
+            subjects = newLessonUiState.subjects
+        }
 
-            NewLessonUiState.Loading -> {
+        NewLessonUiState.Loading -> {
 
-            }
+        }
 
-            is NewLessonUiState.Success -> {
-                subjects = newLessonUiState.subjects
-            }
+        is NewLessonUiState.Success -> {
+            subjects = newLessonUiState.subjects
+        }
 
-            NewLessonUiState.SuccessSaving -> {
-                /* TODO Сделать нормальное уведомление */
-                onNavigateBack()
-            }
+        NewLessonUiState.SuccessSaving -> {
+            /* TODO Сделать нормальное уведомление */
+            onNavigateBack()
         }
     }
     Log.d(TAG, "Loaded Subjects: $subjects")
@@ -203,9 +212,8 @@ fun NewLessonScreen(
                 subject = subject,
                 onSubjectChange = {
                     subject = it
-                    subjectError = false
                 },
-                subjects = subjects,
+                subjects = filteredSubjects,
                 expanded = expanded,
                 onExpandedChange = { expanded = it },
                 isError = subjectError

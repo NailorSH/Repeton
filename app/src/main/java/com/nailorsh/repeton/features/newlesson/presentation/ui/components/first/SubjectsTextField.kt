@@ -88,9 +88,6 @@ fun SubjectTextField(
             modifier = Modifier.menuAnchor()
         )
 
-
-
-
         if (subjects.isNotEmpty()) {
 
             ExposedDropdownMenu(

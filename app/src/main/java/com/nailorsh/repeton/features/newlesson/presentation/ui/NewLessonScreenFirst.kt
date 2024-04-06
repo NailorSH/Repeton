@@ -119,7 +119,6 @@ fun NewLessonScreen(
         }
     }
 
-    Log.d(TAG, "Loaded Subjects: $subjects")
     if (showDatePicker) {
 
 

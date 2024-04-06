@@ -27,7 +27,6 @@ fun DateTextField(
     onClick: () -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    Log.d("DATE", firstSet.toString())
     OutlinedTextField(
         isError = isError,
         modifier = Modifier

@@ -5,16 +5,9 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
-import com.nailorsh.repeton.R
-import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.util.*
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -24,8 +17,6 @@ fun CalendarDialog(
     onDateChange: (Long?) -> Unit,
     onDismissRequest: () -> Unit
 ) {
-
-
 
     val state = rememberDatePickerState(
         yearRange = (2024..2050),

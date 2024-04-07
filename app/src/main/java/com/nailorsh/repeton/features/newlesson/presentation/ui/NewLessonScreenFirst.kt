@@ -35,6 +35,8 @@ const val TAG = "NEW_LESSON"
 @Composable
 fun NewLessonScreen(
     lessonState: NewLessonState,
+    filteredSubjects: List<Subject>,
+    onFilterSubjects: (String) -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateNext: () -> Unit,
     onSaveRequiredFields: (String, String, LocalDateTime, LocalDateTime) -> Unit,
@@ -52,21 +54,12 @@ fun NewLessonScreen(
     var localEndTime by remember { mutableStateOf(lessonState.endTime) }
     var expanded by remember { mutableStateOf(false) }
 
-    val subjects = when (lessonState.uiState) {
-        is NewLessonUiState.Success -> lessonState.uiState.subjects
-        is NewLessonUiState.ErrorSaving -> lessonState.uiState.subjects
-        else -> listOf<Subject>()
+    LaunchedEffect(localSubject) {
+        onFilterSubjects(localSubject)
     }
 
     var subjectError by remember { mutableStateOf(false) }
 
-    val filteredSubjects by remember {
-        derivedStateOf {
-            subjects.filter {
-                it.subjectName.lowercase().startsWith(localSubject.lowercase())
-            }.sortedWith(compareBy { it.subjectName })
-        }
-    }
 
     LaunchedEffect(lessonState.uiState) {
         when (lessonState.uiState) {
@@ -82,12 +75,13 @@ fun NewLessonScreen(
     val focusManager = LocalFocusManager.current
 
 
+    val now = remember { LocalDateTime.now() }
 
     val (dateError, startTimeError, endTimeError) = remember {
         derivedStateOf {
-            val dateErrorValue = LocalDate.now() > localStartTime.toLocalDate()
-            val startTimeErrorValue = if (LocalDate.now() == localStartTime.toLocalDate()) {
-                LocalTime.now() > localStartTime.toLocalTime()
+            val dateErrorValue = now.toLocalDate() > localStartTime.toLocalDate()
+            val startTimeErrorValue = if (now.toLocalDate() == localStartTime.toLocalDate()) {
+                now.toLocalTime() > localStartTime.toLocalTime()
             } else {
                 false
             }
@@ -286,6 +280,8 @@ fun NewLessonScreenPreview() {
         onNavigateBack = {},
         onSaveRequiredFields = { a, b, c, d -> },
         onNavigateNext = {},
+        filteredSubjects = listOf(),
+        onFilterSubjects = {}
     )
 
 }

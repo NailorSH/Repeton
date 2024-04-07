@@ -78,9 +78,12 @@ fun NavGraph(
 
         composable(AppSections.NEW_LESSON.route) {
             val lessonState by newLessonViewModel.state.collectAsState()
+            val filteredSubjects by newLessonViewModel.filteredSubjects.collectAsState()
 
             NewLessonScreen(
                 lessonState = lessonState,
+                filteredSubjects = filteredSubjects,
+                onFilterSubjects = newLessonViewModel::updateFilteredSubjects,
                 onNavigateBack = {
                     navHostController.navigateUp()
                     newLessonViewModel.clearData()

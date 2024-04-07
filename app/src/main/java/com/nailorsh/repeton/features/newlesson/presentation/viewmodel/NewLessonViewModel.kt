@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.nailorsh.repeton.common.data.models.Homework
 import com.nailorsh.repeton.common.data.models.Lesson
 import com.nailorsh.repeton.common.data.models.Subject
+import com.nailorsh.repeton.features.currentlesson.presentation.viewmodel.CurrentLessonUiState
 import com.nailorsh.repeton.features.newlesson.data.NewLessonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,6 +13,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.IOException
+import java.net.HttpRetryException
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -66,7 +69,9 @@ class NewLessonViewModel @Inject constructor(
                 _state.update { currentState ->
                     currentState.copy(uiState = NewLessonUiState.Success(subjects))
                 }
-            } catch (e: Exception) {
+            } catch (e: IOException) {
+                _state.update { it.copy(uiState = NewLessonUiState.Error) }
+            } catch (e: HttpRetryException) {
                 _state.update { it.copy(uiState = NewLessonUiState.Error) }
             }
         }
@@ -133,6 +138,7 @@ class NewLessonViewModel @Inject constructor(
                                 when (uiState) {
                                     is NewLessonUiState.ErrorSaving ->
                                         uiState.subjects.ifEmpty { listOf() }
+
                                     is NewLessonUiState.Success -> uiState.subjects
                                     else -> listOf()
                                 }

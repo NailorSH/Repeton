@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.features.newlesson.presentation.ui.getColorsForTextField
+import com.nailorsh.repeton.core.util.getDisabledInteractiveOutlinedTextFieldColors
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter.ofLocalizedTime
 import java.time.format.FormatStyle
@@ -37,7 +37,7 @@ fun StartTimeTextField(
                 indication = null
             ) { onClick() },
         enabled = false,
-        colors = getColorsForTextField(isError),
+        colors = getDisabledInteractiveOutlinedTextFieldColors(isError),
         readOnly = true,
         singleLine = true,
         value = if (firstSet) "" else time.format(ofLocalizedTime(FormatStyle.SHORT)),

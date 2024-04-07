@@ -14,7 +14,7 @@ import com.nailorsh.repeton.features.messenger.presentation.viewmodel.MessengerV
 import com.nailorsh.repeton.features.newlesson.presentation.ui.NewLessonScreen
 import com.nailorsh.repeton.features.newlesson.presentation.ui.NewLessonScreenSecond
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonViewModel
-import com.nailorsh.repeton.features.schedule.presentation.ui.components.ScheduleScreen
+import com.nailorsh.repeton.features.schedule.presentation.ui.ScheduleScreen
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleViewModel
 import com.nailorsh.repeton.features.studentprofile.presentation.ui.ProfileScreen
 import com.nailorsh.repeton.features.tutorsearch.presentation.ui.SearchScreen

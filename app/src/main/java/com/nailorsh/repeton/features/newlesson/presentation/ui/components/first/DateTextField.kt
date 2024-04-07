@@ -1,6 +1,5 @@
 package com.nailorsh.repeton.features.newlesson.presentation.ui.components.first
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.features.newlesson.presentation.ui.getColorsForTextField
+import com.nailorsh.repeton.core.util.getDisabledInteractiveOutlinedTextFieldColors
 import java.time.LocalDate
 
 
@@ -35,7 +34,7 @@ fun DateTextField(
                 indication = null
             ) { onClick() },
         enabled = false,
-        colors = getColorsForTextField(isError),
+        colors = getDisabledInteractiveOutlinedTextFieldColors(isError),
         readOnly = true,
         singleLine = true,
         value = if (firstSet) "" else date.toString(),

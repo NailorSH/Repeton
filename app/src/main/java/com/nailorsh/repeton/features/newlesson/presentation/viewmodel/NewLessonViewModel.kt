@@ -10,6 +10,10 @@ import com.nailorsh.repeton.common.data.models.Homework
 import com.nailorsh.repeton.common.data.models.Lesson
 import com.nailorsh.repeton.common.data.models.Subject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.net.HttpRetryException
@@ -28,35 +32,29 @@ sealed interface NewLessonUiState {
 
 }
 
-sealed interface NewLessonSecondUiState {
-    object None : NewLessonSecondUiState
-
-    object Saved : NewLessonSecondUiState
+enum class NewLessonSecondUiState {
+    None, Saved
 }
+
+data class NewLessonState(
+    val uiState: NewLessonUiState = NewLessonUiState.Loading,
+    val secondUiState: NewLessonSecondUiState = NewLessonSecondUiState.None,
+    val subject: Subject = Subject(-1, ""),
+    val topic: String = "",
+    val startTime: LocalDateTime = LocalDateTime.now().plusMinutes(1),
+    val endTime: LocalDateTime = LocalDateTime.now().plusMinutes(30),
+    val description: String? = null,
+    val additionalMaterials: String? = null,
+    val homework: Homework? = null
+)
 
 @HiltViewModel
 class NewLessonViewModel @Inject constructor(
     private val newLessonRepository: NewLessonRepository
 ) : ViewModel() {
-    var newLessonUiState: NewLessonUiState by mutableStateOf(NewLessonUiState.Loading)
-        private set
 
-    var newLessonSecondUiState : NewLessonSecondUiState by mutableStateOf(NewLessonSecondUiState.None)
-        private set
-
-    var _subject = Subject(-1, "")
-        private set
-    var _topic = ""
-        private set
-    var _startTime = LocalDateTime.now().plusMinutes(1)
-        private set
-    var _endTime = LocalDateTime.now().plusMinutes(30)
-        private set
-
-    private var _description : String? = null
-    private var _additionalMaterials : String? = null
-    private var _homework : Homework? = null
-    private lateinit var _subjects : List<Subject>
+    private val _state = MutableStateFlow(NewLessonState())
+    val state: StateFlow<NewLessonState> = _state.asStateFlow()
 
     init {
         clearData()
@@ -64,69 +62,66 @@ class NewLessonViewModel @Inject constructor(
 
     fun getSubjects() {
         viewModelScope.launch {
-            newLessonUiState = NewLessonUiState.Loading
-            newLessonSecondUiState = NewLessonSecondUiState.None
-            newLessonUiState = try {
-                /* TODO Добавить репозиторий для NewLesson и метод получения всех доступных предметов */
-                _subjects = newLessonRepository.getSubjects()
-                NewLessonUiState.Success(_subjects)
-            } catch (e: IOException) {
-                NewLessonUiState.Error
-            } catch (e: HttpRetryException) {
-                NewLessonUiState.Error
+            _state.update { it.copy(uiState = NewLessonUiState.Loading, secondUiState = NewLessonSecondUiState.None) }
+            try {
+                val subjects = newLessonRepository.getSubjects()
+                _state.update { currentState ->
+                    currentState.copy(uiState = NewLessonUiState.Success(subjects))
+                }
+            } catch (e: Exception) { // Объединяем IOException и HttpRetryException для простоты
+                _state.update { it.copy(uiState = NewLessonUiState.Error) }
             }
         }
     }
 
-    fun saveLesson(description : String?, homework: Homework?, additionalMaterials : String?) {
+    fun saveLesson(description: String?, homework: Homework?, additionalMaterials: String?) {
         viewModelScope.launch {
-            _description = description
-            _homework = homework
-            _additionalMaterials = additionalMaterials
             newLessonRepository.saveNewLesson(Lesson(
-                subject = _subject,
-                topic = _topic,
-                startTime = _startTime,
-                endTime = _endTime,
+                subject = _state.value.subject,
+                topic = _state.value.topic,
+                startTime = _state.value.startTime,
+                endTime = _state.value.endTime,
                 teacherName = "Placeholder",
-                description = _description,
-                homework = _homework,
-                additionalMaterials = _additionalMaterials
+                description = description,
+                homework = homework,
+                additionalMaterials = additionalMaterials
             ))
-            newLessonSecondUiState = NewLessonSecondUiState.Saved
+            _state.update { it.copy(secondUiState = NewLessonSecondUiState.Saved) }
         }
     }
 
     fun clearData() {
         getSubjects()
-        _subject = Subject(-1, "")
-        _topic = ""
-        _startTime = LocalDateTime.now().plusMinutes(1)
-        _endTime = LocalDateTime.now().plusMinutes(30)
-        _description = null
-        _homework = null
-        _additionalMaterials = null
+        _state.update {
+            it.copy(
+                subject = Subject(-1, ""),
+                topic = "",
+                startTime = LocalDateTime.now().plusMinutes(1),
+                endTime = LocalDateTime.now().plusMinutes(30),
+                description = null,
+                homework = null,
+                additionalMaterials = null
+            )
+        }
     }
 
     fun saveRequiredFields(subject: String, title: String, startTime: LocalDateTime, endTime: LocalDateTime) {
         viewModelScope.launch {
-            var error = false
-
-            val resultSubject = newLessonRepository.getSubject(subject)
-            if (resultSubject == null) {
-                error = true
-                _subject = Subject(-1, "")
-            }
+            val resultSubject = newLessonRepository.getSubject(subject) ?: Subject(-1, "")
+            val error = resultSubject.id == -1
 
             if (error) {
-                newLessonUiState = NewLessonUiState.ErrorSaving(error, _subjects)
+                _state.update { it.copy(uiState = NewLessonUiState.ErrorSaving(true, _state.value.uiState.let { uiState -> if (uiState is NewLessonUiState.Success) uiState.subjects else emptyList() })) }
             } else {
-                _subject = resultSubject!!
-                _topic = title
-                _startTime = startTime
-                _endTime = endTime
-
-                newLessonUiState = NewLessonUiState.SuccessSaving
+                _state.update {
+                    it.copy(
+                        subject = resultSubject,
+                        topic = title,
+                        startTime = startTime,
+                        endTime = endTime,
+                        uiState = NewLessonUiState.SuccessSaving
+                    )
+                }
             }
         }
     }

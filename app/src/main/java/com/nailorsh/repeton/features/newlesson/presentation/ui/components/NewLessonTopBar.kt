@@ -16,7 +16,7 @@ import com.nailorsh.repeton.R
 import com.nailorsh.repeton.core.ui.components.RepetonDivider
 
 @Composable
-fun TopBar(modifier: Modifier = Modifier) {
+fun NewLessonTopBar(modifier: Modifier = Modifier) {
     Spacer(modifier = modifier.height(48.dp))
     Card(
         colors = CardDefaults.cardColors(

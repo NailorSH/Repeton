@@ -26,40 +26,40 @@ import com.nailorsh.repeton.common.data.models.Homework
 import com.nailorsh.repeton.core.util.cameraRequest
 import com.nailorsh.repeton.core.util.fileAttachmentRequest
 import com.nailorsh.repeton.features.newlesson.data.FakeNewLessonRepository
-import com.nailorsh.repeton.features.newlesson.presentation.ui.components.TopBar
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.NewLessonTopBar
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.second.AdditionalMaterialsTextField
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.second.DescriptionTextField
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.second.HomeworkTextField
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonSecondUiState
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonState
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonViewModel
 
 
 @Composable
 fun NewLessonScreenSecond(
-    newLessonSecondUiState: NewLessonSecondUiState,
+    lessonState: NewLessonState,
     onNavigateBack: () -> Unit,
     onNavigateSuccessfulSave: () -> Unit,
     onSaveLesson: (String?, Homework?, String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
-    when (newLessonSecondUiState) {
-        NewLessonSecondUiState.None -> {
-        }
 
-        NewLessonSecondUiState.Saved -> {
-            onNavigateSuccessfulSave()
+    var description by remember { mutableStateOf(lessonState.description ?: "") }
+    var homeworkText by remember { mutableStateOf(lessonState.homework?.text ?: "") }
+    var additionalMaterials by remember { mutableStateOf(lessonState.additionalMaterials ?: "") }
+    var homeworkAttachments by remember { mutableStateOf(lessonState.homework?.attachments ?: emptyList()) }
+
+    val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
+    val scrollState = rememberScrollState()
+    LaunchedEffect(lessonState.secondUiState) {
+        when (lessonState.secondUiState) {
+            NewLessonSecondUiState.Saved -> onNavigateSuccessfulSave()
+            else -> {}
         }
     }
 
-
-    var description by remember { mutableStateOf("") }
-    val scrollState = rememberScrollState()
-    var homeworkText by remember { mutableStateOf("") }
-    var homeworkAttachments by remember { mutableStateOf<List<Attachment>>(emptyList()) }
-    var additionalMaterials by remember { mutableStateOf("") }
-
-    val context = LocalContext.current
 
     val onClickAddPhoto = cameraRequest(
         onImageCaptured = { /* TODO Обработка изображения и выгрузка в локальный репозиторий */ },
@@ -77,7 +77,6 @@ fun NewLessonScreenSecond(
     )
 
 
-    val focusManager = LocalFocusManager.current
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -91,7 +90,7 @@ fun NewLessonScreenSecond(
             )
     ) {
 
-        TopBar(
+        NewLessonTopBar(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
@@ -180,7 +179,7 @@ fun NewLessonScreenSecond(
 fun NewLessonScreenSecondPreview() {
 
     NewLessonScreenSecond(
-        newLessonSecondUiState = NewLessonViewModel(FakeNewLessonRepository()).newLessonSecondUiState,
+        lessonState = NewLessonViewModel(FakeNewLessonRepository()).state.collectAsState().value,
         onNavigateBack = {},
         onSaveLesson = { a, b, c -> },
         onNavigateSuccessfulSave = {}

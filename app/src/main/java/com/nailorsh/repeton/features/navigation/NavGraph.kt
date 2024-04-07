@@ -1,6 +1,8 @@
 package com.nailorsh.repeton.features.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -75,27 +77,26 @@ fun NavGraph(
         }
 
         composable(AppSections.NEW_LESSON.route) {
+            val lessonState by newLessonViewModel.state.collectAsState()
+
             NewLessonScreen(
-                newLessonUiState = newLessonViewModel.newLessonUiState,
+                lessonState = lessonState,
                 onNavigateBack = {
                     navHostController.navigateUp()
                     newLessonViewModel.clearData()
                 },
-                onSaveRequiredFields = newLessonViewModel::saveRequiredFields,
                 onNavigateNext = {
                     navHostController.navigate(AppSections.NEW_LESSON_SECOND.route)
                     newLessonViewModel.getSubjects()
                 },
-                subject = newLessonViewModel._subject,
-                topic = newLessonViewModel._topic,
-                startTime = newLessonViewModel._startTime,
-                endTime = newLessonViewModel._endTime
+                onSaveRequiredFields = newLessonViewModel::saveRequiredFields
             )
         }
 
         composable(AppSections.NEW_LESSON_SECOND.route) {
+            val lessonState by newLessonViewModel.state.collectAsState()
             NewLessonScreenSecond(
-                newLessonSecondUiState = newLessonViewModel.newLessonSecondUiState,
+                lessonState = lessonState,
                 onNavigateBack = {
                     navHostController.navigateUp()
                 },
@@ -103,7 +104,9 @@ fun NavGraph(
                     navHostController.popBackStack(route = AppSections.HOME.route, inclusive = false)
                     newLessonViewModel.clearData()
                 },
-                onSaveLesson = newLessonViewModel::saveLesson
+                onSaveLesson = { description, homework, additionalMaterials ->
+                    newLessonViewModel.saveLesson(description, homework, additionalMaterials)
+                }
             )
         }
     }

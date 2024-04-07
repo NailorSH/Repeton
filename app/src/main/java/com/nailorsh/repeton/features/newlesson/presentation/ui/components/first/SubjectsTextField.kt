@@ -27,6 +27,7 @@ fun SubjectTextField(
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     subjects: List<Subject>,
+    onChangeError: () -> Unit,
     isError: Boolean,
 ) {
 
@@ -101,6 +102,7 @@ fun SubjectTextField(
                         onClick = {
                             onSubjectChange(it.subjectName)
                             onExpandedChange(false)
+                            onChangeError()
                         }
                     )
                 }

@@ -1,6 +1,5 @@
 package com.nailorsh.repeton.features.newlesson.presentation.ui
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInHorizontally
@@ -20,8 +19,9 @@ import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.common.data.models.Subject
 import com.nailorsh.repeton.features.newlesson.data.FakeNewLessonRepository
-import com.nailorsh.repeton.features.newlesson.presentation.ui.components.TopBar
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.NewLessonTopBar
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.*
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonState
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonUiState
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonViewModel
 import java.time.*
@@ -31,11 +31,7 @@ const val TAG = "NEW_LESSON"
 
 @Composable
 fun NewLessonScreen(
-    newLessonUiState: NewLessonUiState,
-    subject : Subject,
-    topic : String,
-    startTime : LocalDateTime,
-    endTime : LocalDateTime,
+    lessonState: NewLessonState,
     onNavigateBack: () -> Unit,
     onNavigateNext: () -> Unit,
     onSaveRequiredFields: (String, String, LocalDateTime, LocalDateTime) -> Unit,
@@ -47,13 +43,17 @@ fun NewLessonScreen(
     var showStartTimePickerTextField by remember { mutableStateOf(false) }
     var showEndTimePickerTextField by remember { mutableStateOf(false) }
 
-    var localSubject by remember { mutableStateOf(subject.subjectName) }
-
-    var localTopic by remember { mutableStateOf(topic) }
-    var localStartTime by remember { mutableStateOf(startTime) }
-    var localEndTime by remember { mutableStateOf(endTime) }
+    var localSubject by remember { mutableStateOf(lessonState.subject.subjectName) }
+    var localTopic by remember { mutableStateOf(lessonState.topic) }
+    var localStartTime by remember { mutableStateOf(lessonState.startTime) }
+    var localEndTime by remember { mutableStateOf(lessonState.endTime) }
     var expanded by remember { mutableStateOf(false) }
-    var subjects by remember { mutableStateOf(listOf<Subject>()) }
+
+    val subjects = when (lessonState.uiState) {
+        is NewLessonUiState.Success -> lessonState.uiState.subjects
+        is NewLessonUiState.ErrorSaving -> lessonState.uiState.subjects
+        else -> listOf<Subject>()
+    }
 
     var subjectError by remember { mutableStateOf(false) }
 
@@ -63,7 +63,16 @@ fun NewLessonScreen(
                 it.subjectName.lowercase().startsWith(localSubject.lowercase())
             }.sortedWith(compareBy { it.subjectName })
         }
+    }
 
+    LaunchedEffect(lessonState.uiState) {
+        when (lessonState.uiState) {
+            is NewLessonUiState.ErrorSaving -> {
+                subjectError = lessonState.uiState.error
+            }
+            NewLessonUiState.SuccessSaving -> onNavigateNext()
+            else -> {}
+        }
     }
 
     val focusManager = LocalFocusManager.current
@@ -88,36 +97,7 @@ fun NewLessonScreen(
     }.value
 
 
-    var errorToast by remember { mutableStateOf(false) }
 
-    if (errorToast) {
-        errorToast = false
-        /* TODO Уведомление об ошибке */
-    }
-
-    LaunchedEffect(newLessonUiState) {
-        when (newLessonUiState) {
-            NewLessonUiState.Error -> {}
-            is NewLessonUiState.ErrorSaving -> {
-                subjectError = newLessonUiState.error
-                subjects = newLessonUiState.subjects
-                errorToast = true
-            }
-
-            NewLessonUiState.Loading -> {
-
-            }
-
-            is NewLessonUiState.Success -> {
-                subjects = newLessonUiState.subjects
-            }
-
-            NewLessonUiState.SuccessSaving -> {
-                /* TODO Сделать нормальное уведомление */
-                onNavigateNext()
-            }
-        }
-    }
 
     if (showDatePicker) {
 
@@ -146,7 +126,8 @@ fun NewLessonScreen(
         LessonTimePicker(
             onCancel = { showStartTimePicker = false },
             onConfirm = {
-                localStartTime = localStartTime.withHour(it.get(Calendar.HOUR_OF_DAY)).withMinute(it.get(Calendar.MINUTE))
+                localStartTime =
+                    localStartTime.withHour(it.get(Calendar.HOUR_OF_DAY)).withMinute(it.get(Calendar.MINUTE))
                 showStartTimePicker = false
                 showEndTimePickerTextField = true
                 localEndTime = localStartTime.plusMinutes(30)
@@ -185,7 +166,7 @@ fun NewLessonScreen(
             )
     ) {
 
-        TopBar(
+        NewLessonTopBar(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
@@ -201,11 +182,11 @@ fun NewLessonScreen(
                 subject = localSubject,
                 onSubjectChange = {
                     localSubject = it
-                    subjectError = false
                 },
                 subjects = filteredSubjects,
                 expanded = expanded,
                 onExpandedChange = { expanded = it },
+                onChangeError = { subjectError = false },
                 isError = subjectError
             )
 
@@ -322,14 +303,10 @@ fun getColorsForTextField(error: Boolean): TextFieldColors {
 fun NewLessonScreenPreview() {
 
     NewLessonScreen(
-        newLessonUiState = NewLessonViewModel(FakeNewLessonRepository()).newLessonUiState,
+        lessonState = NewLessonViewModel(FakeNewLessonRepository()).state.collectAsState().value,
         onNavigateBack = {},
         onSaveRequiredFields = { a, b, c, d -> },
         onNavigateNext = {},
-        startTime = LocalDateTime.now().plusMinutes(1),
-        endTime = LocalDateTime.now().plusMinutes(30),
-        subject = Subject(-1, ""),
-        topic = ""
     )
 
 }

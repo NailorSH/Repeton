@@ -66,7 +66,7 @@ class NewLessonViewModel @Inject constructor(
                 _state.update { currentState ->
                     currentState.copy(uiState = NewLessonUiState.Success(subjects))
                 }
-            } catch (e: Exception) { // Объединяем IOException и HttpRetryException для простоты
+            } catch (e: Exception) {
                 _state.update { it.copy(uiState = NewLessonUiState.Error) }
             }
         }

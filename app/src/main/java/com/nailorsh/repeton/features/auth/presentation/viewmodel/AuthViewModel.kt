@@ -45,4 +45,10 @@ class AuthViewModel @Inject constructor(
             authService.onVerifyOtp(code)
         }
     }
+
+    fun createAnonymousAccount() {
+        viewModelScope.launch {
+            authService.createAnonymousAccount()
+        }
+    }
 }

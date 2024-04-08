@@ -66,4 +66,7 @@
         Ожидание автоматического обнаружения отправленного SMS на номер:
     </string>
     <string name="lessonscreen_timeinfo_descrpition">Время</string>
+    <string name="guest_mode">Гостевой режим</string>
+    <string name="creating_guest_mode">Создание гостевого аккаунта</string>
+    <string name="guest_account_created">Гостевой аккаунт создан</string>
 </resources>

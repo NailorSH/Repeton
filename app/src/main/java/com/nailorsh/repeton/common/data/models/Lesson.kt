@@ -3,13 +3,24 @@ package com.nailorsh.repeton.common.data.models
 import java.time.LocalDateTime
 
 data class Lesson(
-    val id: Int,
-    val subject: String,
-    val title: String,
-    val description: String?,
+    // ID устанавливается при добавлении нового урока
+    var id : Int = 0,
+    val subject: Subject,
+    val topic: String,
+    val description: String? = null,
     val teacherName: String, /* TODO Заменить на ID тутора и сделать запросы данных тутора для урока */
     val startTime: LocalDateTime,
     val endTime: LocalDateTime,
-    val homeworkLink: String?,
-    val additionalMaterials: String?
-)
+    val homework: Homework? = null,
+    val additionalMaterials: String? = null
+) {
+
+    companion object {
+        private var lessonsNum : Int = 0
+    }
+
+    init {
+        id = lessonsNum
+        lessonsNum++
+    }
+}

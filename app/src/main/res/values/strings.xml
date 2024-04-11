@@ -92,9 +92,12 @@
     <string name="optional_field">Необязательное поле</string>
     <string name="new_lesson_second_route_title">Добавление занятия (вторая страница)</string>
     <string name="new_lesson_screen_homework_label">Домашнее задание</string>
-    <string name="new_lesson_screen_homework_placeholder">Здесь вы можете прикрепить фотографии и файлы...</string>
+    <string name="new_lesson_screen_homework_placeholder">Здесь вы можете прикрепить фотографии и файлы…</string>
     <string name="new_lesson_screen_additional_materials_label">Дополнительные материалы</string>
-    <string name="new_lesson_screen_additional_materials_placeholder">Ссылки на полезную литературу...</string>
+    <string name="new_lesson_screen_additional_materials_placeholder">Ссылки на полезную литературу…</string>
     <string name="camera_permission_denied">Разрешение на использование камеры не предоставлено</string>
     <string name="file_selection_failed">Не удалось выбрать файл</string>
+    <string name="guest_mode">Гостевой режим</string>
+    <string name="creating_guest_mode">Создание гостевого аккаунта</string>
+    <string name="guest_account_created">Гостевой аккаунт создан</string>
 </resources>

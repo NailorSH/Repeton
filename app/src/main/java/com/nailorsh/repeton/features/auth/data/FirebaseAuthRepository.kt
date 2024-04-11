@@ -12,6 +12,7 @@ import com.nailorsh.repeton.MainActivity
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.features.auth.presentation.viewmodel.Response
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.tasks.await
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -137,5 +138,15 @@ class FirebaseAuthRepository @Inject constructor(
 
     override fun getUserPhone(): String {
         return auth.currentUser?.phoneNumber.orEmpty()
+    }
+
+    override suspend fun createAnonymousAccount() {
+        signUpState.value = Response.Loading(context.getString(R.string.creating_guest_mode))
+        try {
+            auth.signInAnonymously().await()
+            signUpState.value = Response.Success(context.getString(R.string.guest_account_created))
+        } catch (e: Exception) {
+            signUpState.value = Response.Error(e)
+        }
     }
 }

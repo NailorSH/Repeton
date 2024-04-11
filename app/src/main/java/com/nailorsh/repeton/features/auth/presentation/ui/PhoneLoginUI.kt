@@ -57,6 +57,9 @@ fun PhoneLoginUI(
                 onDone = {
                     focusManager.clearFocus()
                     viewModel.authenticatePhone(phone)
+                },
+                onGuestModeButtonClicked = {
+                    viewModel.createAnonymousAccount()
                 }
             )
         }
@@ -92,10 +95,7 @@ fun PhoneLoginUI(
                             textAlign = TextAlign.Center
                         )
                     }
-
                 }
-
-
             }
 
         }
@@ -111,8 +111,5 @@ fun PhoneLoginUI(
             Log.d("Code", "The Sign in was successful")
             popUpScreen()
         }
-
     }
-
-
 }

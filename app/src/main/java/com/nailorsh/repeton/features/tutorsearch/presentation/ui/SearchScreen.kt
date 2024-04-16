@@ -3,6 +3,7 @@ package com.nailorsh.repeton.features.tutorsearch.presentation.ui
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -65,6 +66,7 @@ fun SearchScreen(
     typingGetSearchResults: (String) -> Unit,
     getSearchResults: () -> Unit,
     searchUiState: SearchUiState,
+    onTutorCardClicked: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var query by remember { mutableStateOf("") }
@@ -109,6 +111,7 @@ fun SearchScreen(
 
                 is SearchUiState.Success -> TutorList(
                     tutors = searchUiState.tutors,
+                    onTutorCardClicked = onTutorCardClicked,
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -121,14 +124,11 @@ fun SearchScreen(
     }
 }
 
-
-
-
-
 @Composable
 fun TutorList(
-    modifier: Modifier = Modifier,
-    tutors: List<Tutor>
+    tutors: List<Tutor>,
+    onTutorCardClicked: (Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically),
@@ -139,7 +139,8 @@ fun TutorList(
             TutorCard(
                 modifier = Modifier.fillMaxWidth(),
                 tutor = it,
-                onWriteButtonClicked = {}
+                onWriteButtonClicked = {},
+                onCardClicked = onTutorCardClicked
             )
         }
     }
@@ -147,9 +148,10 @@ fun TutorList(
 
 @Composable
 fun TutorCard(
-    modifier: Modifier = Modifier,
     tutor: Tutor,
-    onWriteButtonClicked: () -> Unit
+    onWriteButtonClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+    onCardClicked: (Int) -> Unit
 ) {
     var isLiked by remember { mutableStateOf(false) }
 
@@ -161,6 +163,7 @@ fun TutorCard(
         modifier = modifier
             .shadow(elevation = 4.dp, spotColor = SpotColor, ambientColor = AmbientColor)
             .background(color = White, shape = RoundedCornerShape(size = 5.dp))
+            .clickable { onCardClicked(tutor.id) }
             .padding(15.dp)
     ) {
         Column(
@@ -403,7 +406,8 @@ fun TutorCardPreview() {
     RepetonTheme {
         TutorCard(
             tutor = FakeTutorsSource.getTutorsList()[0],
-            onWriteButtonClicked = {}
+            onWriteButtonClicked = {},
+            onCardClicked = {}
         )
     }
 }

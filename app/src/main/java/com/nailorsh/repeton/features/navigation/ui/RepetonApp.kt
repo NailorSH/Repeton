@@ -19,6 +19,7 @@ import com.nailorsh.repeton.features.messenger.presentation.viewmodel.MessengerV
 import com.nailorsh.repeton.features.navigation.AppSections
 import com.nailorsh.repeton.features.navigation.NavGraph
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleViewModel
+import com.nailorsh.repeton.features.tutorprofile.presentation.viewmodel.TutorProfileViewModel
 import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.TutorSearchViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -27,6 +28,7 @@ fun RepetonApp(
     navController: NavHostController = rememberNavController(),
     currentLessonViewModel: CurrentLessonViewModel = viewModel(),
     tutorSearchViewModel: TutorSearchViewModel = viewModel(),
+    tutorProfileViewModel: TutorProfileViewModel = viewModel(),
     scheduleViewModel: ScheduleViewModel = viewModel(),
     messengerViewModel: MessengerViewModel = viewModel(),
     authViewModel: AuthViewModel = viewModel()
@@ -52,6 +54,7 @@ fun RepetonApp(
                     navHostController = navController,
                     currentLessonViewModel = currentLessonViewModel,
                     tutorSearchViewModel = tutorSearchViewModel,
+                    tutorProfileViewModel = tutorProfileViewModel,
                     scheduleViewModel = scheduleViewModel,
                     messengerViewModel = messengerViewModel,
                     modifier = Modifier.padding(innerPaddingModifier)

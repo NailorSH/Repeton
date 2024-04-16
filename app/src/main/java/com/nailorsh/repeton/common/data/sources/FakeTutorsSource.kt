@@ -5,6 +5,7 @@ import com.nailorsh.repeton.common.data.models.Tutor
 object FakeTutorsSource {
     private val tutors = listOf(
         Tutor(
+            id = 0,
             name = "Александр ",
             surname = "Киселёв",
             middleName = "Витальевич",
@@ -27,6 +28,7 @@ object FakeTutorsSource {
         ),
 
         Tutor(
+            id = 1,
             name = "Александр",
             surname = "Коновалов",
             middleName = "Владимирович",
@@ -52,6 +54,7 @@ object FakeTutorsSource {
         ),
 
         Tutor(
+            id = 2,
             name = "Данила",
             surname = "Посевин",
             middleName = "Павлович",
@@ -79,6 +82,7 @@ object FakeTutorsSource {
         ),
 
         Tutor(
+            id = 3,
             name = "Иван",
             surname = "Иванов",
             middleName = "Иванович",

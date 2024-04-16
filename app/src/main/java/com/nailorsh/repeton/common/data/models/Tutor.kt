@@ -1,6 +1,7 @@
 package com.nailorsh.repeton.common.data.models
 
 data class Tutor(
+    val id: Int,
     val name: String,
     val surname: String,
     val middleName: String = "",

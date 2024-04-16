@@ -51,6 +51,7 @@ import com.nailorsh.repeton.core.ui.components.SearchBarWithFilter
 import com.nailorsh.repeton.core.ui.theme.AmbientColor
 import com.nailorsh.repeton.core.ui.theme.BodyColor
 import com.nailorsh.repeton.core.ui.theme.RepetonTheme
+import com.nailorsh.repeton.core.ui.theme.ShowMoreTextButtonColor
 import com.nailorsh.repeton.core.ui.theme.SpotColor
 import com.nailorsh.repeton.core.ui.theme.StarColor
 import com.nailorsh.repeton.core.ui.theme.TitleColor
@@ -227,7 +228,19 @@ fun TutorCard(
 
             ExpandableText(
                 modifier = modifier.fillMaxWidth(),
-                text = tutor.about
+                text = tutor.about,
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    lineHeight = 24.sp,
+                    fontWeight = FontWeight(400),
+                    color = BodyColor,
+                ),
+                textButtonStyle = TextStyle(
+                    fontSize = 14.sp,
+                    lineHeight = 24.sp,
+                    fontWeight = FontWeight(500),
+                    color = ShowMoreTextButtonColor,
+                )
             )
 
             Column(

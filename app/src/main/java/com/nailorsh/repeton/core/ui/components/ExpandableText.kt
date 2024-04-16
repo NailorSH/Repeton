@@ -5,6 +5,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -12,23 +13,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.core.ui.theme.BodyColor
-import com.nailorsh.repeton.core.ui.theme.ShowMoreTextButtonColor
 
 @Composable
 fun ExpandableText(
-    modifier: Modifier = Modifier,
     text: String,
-    textColor: Color = BodyColor,
-    showMoreTextColor: Color = ShowMoreTextButtonColor
+    modifier: Modifier = Modifier,
+    style: TextStyle = MaterialTheme.typography.bodyLarge,
+    textButtonStyle: TextStyle = MaterialTheme.typography.labelLarge,
 ) {
     Column(
         modifier = modifier
@@ -43,12 +39,7 @@ fun ExpandableText(
 
         Text(
             text = text,
-            style = TextStyle(
-                fontSize = 16.sp,
-                lineHeight = 24.sp,
-                fontWeight = FontWeight(400),
-                color = textColor,
-            ),
+            style = style,
             maxLines = if (seeMore) 3 else Int.MAX_VALUE,
             overflow = TextOverflow.Ellipsis,
         )
@@ -61,12 +52,7 @@ fun ExpandableText(
 
         Text(
             text = textButton,
-            style = TextStyle(
-                fontSize = 14.sp,
-                lineHeight = 24.sp,
-                fontWeight = FontWeight(500),
-                color = showMoreTextColor,
-            ),
+            style = textButtonStyle,
             modifier = Modifier
                 .clickable {
                     seeMore = !seeMore
@@ -74,6 +60,7 @@ fun ExpandableText(
         )
     }
 }
+
 
 @Preview(
     showSystemUi = true

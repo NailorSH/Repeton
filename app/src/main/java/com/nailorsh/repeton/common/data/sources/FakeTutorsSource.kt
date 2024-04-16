@@ -16,8 +16,14 @@ object FakeTutorsSource {
                 "Математика" to "500-1000 ₽ / 60 мин",
                 "Информатика" to "800-1000 ₽ / 60 мин"
             ),
+            averagePrice = 500,
             rating = 4.93,
-            reviewsNumber = 100
+            reviewsNumber = 100,
+            country = "Россия",
+            countryCode = "RU",
+            taughtLessonNumber = 250,
+            experienceYears = 6,
+            languages = mapOf("Русский" to "Носитель")
         ),
 
         Tutor(
@@ -31,8 +37,18 @@ object FakeTutorsSource {
                 "Информатика" to "800-1000 ₽ / 60 мин",
                 "Алгоритмы" to "1000-1500 ₽ / 60 мин"
             ),
+            averagePrice = 1000,
             rating = 4.0,
-            reviewsNumber = 3
+            reviewsNumber = 3,
+            country = "Казахстан",
+            countryCode = "KZ",
+            taughtLessonNumber = 10,
+            experienceYears = 1,
+            languages = mapOf(
+                "Русский" to "Носитель",
+                "Английский" to "Выше среднего B2",
+                "Французский" to "Средний B1"
+            )
         ),
 
         Tutor(
@@ -49,8 +65,17 @@ object FakeTutorsSource {
                 "Компьютерные сети" to "1000-2000 ₽ / 60 мин",
                 "Разработка мобильных приложений" to "1000-2000 ₽ / 60 мин"
             ),
+            averagePrice = 1500,
             rating = 4.5,
-            reviewsNumber = 10
+            reviewsNumber = 10,
+            country = "Россия",
+            countryCode = "RU",
+            taughtLessonNumber = 50,
+            experienceYears = 2,
+            languages = mapOf(
+                "Русский" to "Носитель",
+                "Английский" to "Выше среднего B2",
+            )
         ),
 
         Tutor(
@@ -67,8 +92,17 @@ object FakeTutorsSource {
                 "Английский язык" to "800-1500 ₽ / 60 мин",
                 "Немецкий язык" to "800-1500 ₽ / 60 мин"
             ),
+            averagePrice = 800,
             rating = 3.9,
-            reviewsNumber = 19
+            reviewsNumber = 19,
+            country = "Россия",
+            countryCode = "RU",
+            taughtLessonNumber = 100,
+            experienceYears = 8,
+            languages = mapOf(
+                "Русский" to "Носитель",
+                "Английский" to "Выше среднего B2",
+            )
         ),
     )
 

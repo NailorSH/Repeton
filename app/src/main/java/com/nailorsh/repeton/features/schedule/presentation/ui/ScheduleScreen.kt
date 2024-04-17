@@ -13,11 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -55,17 +51,19 @@ private enum class SelectionSource {
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleScreen(
     scheduleUiState: ScheduleUiState,
     getLessons: () -> Unit,
-    onLessonClicked: (Lesson) -> Unit
+    onLessonClicked: (Lesson) -> Unit,
+    onNewLessonClicked: () -> Unit
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     var selectedDay by remember {
         mutableStateOf(LocalDate.now())
     }
+
 
     val dayPagerState = rememberPagerState(
         initialPage = ChronoUnit.DAYS.between(BASE_DATE, selectedDay).toInt(),
@@ -127,7 +125,6 @@ fun ScheduleScreen(
 
 
 
-
     Column(
 
         modifier = Modifier
@@ -139,6 +136,10 @@ fun ScheduleScreen(
         Spacer(
             modifier = Modifier
                 .height(dimensionResource(R.dimen.top_padding))
+                .fillMaxWidth()
+                .clickable {
+                    getLessons()
+                }
         )
         HorizontalDivider(
             modifier = Modifier
@@ -177,7 +178,7 @@ fun ScheduleScreen(
 
         when (scheduleUiState) {
             is ScheduleUiState.Success -> {
-                lessonsMap = remember { scheduleUiState.lessons }
+                lessonsMap = scheduleUiState.lessons
 
                 DaySlider(
                     selectedDay = selectedDay,
@@ -229,7 +230,7 @@ fun ScheduleScreen(
                             )
 
                             Button(
-                                onClick = { /* TODO Добавление нового занятия */ },
+                                onClick = { onNewLessonClicked() },
                                 modifier = Modifier
                                     .padding(top = 32.dp)
                                     .width(dimensionResource(R.dimen.schedule_screen_button_width))
@@ -244,7 +245,6 @@ fun ScheduleScreen(
                                     text = stringResource(R.string.add_lesson_button),
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onPrimary
                                 )
                             }
                         }
@@ -281,7 +281,8 @@ fun ScheduleScreenPreview() {
         ScheduleScreen(
             onLessonClicked = { },
             getLessons = { },
-            scheduleUiState = ScheduleViewModel(FakeScheduleRepository()).scheduleUiState
+            scheduleUiState = ScheduleViewModel(FakeScheduleRepository()).scheduleUiState,
+            onNewLessonClicked = { }
         )
     }
 }

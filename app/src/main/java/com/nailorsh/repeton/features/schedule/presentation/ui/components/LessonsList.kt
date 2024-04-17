@@ -25,7 +25,6 @@ fun LessonsList(
     lessons: List<Lesson>,
     modifier: Modifier = Modifier
 ) {
-
     Spacer(
         modifier = Modifier
             .height(10.dp)
@@ -57,7 +56,7 @@ fun LessonsList(
                 modifier = Modifier
                     .padding(top = 6.dp)
             ) {
-                items(items = lessons, key = {lesson -> lesson.id}) { lesson ->
+                items(items = lessons) { lesson ->
                     LessonCard(lesson = lesson, onClick = onLessonClicked)
                 }
 

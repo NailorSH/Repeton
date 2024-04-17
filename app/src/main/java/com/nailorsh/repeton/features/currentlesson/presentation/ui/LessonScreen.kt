@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -82,8 +84,11 @@ fun LessonContent(lesson: Lesson, modifier: Modifier = Modifier) {
             .padding(horizontal = 28.dp, vertical = 32.dp),
     ) {
 
-
-        Column {
+        val scrollState = rememberScrollState()
+        Column(
+            Modifier
+                .verticalScroll(scrollState)
+        ) {
             HorizontalDivider(
                 modifier = Modifier
                     .width(dimensionResource(R.dimen.divider_width))
@@ -94,11 +99,11 @@ fun LessonContent(lesson: Lesson, modifier: Modifier = Modifier) {
             )
             Spacer(modifier = Modifier.height(24.dp))
             LessonSubject(
-                lesson.subject,
+                lesson.subject.subjectName,
                 modifier = Modifier.padding(start = 8.dp)
             )
             LessonCard(lesson, Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium)))
-            HomeworkCard(lesson.homeworkLink)
+            HomeworkCard(lesson.homework)
             Spacer(modifier = Modifier.height(32.dp))
             AdditionalMaterialsCard(lesson.additionalMaterials)
         }

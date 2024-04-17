@@ -1,10 +1,12 @@
 package com.nailorsh.repeton.features.schedule.presentation.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nailorsh.repeton.common.data.models.Lesson
 import com.nailorsh.repeton.features.schedule.data.ScheduleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,15 +29,21 @@ class ScheduleViewModel @Inject constructor(
 
     private var lessonsCache = mutableMapOf<LocalDate, MutableList<Lesson>>()
 
+    private var firstLaunch = true
 
     init {
-        getLessons()
+        viewModelScope.launch {
+            getLessons()
+        }
     }
+
 
     fun getLessons() {
         viewModelScope.launch {
             scheduleUiState = ScheduleUiState.Loading
             try {
+                lessonsCache.clear()
+                lessonsCache = mutableMapOf<LocalDate, MutableList<Lesson>>()
                 val lessons = scheduleRepository.getLessons()
                 lessons.forEach { lesson ->
                     val day = LocalDate.from(lesson.startTime)
@@ -43,6 +51,7 @@ class ScheduleViewModel @Inject constructor(
                         it.add(lesson)
                     }
                 }
+
                 val todayLessons = lessonsCache ?: emptyMap<LocalDate, MutableList<Lesson>>()
                 scheduleUiState = ScheduleUiState.Success(todayLessons)
             } catch (e: Exception) {

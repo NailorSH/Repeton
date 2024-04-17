@@ -90,6 +90,7 @@ fun NavGraph(
                     viewModel = tutorProfileViewModel
                 )
             }
+        }
             
         composable(AppSections.NEW_LESSON.route) {
             val lessonState by newLessonViewModel.state.collectAsState()

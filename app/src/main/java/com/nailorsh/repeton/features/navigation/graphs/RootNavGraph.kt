@@ -1,10 +1,12 @@
 package com.nailorsh.repeton.features.navigation.graphs
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import com.nailorsh.repeton.features.auth.presentation.ui.PhoneLoginUI
 import com.nailorsh.repeton.features.auth.presentation.viewmodel.AuthViewModel
+import com.nailorsh.repeton.features.auth.presentation.viewmodel.Response
 import com.nailorsh.repeton.features.currentlesson.presentation.viewmodel.CurrentLessonViewModel
 import com.nailorsh.repeton.features.messenger.presentation.viewmodel.MessengerViewModel
 import com.nailorsh.repeton.features.navigation.routes.Graph
@@ -25,32 +27,45 @@ fun RootNavGraph(
     newLessonViewModel: NewLessonViewModel,
     messengerViewModel: MessengerViewModel
 ) {
-//    val authUiState by authViewModel.signUpState.collectAsState()
-//    if (authUiState is Response.Success) {
-//        println()
-//    } else {
-//        println()
-//    }
-
-    NavHost(
-        navController = navController,
-        route = Graph.ROOT,
-        startDestination = Graph.AUTHENTICATION,
-    ) {
-        authNavGraph(
-            navController = navController,
-            authViewModel = authViewModel
+    val authUiState by authViewModel.signUpState.collectAsState()
+    if (authUiState is Response.Success) {
+        HomeScreen(
+            tutorSearchViewModel = tutorSearchViewModel,
+            tutorProfileViewModel = tutorProfileViewModel,
+            scheduleViewModel = scheduleViewModel,
+            currentLessonViewModel = currentLessonViewModel,
+            newLessonViewModel = newLessonViewModel,
+            messengerViewModel = messengerViewModel
         )
-
-        composable(route = Graph.HOME) {
-            HomeScreen(
-                tutorSearchViewModel = tutorSearchViewModel,
-                tutorProfileViewModel = tutorProfileViewModel,
-                scheduleViewModel = scheduleViewModel,
-                currentLessonViewModel = currentLessonViewModel,
-                newLessonViewModel = newLessonViewModel,
-                messengerViewModel = messengerViewModel
-            )
-        }
+    } else {
+        PhoneLoginUI(
+            viewModel = authViewModel,
+            popUpScreen = {
+                navController.popBackStack()
+                navController.navigate(Graph.HOME)
+            }
+        )
     }
+
+//    NavHost(
+//        navController = navController,
+//        route = Graph.ROOT,
+//        startDestination = Graph.AUTHENTICATION,
+//    ) {
+//        authNavGraph(
+//            navController = navController,
+//            authViewModel = authViewModel
+//        )
+//
+//        composable(route = Graph.HOME) {
+//            HomeScreen(
+//                tutorSearchViewModel = tutorSearchViewModel,
+//                tutorProfileViewModel = tutorProfileViewModel,
+//                scheduleViewModel = scheduleViewModel,
+//                currentLessonViewModel = currentLessonViewModel,
+//                newLessonViewModel = newLessonViewModel,
+//                messengerViewModel = messengerViewModel
+//            )
+//        }
+//    }
 }

@@ -42,7 +42,6 @@ fun NavGraph(
             SearchScreen(
                 getSearchResults = tutorSearchViewModel::getTutors,
                 typingGetSearchResults = tutorSearchViewModel::typingTutorSearch,
-//                getSearchResults = viewModel::getTutors,
                 searchUiState = tutorSearchViewModel.searchUiState,
                 onTutorCardClicked = { tutorId ->
                     navHostController.navigate("tutor/${tutorId}")

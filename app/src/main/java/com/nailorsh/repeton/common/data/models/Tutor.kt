@@ -21,7 +21,15 @@ data class Tutor(
 )
 
 fun Tutor.getFlagEmoji(): String {
-    val firstChar = Character.codePointAt(countryCode, 0) - 0x41 + 0x1F1E6
-    val secondChar = Character.codePointAt(countryCode, 1) - 0x41 + 0x1F1E6
-    return String(Character.toChars(firstChar)) + String(Character.toChars(secondChar))
+    val asciiOffset = 'A'.code // ASCII code for 'A'
+    val emojiRegionBase = 0x1F1E6 // Base Unicode for regional indicator symbols
+
+    val firstCharEmojiCode = Character.codePointAt(countryCode, 0) - asciiOffset + emojiRegionBase
+    val secondCharEmojiCode = Character.codePointAt(countryCode, 1) - asciiOffset + emojiRegionBase
+
+    return String(Character.toChars(firstCharEmojiCode)) + String(
+        Character.toChars(
+            secondCharEmojiCode
+        )
+    )
 }

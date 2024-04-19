@@ -44,7 +44,6 @@ fun HomeNavGraph(
             SearchScreen(
                 getSearchResults = tutorSearchViewModel::getTutors,
                 typingGetSearchResults = tutorSearchViewModel::typingTutorSearch,
-//                getSearchResults = viewModel::getTutors,
                 searchUiState = tutorSearchViewModel.searchUiState,
                 onTutorCardClicked = { tutorId ->
                     navController.navigate("tutor_view/${tutorId}")

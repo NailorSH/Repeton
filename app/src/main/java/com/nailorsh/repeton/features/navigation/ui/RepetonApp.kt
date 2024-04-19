@@ -1,6 +1,5 @@
 package com.nailorsh.repeton.features.navigation.ui
 
-import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
@@ -14,7 +13,6 @@ import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleVie
 import com.nailorsh.repeton.features.tutorprofile.presentation.viewmodel.TutorProfileViewModel
 import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.TutorSearchViewModel
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun RepetonApp(
     authViewModel: AuthViewModel = viewModel(),

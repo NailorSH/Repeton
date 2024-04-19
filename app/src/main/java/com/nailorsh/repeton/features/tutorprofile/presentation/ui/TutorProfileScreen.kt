@@ -120,7 +120,7 @@ fun TutorProfile(
 }
 
 @Composable
-fun TutorMainInfoBlock(
+private fun TutorMainInfoBlock(
     tutor: Tutor,
     modifier: Modifier = Modifier
 ) {
@@ -165,7 +165,7 @@ fun TutorMainInfoBlock(
 }
 
 @Composable
-fun TutorAdditionalInfoBlock(
+private fun TutorAdditionalInfoBlock(
     tutor: Tutor,
     modifier: Modifier = Modifier
 ) {

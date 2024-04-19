@@ -92,68 +92,14 @@ fun TutorProfile(
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
-            Column(
-                modifier = Modifier.padding(
-                    horizontal = dimensionResource(R.dimen.padding_medium)
-                )
-            ) {
-                ProfileInfoRow(
-                    profileImageId = R.drawable.man_photo,
-                    name = "${tutor.name} ${tutor.surname.first()}.",
-                    country = tutor.country,
-                    flagEmoji = tutor.getFlagEmoji()
-                )
-
-                HorizontalDivider(
-                    modifier = Modifier.padding(
-                        vertical = dimensionResource(R.dimen.padding_medium)
-                    )
-                )
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Rating(tutor.rating.toString())
-                    ReviewsNumber(tutor.reviewsNumber)
-                    PriceInfo(tutor.averagePrice)
-                    TaughtLessonsNumber(tutor.taughtLessonNumber)
-                    ExperienceYearsNumber(tutor.experienceYears)
-                }
-
-                HorizontalDivider(
-                    modifier = Modifier.padding(
-                        vertical = dimensionResource(R.dimen.padding_medium)
-                    )
-                )
-
-                Advantages()
-            }
+            TutorMainInfoBlock(tutor)
 
             HorizontalDivider(
                 thickness = 3.dp,
                 modifier = Modifier.padding(vertical = 20.dp)
             )
 
-            Column(
-                modifier = Modifier.padding(
-                    horizontal = dimensionResource(R.dimen.padding_medium)
-                )
-            ) {
-                TitleWithExpandableText(
-                    title = stringResource(R.string.about_me),
-                    text = tutor.about
-                )
-
-                HorizontalDivider(
-                    modifier = Modifier.padding(
-                        vertical = dimensionResource(R.dimen.padding_medium)
-                    )
-                )
-
-                LanguageSkills(tutor.languages)
-            }
+            TutorAdditionalInfoBlock(tutor)
 
             HorizontalDivider(
                 thickness = 2.dp,
@@ -170,6 +116,76 @@ fun TutorProfile(
 
             Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
         }
+    }
+}
+
+@Composable
+fun TutorMainInfoBlock(
+    tutor: Tutor,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.padding(
+            horizontal = dimensionResource(R.dimen.padding_medium)
+        )
+    ) {
+        ProfileInfoRow(
+            profileImageId = R.drawable.man_photo,
+            name = "${tutor.name} ${tutor.surname.first()}.",
+            country = tutor.country,
+            flagEmoji = tutor.getFlagEmoji()
+        )
+
+        HorizontalDivider(
+            modifier = Modifier.padding(
+                vertical = dimensionResource(R.dimen.padding_medium)
+            )
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Rating(tutor.rating.toString())
+            ReviewsNumber(tutor.reviewsNumber)
+            PriceInfo(tutor.averagePrice)
+            TaughtLessonsNumber(tutor.taughtLessonNumber)
+            ExperienceYearsNumber(tutor.experienceYears)
+        }
+
+        HorizontalDivider(
+            modifier = Modifier.padding(
+                vertical = dimensionResource(R.dimen.padding_medium)
+            )
+        )
+
+        Advantages()
+    }
+}
+
+@Composable
+fun TutorAdditionalInfoBlock(
+    tutor: Tutor,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.padding(
+            horizontal = dimensionResource(R.dimen.padding_medium)
+        )
+    ) {
+        TitleWithExpandableText(
+            title = stringResource(R.string.about_me),
+            text = tutor.about
+        )
+
+        HorizontalDivider(
+            modifier = Modifier.padding(
+                vertical = dimensionResource(R.dimen.padding_medium)
+            )
+        )
+
+        LanguageSkills(tutor.languages)
     }
 }
 

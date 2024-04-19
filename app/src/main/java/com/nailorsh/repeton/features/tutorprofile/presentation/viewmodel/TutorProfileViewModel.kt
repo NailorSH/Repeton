@@ -8,7 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.nailorsh.repeton.common.data.models.Tutor
 import com.nailorsh.repeton.features.tutorprofile.data.TutorProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.net.HttpRetryException
 import javax.inject.Inject
@@ -31,7 +33,9 @@ class TutorProfileViewModel @Inject constructor(
         viewModelScope.launch {
             tutorProfileUiState = TutorProfileUiState.Loading
             tutorProfileUiState = try {
-                val tutor = tutorProfileRepository.getLesson(lessonId)
+                val tutor = withContext(Dispatchers.IO) {
+                    tutorProfileRepository.getLesson(lessonId)
+                }
                 TutorProfileUiState.Success(tutor)
             } catch (e: IOException) {
                 TutorProfileUiState.Error

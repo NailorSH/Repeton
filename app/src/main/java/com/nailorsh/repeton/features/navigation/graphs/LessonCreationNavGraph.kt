@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.nailorsh.repeton.core.navigation.sharedViewModel
 import com.nailorsh.repeton.features.navigation.routes.BottomBarScreen
 import com.nailorsh.repeton.features.navigation.routes.Graph
 import com.nailorsh.repeton.features.navigation.routes.LessonCreationScreen
@@ -14,35 +15,37 @@ import com.nailorsh.repeton.features.newlesson.presentation.ui.NewLessonScreenSe
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonViewModel
 
 fun NavGraphBuilder.lessonCreationNavGraph(
-    navController: NavHostController,
-    newLessonViewModel: NewLessonViewModel
+    navController: NavHostController
 ) {
     navigation(
         route = Graph.LESSON_CREATION,
         startDestination = LessonCreationScreen.NewLesson.route
     ) {
         composable(route = LessonCreationScreen.NewLesson.route) {
-            val lessonState by newLessonViewModel.state.collectAsState()
-            val filteredSubjects by newLessonViewModel.filteredSubjects.collectAsState()
+            val viewModel = it.sharedViewModel<NewLessonViewModel>(navController)
+            val lessonState by viewModel.state.collectAsState()
+            val filteredSubjects by viewModel.filteredSubjects.collectAsState()
 
             NewLessonScreen(
                 lessonState = lessonState,
                 filteredSubjects = filteredSubjects,
-                onFilterSubjects = newLessonViewModel::updateFilteredSubjects,
+                onFilterSubjects = viewModel::updateFilteredSubjects,
                 onNavigateBack = {
                     navController.navigateUp()
-                    newLessonViewModel.clearData()
+                    viewModel.clearData()
                 },
                 onNavigateNext = {
                     navController.navigate(LessonCreationScreen.NewLessonSecond.route)
-                    newLessonViewModel.getSubjects()
+                    viewModel.getSubjects()
                 },
-                onSaveRequiredFields = newLessonViewModel::saveRequiredFields
+                onSaveRequiredFields = viewModel::saveRequiredFields
             )
         }
 
         composable(route = LessonCreationScreen.NewLessonSecond.route) {
-            val lessonState by newLessonViewModel.state.collectAsState()
+            val viewModel = it.sharedViewModel<NewLessonViewModel>(navController)
+            val lessonState by viewModel.state.collectAsState()
+
             NewLessonScreenSecond(
                 lessonState = lessonState,
                 onNavigateBack = {
@@ -53,10 +56,10 @@ fun NavGraphBuilder.lessonCreationNavGraph(
                         route = BottomBarScreen.Home.route,
                         inclusive = false
                     )
-                    newLessonViewModel.clearData()
+                    viewModel.clearData()
                 },
                 onSaveLesson = { description, homework, additionalMaterials ->
-                    newLessonViewModel.saveLesson(description, homework, additionalMaterials)
+                    viewModel.saveLesson(description, homework, additionalMaterials)
                 }
             )
         }

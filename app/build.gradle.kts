@@ -59,6 +59,7 @@ val daggerVersion = "2.51"
 dependencies {
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:$daggerVersion")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     kapt("com.google.dagger:hilt-compiler:$daggerVersion")
 
     implementation("androidx.compose.material:material-icons-core:1.6.4")

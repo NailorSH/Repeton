@@ -2,31 +2,23 @@ package com.nailorsh.repeton.features.navigation.graphs
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.nailorsh.repeton.features.currentlesson.presentation.viewmodel.CurrentLessonViewModel
 import com.nailorsh.repeton.features.messenger.presentation.ui.ChatsScreen
 import com.nailorsh.repeton.features.messenger.presentation.viewmodel.MessengerViewModel
 import com.nailorsh.repeton.features.navigation.routes.BottomBarScreen
 import com.nailorsh.repeton.features.navigation.routes.Graph
-import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonViewModel
 import com.nailorsh.repeton.features.schedule.presentation.ui.ScheduleScreen
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleViewModel
 import com.nailorsh.repeton.features.studentprofile.presentation.ui.ProfileScreen
-import com.nailorsh.repeton.features.tutorprofile.presentation.viewmodel.TutorProfileViewModel
 import com.nailorsh.repeton.features.tutorsearch.presentation.ui.SearchScreen
 import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.TutorSearchViewModel
 
 @Composable
 fun HomeNavGraph(
     navController: NavHostController,
-    tutorSearchViewModel: TutorSearchViewModel,
-    tutorProfileViewModel: TutorProfileViewModel,
-    scheduleViewModel: ScheduleViewModel,
-    currentLessonViewModel: CurrentLessonViewModel,
-    newLessonViewModel: NewLessonViewModel,
-    messengerViewModel: MessengerViewModel,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -35,12 +27,11 @@ fun HomeNavGraph(
         startDestination = BottomBarScreen.Home.route,
         modifier = modifier
     ) {
-        tutorViewNavGraph(
-            navController = navController,
-            tutorProfileViewModel = tutorProfileViewModel
-        )
+        tutorViewNavGraph(navController)
 
         composable(route = BottomBarScreen.Search.route) {
+            val tutorSearchViewModel = hiltViewModel<TutorSearchViewModel>()
+
             SearchScreen(
                 getSearchResults = tutorSearchViewModel::getTutors,
                 typingGetSearchResults = tutorSearchViewModel::typingTutorSearch,
@@ -52,6 +43,8 @@ fun HomeNavGraph(
         }
 
         composable(route = BottomBarScreen.Home.route) {
+            val scheduleViewModel = hiltViewModel<ScheduleViewModel>()
+
             ScheduleScreen(
                 scheduleUiState = scheduleViewModel.scheduleUiState,
                 // Вызов getLessons по указанной дате
@@ -65,17 +58,13 @@ fun HomeNavGraph(
             )
         }
 
-        lessonViewNavGraph(
-            navController = navController,
-            currentLessonViewModel = currentLessonViewModel
-        )
+        lessonViewNavGraph(navController)
 
-        lessonCreationNavGraph(
-            navController = navController,
-            newLessonViewModel = newLessonViewModel
-        )
+        lessonCreationNavGraph(navController)
 
         composable(route = BottomBarScreen.Chats.route) {
+            val messengerViewModel = hiltViewModel<MessengerViewModel>()
+
             ChatsScreen(
                 getChats = messengerViewModel::getChats,
                 chatsUiState = messengerViewModel.chatsUiState

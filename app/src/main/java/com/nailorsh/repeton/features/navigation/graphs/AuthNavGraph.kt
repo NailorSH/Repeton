@@ -1,5 +1,6 @@
 package com.nailorsh.repeton.features.navigation.graphs
 
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -10,14 +11,15 @@ import com.nailorsh.repeton.features.navigation.routes.AuthScreen
 import com.nailorsh.repeton.features.navigation.routes.Graph
 
 fun NavGraphBuilder.authNavGraph(
-    navController: NavHostController,
-    authViewModel: AuthViewModel
+    navController: NavHostController
 ) {
     navigation(
         route = Graph.AUTHENTICATION,
         startDestination = AuthScreen.Login.route
     ) {
         composable(route = AuthScreen.Login.route) {
+            val authViewModel = hiltViewModel<AuthViewModel>()
+
             PhoneLoginUI(
                 viewModel = authViewModel,
                 popUpScreen = {

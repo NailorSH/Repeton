@@ -17,6 +17,8 @@ import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonV
 import com.nailorsh.repeton.features.schedule.presentation.ui.ScheduleScreen
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleViewModel
 import com.nailorsh.repeton.features.studentprofile.presentation.ui.ProfileScreen
+import com.nailorsh.repeton.features.tutorprofile.presentation.ui.TutorProfileScreen
+import com.nailorsh.repeton.features.tutorprofile.presentation.viewmodel.TutorProfileViewModel
 import com.nailorsh.repeton.features.tutorsearch.presentation.ui.SearchScreen
 import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.TutorSearchViewModel
 
@@ -25,6 +27,7 @@ fun NavGraph(
     navHostController: NavHostController,
     currentLessonViewModel: CurrentLessonViewModel,
     tutorSearchViewModel: TutorSearchViewModel,
+    tutorProfileViewModel: TutorProfileViewModel,
     scheduleViewModel: ScheduleViewModel,
     messengerViewModel: MessengerViewModel,
     newLessonViewModel: NewLessonViewModel,
@@ -39,11 +42,14 @@ fun NavGraph(
             SearchScreen(
                 getSearchResults = tutorSearchViewModel::getTutors,
                 typingGetSearchResults = tutorSearchViewModel::typingTutorSearch,
-                searchUiState = tutorSearchViewModel.searchUiState
+//                getSearchResults = viewModel::getTutors,
+                searchUiState = tutorSearchViewModel.searchUiState,
+                onTutorCardClicked = { tutorId ->
+                    navHostController.navigate("tutor/${tutorId}")
+                }
             )
         }
         composable(AppSections.HOME.route) {
-
             ScheduleScreen(
                 scheduleUiState = scheduleViewModel.scheduleUiState,
                 // Вызов getLessons по указанной дате
@@ -76,6 +82,16 @@ fun NavGraph(
             }
         }
 
+        composable(AppSections.TUTOR.route) { backStackEntry ->
+            backStackEntry.arguments?.getString("id")?.let { id ->
+                TutorProfileScreen(
+                    tutorId = id.toInt(),
+                    onBackClicked = { navHostController.popBackStack() },
+                    viewModel = tutorProfileViewModel
+                )
+            }
+        }
+            
         composable(AppSections.NEW_LESSON.route) {
             val lessonState by newLessonViewModel.state.collectAsState()
             val filteredSubjects by newLessonViewModel.filteredSubjects.collectAsState()

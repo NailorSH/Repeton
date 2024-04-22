@@ -24,7 +24,7 @@ import com.nailorsh.repeton.features.auth.presentation.viewmodel.Response
 
 @Composable
 fun PhoneLoginUI(
-    popUpScreen: () -> Unit = {},
+    popUpScreen: () -> Unit,
     viewModel: AuthViewModel = viewModel(),
     restartLogin: () -> Unit = { viewModel.signUpState.value = Response.NotInitialized }
 ) {

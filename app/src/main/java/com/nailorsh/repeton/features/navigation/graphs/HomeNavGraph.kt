@@ -10,6 +10,8 @@ import com.nailorsh.repeton.features.messenger.presentation.ui.ChatsScreen
 import com.nailorsh.repeton.features.messenger.presentation.viewmodel.MessengerViewModel
 import com.nailorsh.repeton.features.navigation.routes.BottomBarScreen
 import com.nailorsh.repeton.features.navigation.routes.Graph
+import com.nailorsh.repeton.features.navigation.routes.LessonViewScreen
+import com.nailorsh.repeton.features.navigation.routes.TutorViewScreen
 import com.nailorsh.repeton.features.schedule.presentation.ui.ScheduleScreen
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleViewModel
 import com.nailorsh.repeton.features.studentprofile.presentation.ui.ProfileScreen
@@ -37,7 +39,7 @@ fun HomeNavGraph(
                 typingGetSearchResults = tutorSearchViewModel::typingTutorSearch,
                 searchUiState = tutorSearchViewModel.searchUiState,
                 onTutorCardClicked = { tutorId ->
-                    navController.navigate("tutor_view/${tutorId}")
+                    navController.navigate(TutorViewScreen.TutorView.createTutorViewRoute(tutorId))
                 }
             )
         }
@@ -50,7 +52,7 @@ fun HomeNavGraph(
                 // Вызов getLessons по указанной дате
                 getLessons = { scheduleViewModel.getLessons() },
                 onLessonClicked = { lesson ->
-                    navController.navigate("lesson/${lesson.id}")
+                    navController.navigate(LessonViewScreen.Lesson.createLessonRoute(lesson.id))
                 },
                 onNewLessonClicked = {
                     navController.navigate(Graph.LESSON_CREATION)

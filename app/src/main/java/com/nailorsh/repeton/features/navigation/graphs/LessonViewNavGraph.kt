@@ -18,7 +18,7 @@ fun NavGraphBuilder.lessonViewNavGraph(
         startDestination = LessonViewScreen.Lesson.route
     ) {
         composable(route = LessonViewScreen.Lesson.route) { backStackEntry ->
-            backStackEntry.arguments?.getString("id")?.let { id ->
+            backStackEntry.arguments?.getString(LessonViewScreen.Lesson.ID_PARAM)?.let { id ->
                 val viewModel =
                     backStackEntry.sharedViewModel<CurrentLessonViewModel>(navController)
 

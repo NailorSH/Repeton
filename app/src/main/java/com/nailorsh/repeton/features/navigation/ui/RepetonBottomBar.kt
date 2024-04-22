@@ -15,47 +15,57 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.nailorsh.repeton.core.ui.theme.BottomNavigationBarColor
 import com.nailorsh.repeton.core.ui.theme.SelectedBottomBarIconColor
 import com.nailorsh.repeton.core.ui.theme.UnselectedBottomBarIconColor
-import com.nailorsh.repeton.features.navigation.AppSections
+import com.nailorsh.repeton.features.navigation.routes.BottomBarScreen
 
 @Composable
 fun RepetonBottomBar(
-    tabs: Array<AppSections>,
+    tabs: Array<BottomBarScreen>,
     navController: NavController,
 ) {
-    BottomAppBar(
-        modifier = Modifier.height(55.dp),
-        tonalElevation = 1.dp,
-        contentPadding = PaddingValues(0.dp)
-    ) {
-        NavigationBar(
-            containerColor = BottomNavigationBarColor,
-        ) {
-            val backStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = backStackEntry?.destination?.route
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = backStackEntry?.destination
+    val bottomBarDestination = tabs.any { it.route == currentDestination?.route }
 
-            tabs.forEach { item ->
-                NavigationBarItem(
-                    selected = currentRoute == item.route,
-                    onClick = {
-                        navController.navigate(item.route)
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(item.icon),
-                            contentDescription = null,
-                            modifier = Modifier.size(25.dp)
+    if (bottomBarDestination) {
+        BottomAppBar(
+            modifier = Modifier.height(55.dp),
+            tonalElevation = 1.dp,
+            contentPadding = PaddingValues(0.dp)
+        ) {
+            NavigationBar(
+                containerColor = BottomNavigationBarColor,
+            ) {
+                tabs.forEach { item ->
+                    NavigationBarItem(
+                        selected = currentDestination?.hierarchy?.any {
+                            it.route == item.route
+                        } == true,
+                        onClick = {
+                            navController.navigate(item.route) {
+                                popUpTo(navController.graph.findStartDestination().id)
+                                launchSingleTop = true
+                            }
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(item.icon),
+                                contentDescription = null,
+                                modifier = Modifier.size(25.dp)
+                            )
+                        },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = SelectedBottomBarIconColor,
+                            unselectedIconColor = UnselectedBottomBarIconColor,
+                            indicatorColor = BottomNavigationBarColor
                         )
-                    },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = SelectedBottomBarIconColor,
-                        unselectedIconColor = UnselectedBottomBarIconColor,
-                        indicatorColor = BottomNavigationBarColor
                     )
-                )
+                }
             }
         }
     }

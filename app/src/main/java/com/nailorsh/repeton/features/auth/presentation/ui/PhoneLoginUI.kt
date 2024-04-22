@@ -24,7 +24,7 @@ import com.nailorsh.repeton.features.auth.presentation.viewmodel.Response
 
 @Composable
 fun PhoneLoginUI(
-    popUpScreen: () -> Unit = {},
+    popUpScreen: () -> Unit,
     viewModel: AuthViewModel = viewModel(),
     restartLogin: () -> Unit = { viewModel.signUpState.value = Response.NotInitialized }
 ) {
@@ -108,7 +108,6 @@ fun PhoneLoginUI(
 
         // You can navigate when the auth process is successful
         is Response.Success -> {
-            Log.d("Code", "The Sign in was successful")
             popUpScreen()
         }
     }

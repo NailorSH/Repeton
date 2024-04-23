@@ -14,9 +14,10 @@ import com.nailorsh.repeton.features.navigation.routes.LessonViewScreen
 import com.nailorsh.repeton.features.navigation.routes.TutorViewScreen
 import com.nailorsh.repeton.features.schedule.presentation.ui.ScheduleScreen
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleViewModel
-import com.nailorsh.repeton.features.studentprofile.presentation.ui.ProfileScreen
 import com.nailorsh.repeton.features.tutorsearch.presentation.ui.SearchScreen
 import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.TutorSearchViewModel
+import com.nailorsh.repeton.features.userprofile.presentation.ui.ProfileScreen
+import com.nailorsh.repeton.features.userprofile.presentation.viewmodel.ProfileViewModel
 
 @Composable
 fun HomeNavGraph(
@@ -74,7 +75,11 @@ fun HomeNavGraph(
         }
 
         composable(route = BottomBarScreen.Profile.route) {
-            ProfileScreen()
+            val profileViewModel = hiltViewModel<ProfileViewModel>()
+            ProfileScreen(
+
+            )
+
         }
     }
 }

@@ -2,10 +2,12 @@
 <resources>
     <dimen name="padding_medium">16dp</dimen>
     <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_extra_small">4dp</dimen>
     <dimen name="top_padding">48dp</dimen>
     <dimen name="divider_width">290dp</dimen>
     <dimen name="divider_thickness">1dp</dimen>
     <dimen name="schedule_screen_button_width">295dp</dimen>
     <dimen name="schedule_screen_lesson_size">95dp</dimen>
     <dimen name="schedule_screen_days_padding">7dp</dimen>
+    <dimen name="tutor_profile_photo_size">70dp</dimen>
 </resources>

@@ -29,6 +29,8 @@ val SubjectColor = Color(0xFF3A65FF)
 val BottomNavigationBarColor = Color(0xFFF6F6F6)
 val SelectedBottomBarIconColor = Color(0xFF3856BF)
 val UnselectedBottomBarIconColor = Black
+val LightGreen = Color(0xFFA5D6A7)
+val LightBlue = Color(0xFF81D4FA)
 
 
 

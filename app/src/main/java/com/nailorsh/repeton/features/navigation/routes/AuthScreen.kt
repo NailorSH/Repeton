@@ -1,5 +1,7 @@
 package com.nailorsh.repeton.features.navigation.routes
 
-sealed class AuthScreen(val route: String) {
+import com.nailorsh.repeton.core.navigation.NavigationRoute
+
+sealed class AuthScreen(override val route: String) : NavigationRoute {
     object Login : AuthScreen(route = "login")
 }

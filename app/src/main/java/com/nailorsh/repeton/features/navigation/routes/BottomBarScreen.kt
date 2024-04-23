@@ -3,12 +3,13 @@ package com.nailorsh.repeton.features.navigation.routes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.nailorsh.repeton.R
+import com.nailorsh.repeton.core.navigation.NavigationRoute
 
 sealed class BottomBarScreen(
     @StringRes val title: Int,
     @DrawableRes val icon: Int,
-    val route: String,
-) {
+    override val route: String,
+) : NavigationRoute {
     object Search : BottomBarScreen(
         title = R.string.search_tutors,
         icon = R.drawable.search_icon,

@@ -25,7 +25,7 @@ fun HomeNavGraph(
 ) {
     NavHost(
         navController = navController,
-        route = Graph.HOME,
+        route = Graph.HOME.route,
         startDestination = BottomBarScreen.Home.route,
         modifier = modifier
     ) {
@@ -55,7 +55,7 @@ fun HomeNavGraph(
                     navController.navigate(LessonViewScreen.Lesson.createLessonRoute(lesson.id))
                 },
                 onNewLessonClicked = {
-                    navController.navigate(Graph.LESSON_CREATION)
+                    navController.navigate(Graph.LESSON_CREATION.route)
                 }
             )
         }

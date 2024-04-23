@@ -18,7 +18,7 @@ fun NavGraphBuilder.lessonCreationNavGraph(
     navController: NavHostController
 ) {
     navigation(
-        route = Graph.LESSON_CREATION,
+        route = Graph.LESSON_CREATION.route,
         startDestination = LessonCreationScreen.NewLesson.route
     ) {
         composable(route = LessonCreationScreen.NewLesson.route) {

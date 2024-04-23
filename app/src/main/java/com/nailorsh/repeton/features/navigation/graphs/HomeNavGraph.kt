@@ -14,9 +14,9 @@ import com.nailorsh.repeton.features.navigation.routes.LessonViewScreen
 import com.nailorsh.repeton.features.navigation.routes.TutorViewScreen
 import com.nailorsh.repeton.features.schedule.presentation.ui.ScheduleScreen
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleViewModel
-import com.nailorsh.repeton.features.userprofile.presentation.ui.ProfileScreen
 import com.nailorsh.repeton.features.tutorsearch.presentation.ui.SearchScreen
 import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.TutorSearchViewModel
+import com.nailorsh.repeton.features.userprofile.presentation.ui.ProfileScreen
 import com.nailorsh.repeton.features.userprofile.presentation.viewmodel.ProfileViewModel
 
 @Composable
@@ -26,7 +26,7 @@ fun HomeNavGraph(
 ) {
     NavHost(
         navController = navController,
-        route = Graph.HOME,
+        route = Graph.HOME.route,
         startDestination = BottomBarScreen.Home.route,
         modifier = modifier
     ) {
@@ -56,7 +56,7 @@ fun HomeNavGraph(
                     navController.navigate(LessonViewScreen.Lesson.createLessonRoute(lesson.id))
                 },
                 onNewLessonClicked = {
-                    navController.navigate(Graph.LESSON_CREATION)
+                    navController.navigate(Graph.LESSON_CREATION.route)
                 }
             )
         }

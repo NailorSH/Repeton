@@ -14,7 +14,7 @@ fun NavGraphBuilder.lessonViewNavGraph(
     navController: NavHostController
 ) {
     navigation(
-        route = Graph.LESSON_VIEW,
+        route = Graph.LESSON_VIEW.route,
         startDestination = LessonViewScreen.Lesson.route
     ) {
         composable(route = LessonViewScreen.Lesson.route) { backStackEntry ->

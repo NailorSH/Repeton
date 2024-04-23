@@ -14,7 +14,7 @@ fun NavGraphBuilder.tutorViewNavGraph(
     navController: NavHostController
 ) {
     navigation(
-        route = Graph.TUTOR_VIEW,
+        route = Graph.TUTOR_VIEW.route,
         startDestination = TutorViewScreen.TutorView.route
     ) {
         composable(route = TutorViewScreen.TutorView.route) { backStackEntry ->

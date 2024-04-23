@@ -14,7 +14,7 @@ fun NavGraphBuilder.authNavGraph(
     navController: NavHostController
 ) {
     navigation(
-        route = Graph.AUTHENTICATION,
+        route = Graph.AUTHENTICATION.route,
         startDestination = AuthScreen.Login.route
     ) {
         composable(route = AuthScreen.Login.route) {
@@ -24,7 +24,7 @@ fun NavGraphBuilder.authNavGraph(
                 viewModel = authViewModel,
                 popUpScreen = {
                     navController.popBackStack()
-                    navController.navigate(Graph.HOME)
+                    navController.navigate(Graph.HOME.route)
                 }
             )
         }

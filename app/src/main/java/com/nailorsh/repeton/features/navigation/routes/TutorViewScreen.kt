@@ -1,7 +1,9 @@
 package com.nailorsh.repeton.features.navigation.routes
 
-sealed interface TutorViewScreen {
-    val route: String
+import com.nailorsh.repeton.core.navigation.NavigationRoute
+
+sealed interface TutorViewScreen : NavigationRoute {
+    override val route: String
 
     object TutorView : TutorViewScreen {
         private const val BASE_ROUTE = "tutor_view"

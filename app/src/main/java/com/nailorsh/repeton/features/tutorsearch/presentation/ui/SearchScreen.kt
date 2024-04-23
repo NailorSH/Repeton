@@ -231,7 +231,7 @@ fun TutorCard(
 
             ExpandableText(
                 modifier = modifier.fillMaxWidth(),
-                text = tutor.about,
+                text = tutor.about ?: "",
                 style = TextStyle(
                     fontSize = 16.sp,
                     lineHeight = 24.sp,

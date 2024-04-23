@@ -176,7 +176,7 @@ private fun TutorAdditionalInfoBlock(
     ) {
         TitleWithExpandableText(
             title = stringResource(R.string.about_me),
-            text = tutor.about
+            text = tutor.about ?: ""
         )
 
         HorizontalDivider(

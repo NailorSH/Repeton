@@ -1,12 +1,12 @@
 package com.nailorsh.repeton.common.data.models
 
 data class Tutor(
-    val id: Int,
-    val name: String,
-    val surname: String,
-    val middleName: String = "",
-    val about: String = "",
-    val photoSrc: String = "",
+    override val id: Int,
+    override val name: String,
+    override val surname: String,
+    override val middleName: String?,
+    override val about: String?,
+    override val photoSrc: String?,
     val subjects: List<String>,
     val education: String,
     val subjectsPrices: Map<String, String>,
@@ -18,7 +18,7 @@ data class Tutor(
     val taughtLessonNumber: Int,
     val experienceYears: Int,
     val languages: Map<String, String>,
-)
+) : User
 
 fun Tutor.getFlagEmoji(): String {
     val asciiOffset = 'A'.code // ASCII code for 'A'

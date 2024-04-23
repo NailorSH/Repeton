@@ -17,6 +17,7 @@ import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleVie
 import com.nailorsh.repeton.features.userprofile.presentation.ui.ProfileScreen
 import com.nailorsh.repeton.features.tutorsearch.presentation.ui.SearchScreen
 import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.TutorSearchViewModel
+import com.nailorsh.repeton.features.userprofile.presentation.viewmodel.ProfileViewModel
 
 @Composable
 fun HomeNavGraph(
@@ -74,8 +75,10 @@ fun HomeNavGraph(
         }
 
         composable(route = BottomBarScreen.Profile.route) {
+            val profileViewModel = hiltViewModel<ProfileViewModel>()
+            ProfileScreen(
 
-            ProfileScreen()
+            )
 
         }
     }

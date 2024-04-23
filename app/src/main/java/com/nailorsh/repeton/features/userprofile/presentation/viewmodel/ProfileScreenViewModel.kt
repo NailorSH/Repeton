@@ -1,6 +1,5 @@
 package com.nailorsh.repeton.features.userprofile.presentation.viewmodel
 
-import android.graphics.Path.Op
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
@@ -10,9 +9,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.common.data.models.Lesson
+import com.nailorsh.repeton.core.navigation.NavigationRoute
 import com.nailorsh.repeton.features.navigation.routes.BottomBarScreen
-import com.nailorsh.repeton.features.schedule.data.ScheduleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -77,16 +75,6 @@ enum class Options(
 }
 
 
-data class ProfileScreenOption(
-    @DrawableRes val icon: Int,
-    @StringRes val text: Int,
-    val onPressCallback: () -> Unit,
-    val trailingItem: TrailingItems,
-    val onSwitchChange: (() -> Unit)? = {},
-    val switchState: Boolean? = false,
-    val badgeCount: Int? = 0
-)
-
 data class TrailingItemsState(
     val badgeCount: Int = 0,
     val switchState: Boolean = false
@@ -106,7 +94,7 @@ sealed interface ProfileScreenUiState {
 
 
 @HiltViewModel
-class ScheduleViewModel @Inject constructor(
+class ProfileViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileScreenUiState.Loading)
@@ -114,8 +102,8 @@ class ScheduleViewModel @Inject constructor(
 
     private val _trailingItemsState = MutableStateFlow(TrailingItemsState())
 
-    private val _sideEffect = MutableSharedFlow<BottomBarScreen>()
-    val sideEffect: SharedFlow<BottomBarScreen> = _sideEffect.asSharedFlow()
+    private val _sideEffect = MutableSharedFlow<NavigationRoute>()
+    val sideEffect: SharedFlow<NavigationRoute> = _sideEffect.asSharedFlow()
 
     init {
         getOptions()
@@ -124,42 +112,7 @@ class ScheduleViewModel @Inject constructor(
 
     fun getOptions() {
         viewModelScope.launch {
-            val profileOptions = listOf(
-                ProfileScreenOption(
-                    icon = R.drawable.ic_profilescreen_lessons,
-                    text = R.string.profile_screen_lessons,
-                    onPressCallback = {},
-                    trailingItem = TrailingItems.None
-                ),
-                ProfileScreenOption(
-                    icon = R.drawable.ic_profilescreen_students,
-                    text = R.string.profile_screen_students,
-                    onPressCallback = {},
-                    trailingItem = TrailingItems.None
-                ),
-                ProfileScreenOption(
-                    icon = R.drawable.ic_profilescreen_homework,
-                    text = R.string.profile_screen_homework,
-                    onPressCallback = {},
-                    trailingItem = TrailingItems.Badge
-                ),
-                ProfileScreenOption(
-                    icon = R.drawable.ic_profilescreen_statistics,
-                    text = R.string.profile_screen_statistics,
-                    onPressCallback = {},
-                    trailingItem = TrailingItems.None
-                ),
-                ProfileScreenOption(
-                    icon = R.drawable.ic_profilescreen_about,
-                    text = R.string.profile_screen_about,
-                    onPressCallback = {},
-                    trailingItem = TrailingItems.None
-                )
-            )
 
-            val settingsOptions = listOf(
-
-            )
         }
 
 

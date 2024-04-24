@@ -1,6 +1,7 @@
 package com.nailorsh.repeton.features.navigation.graphs
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -77,7 +78,10 @@ fun HomeNavGraph(
         composable(route = BottomBarScreen.Profile.route) {
             val profileViewModel = hiltViewModel<ProfileViewModel>()
             ProfileScreen(
-
+                profileScreenUiState = profileViewModel.uiState.collectAsState().value,
+                sideEffectState = profileViewModel.sideEffect,
+                onOptionNavigate = { navController.navigate(it.route) },
+                onOptionClicked = profileViewModel::onOptionClicked
             )
 
         }

@@ -11,11 +11,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.core.navigation.NavigationRoute
 import com.nailorsh.repeton.core.ui.components.LoadingScreen
@@ -26,6 +30,7 @@ import com.nailorsh.repeton.features.userprofile.presentation.ui.components.Prof
 import com.nailorsh.repeton.features.userprofile.presentation.viewmodel.ProfileScreenUiState
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 
 @Composable
 fun ProfileScreen(
@@ -35,8 +40,15 @@ fun ProfileScreen(
     onOptionClicked: (Options) -> Unit
 ) {
 
-    LaunchedEffect(sideEffectState) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
+    LaunchedEffect(sideEffectState) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            sideEffectState.collect { sideEffect ->
+                onOptionNavigate(sideEffect)
+            }
+        }
     }
 
 

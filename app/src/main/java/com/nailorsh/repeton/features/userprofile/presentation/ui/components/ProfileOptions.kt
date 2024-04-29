@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.nailorsh.repeton.features.userprofile.data.Options
+import com.nailorsh.repeton.features.userprofile.data.*
 
 @Composable
 fun ProfileOptions(
@@ -40,7 +40,11 @@ fun ProfileOptions(
                     icon = item.icon,
                     text = item.text,
                     onPressCallback = { onOptionClicked(item) },
-                    trailingItem = item.trailingItem
+                    trailingItem = when(val currentItem = item.trailingItem) {
+                        TrailingContentType.Empty -> TrailingContent.Empty
+                        is TrailingContentType.HomeworkBadge -> HomeworkBadge(currentItem.count)
+                        is TrailingContentType.ThemeSwitcher -> ThemeSwitcher(currentItem.isEnabled, currentItem.onSwitchCallback)
+                    }
                 )
                 if (index != optionsList.size - 1) {
                     HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))

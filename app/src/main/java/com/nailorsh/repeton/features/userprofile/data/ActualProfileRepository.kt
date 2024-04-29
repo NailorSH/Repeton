@@ -3,7 +3,6 @@ package com.nailorsh.repeton.features.userprofile.data
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.nailorsh.repeton.R
-import java.lang.StackWalker.Option
 import javax.inject.Inject
 
 
@@ -11,91 +10,118 @@ enum class OptionType() {
     Tutor, Student, Setting
 }
 
-enum class Options(
-    @DrawableRes val icon: Int,
-    @StringRes val text: Int,
-    val type: OptionType,
-    val trailingItem : TrailingContent
-) {
-    Lessons(
-        icon = R.drawable.ic_profilescreen_lessons,
-        text = R.string.profile_screen_lessons,
-        type = OptionType.Tutor,
-        trailingItem = TrailingContent.Empty
-    ),
+sealed interface TrailingContentType {
+    object Empty : TrailingContentType
 
-    Students(
-        icon = R.drawable.ic_profilescreen_students,
-        text = R.string.profile_screen_students,
-        type = OptionType.Tutor,
-        trailingItem = TrailingContent.Empty
-    ),
+    data class ThemeSwitcher(val isEnabled: Boolean = false, val onSwitchCallback: (Boolean) -> Unit = {}) : TrailingContentType
 
-    Homework(
-        icon = R.drawable.ic_profilescreen_homework,
-        text = R.string.profile_screen_homework,
-        type = OptionType.Tutor,
-        trailingItem = HomeworkBadge(0)
-    ),
-    Statistics(
-        icon = R.drawable.ic_profilescreen_statistics,
-        text = R.string.profile_screen_statistics,
-        type = OptionType.Tutor,
-        trailingItem = TrailingContent.Empty
-    ),
-    About(
-        icon = R.drawable.ic_profilescreen_about,
-        text = R.string.profile_screen_about,
-        type = OptionType.Tutor,
-        trailingItem = TrailingContent.Empty
-    ),
-
-    Security(
-        icon = R.drawable.ic_profilescreen_security,
-        text = R.string.profile_screen_security,
-        type = OptionType.Setting,
-        trailingItem = TrailingContent.Empty
-    ),
-
-    Notifications(
-        icon = R.drawable.ic_profilescreen_notifications,
-        text = R.string.profile_screen_notification,
-        type = OptionType.Setting,
-        trailingItem = TrailingContent.Empty
-    ),
-
-    Language(
-        icon = R.drawable.ic_profilescreen_language,
-        text = R.string.profile_screen_language,
-        type = OptionType.Setting,
-        trailingItem = TrailingContent.Empty
-    ),
-
-    Help(
-        icon = R.drawable.ic_profilescreen_help,
-        text = R.string.profile_screen_help,
-        type = OptionType.Setting,
-        trailingItem = TrailingContent.Empty
-    ),
-
-    ThemeSwitch(
-        icon = R.drawable.ic_profilescreen_theme,
-        text = R.string.profile_screen_theme,
-        type = OptionType.Setting,
-        trailingItem = ThemeSwitcher(false)
-    )
+    data class HomeworkBadge(val count: Int = 0) : TrailingContentType
 }
 
-class ActualProfileRepository @Inject constructor() : UserProfileRepository  {
+
+
+sealed interface Options {
+
+    @get:DrawableRes
+    val icon: Int
+
+    @get:StringRes
+    val text: Int
+    val type: OptionType
+    val trailingItem: TrailingContentType
+
+    object Lessons : Options {
+        override val icon = R.drawable.ic_profilescreen_lessons
+        override val text = R.string.profile_screen_lessons
+        override val type = OptionType.Tutor
+        override val trailingItem = TrailingContentType.Empty
+    }
+
+    object Students : Options {
+        override val icon = R.drawable.ic_profilescreen_students
+        override val text = R.string.profile_screen_students
+        override val type = OptionType.Tutor
+        override val trailingItem = TrailingContentType.Empty
+    }
+
+    object Statistics : Options {
+        override val icon = R.drawable.ic_profilescreen_statistics
+        override val text = R.string.profile_screen_statistics
+        override val type = OptionType.Tutor
+        override val trailingItem = TrailingContentType.Empty
+    }
+
+    object About : Options {
+        override val icon = R.drawable.ic_profilescreen_about
+        override val text = R.string.profile_screen_about
+        override val type = OptionType.Tutor
+        override val trailingItem = TrailingContentType.Empty
+    }
+
+    object Security : Options {
+        override val icon = R.drawable.ic_profilescreen_security
+        override val text = R.string.profile_screen_security
+        override val type = OptionType.Setting
+        override val trailingItem = TrailingContentType.Empty
+    }
+
+    object Notifications : Options {
+        override val icon = R.drawable.ic_profilescreen_notifications
+        override val text = R.string.profile_screen_notification
+        override val type = OptionType.Setting
+        override val trailingItem = TrailingContentType.Empty
+    }
+
+    object Language : Options {
+        override val icon = R.drawable.ic_profilescreen_language
+        override val text = R.string.profile_screen_language
+        override val type = OptionType.Setting
+        override val trailingItem = TrailingContentType.Empty
+    }
+
+    object Help : Options {
+        override val icon = R.drawable.ic_profilescreen_help
+        override val text = R.string.profile_screen_help
+        override val type = OptionType.Setting
+        override val trailingItem = TrailingContentType.Empty
+    }
+
+    data class Homework(override val trailingItem: TrailingContentType.HomeworkBadge) : Options {
+        override val icon = R.drawable.ic_profilescreen_homework
+        override val text = R.string.profile_screen_homework
+        override val type = OptionType.Tutor
+    }
+    data class ThemeSwitch(override val trailingItem: TrailingContentType.ThemeSwitcher) : Options {
+        override val icon = R.drawable.ic_profilescreen_theme
+        override val text = R.string.profile_screen_theme
+        override val type = OptionType.Setting
+    }
+
+}
+
+class ActualProfileRepository @Inject constructor() : UserProfileRepository {
 
     override suspend fun getSettingsOptions(): List<Options> =
-        Options.values().filter { it.type == OptionType.Setting }
+        listOf(
+            Options.Security,
+            Options.Notifications,
+            Options.Language,
+            Options.Help,
+            Options.ThemeSwitch(TrailingContentType.ThemeSwitcher())
+        )
 
 
     override suspend fun getTutorOptions(): List<Options> =
-        Options.values().filter { it.type == OptionType.Tutor }
+        listOf(
+            Options.Lessons,
+            Options.Students,
+            Options.Homework(TrailingContentType.HomeworkBadge()),
+            Options.Statistics,
+            Options.About
+        )
 
 
     override suspend fun getStudentOptions(): List<Options> =
-        Options.values().filter { it.type == OptionType.Student }
+        emptyList()
+
 }

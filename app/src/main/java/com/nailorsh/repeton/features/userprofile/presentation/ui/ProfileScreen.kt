@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -19,6 +20,7 @@ import com.nailorsh.repeton.R
 import com.nailorsh.repeton.core.navigation.NavigationRoute
 import com.nailorsh.repeton.core.ui.components.LoadingScreen
 import com.nailorsh.repeton.features.userprofile.data.Options
+import com.nailorsh.repeton.features.userprofile.data.TrailingContent
 import com.nailorsh.repeton.features.userprofile.presentation.ui.components.ProfileHeader
 import com.nailorsh.repeton.features.userprofile.presentation.ui.components.ProfileOptions
 import com.nailorsh.repeton.features.userprofile.presentation.viewmodel.ProfileScreenUiState
@@ -65,7 +67,7 @@ fun ProfileScreenContent(
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .verticalScroll(scrollState)
     ) {
-        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.top_padding)))
+        Spacer(modifier = Modifier.height(24.dp))
         ProfileHeader()
         Spacer(modifier = Modifier.height(24.dp))
         Text(
@@ -85,13 +87,12 @@ fun ProfileScreenContent(
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(start = 24.dp, bottom = 8.dp)
         )
+
         ProfileOptions(
             optionsList = settingsOptions,
             onOptionClicked = onOptionClicked,
-            isSettings = true
-
+            isSettings = true,
         )
-
     }
 }
 
@@ -103,6 +104,6 @@ fun ProfileScreenPreview() {
     ProfileScreenContent(
         profileOptions = listOf(),
         settingsOptions = listOf(),
-        onOptionClicked = {}
+        onOptionClicked = {},
     )
 }

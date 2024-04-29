@@ -40,7 +40,7 @@ fun ProfileHeader(modifier: Modifier = Modifier) {
                     .clip(CircleShape)
             )
             Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 Text(
                     text = "Иван Иванов",
@@ -49,11 +49,11 @@ fun ProfileHeader(modifier: Modifier = Modifier) {
                 )
                 Text(
                     text = "Репетитор",
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
                     text = "+7-888-888-88-88",
-                    style = MaterialTheme.typography.labelSmall
+                    style = MaterialTheme.typography.titleSmall
                 )
             }
         }

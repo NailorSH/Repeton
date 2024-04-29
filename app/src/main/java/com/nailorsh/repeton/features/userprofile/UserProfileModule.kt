@@ -14,4 +14,5 @@ abstract class UserProfileModule {
     abstract fun bindUserProfileRepository(
         userProfileRepositoryImpl: ActualProfileRepository
     ): UserProfileRepository
+
 }

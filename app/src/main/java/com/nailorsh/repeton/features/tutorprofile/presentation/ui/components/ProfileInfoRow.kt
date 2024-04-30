@@ -23,7 +23,7 @@ import com.nailorsh.repeton.R
 fun ProfileInfoRow(
     @DrawableRes profileImageId: Int,
     name: String,
-    country: String,
+    country: String?,
     flagEmoji: String,
     modifier: Modifier = Modifier
 ) {
@@ -49,17 +49,20 @@ fun ProfileInfoRow(
                 text = name,
                 style = MaterialTheme.typography.headlineMedium
             )
-            Row {
-                Text(
-                    text = country,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Text(
-                    text = flagEmoji,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .padding(start = dimensionResource(R.dimen.padding_extra_small))
-                )
+
+            country?.let {
+                Row {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Text(
+                        text = flagEmoji,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier
+                            .padding(start = dimensionResource(R.dimen.padding_extra_small))
+                    )
+                }
             }
         }
     }

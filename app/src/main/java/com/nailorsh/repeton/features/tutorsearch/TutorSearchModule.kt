@@ -13,7 +13,6 @@ import dagger.hilt.components.SingletonComponent
 abstract class TutorSearchModule {
     @Binds
     abstract fun bindTutorSearchRepository(
-//        tutorSearchRepositoryImpl: FakeTutorSearchRepository
         tutorSearchRepositoryImpl: FirestoreTutorSearchRepository
     ): TutorSearchRepository
 }

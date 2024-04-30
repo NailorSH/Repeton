@@ -1,6 +1,5 @@
 package com.nailorsh.repeton.features.tutorsearch.data
 
-import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.nailorsh.repeton.common.data.models.Tutor
@@ -22,17 +21,12 @@ class FirestoreTutorSearchRepository @Inject constructor(
             .addOnSuccessListener { result ->
                 val tutorsList = mutableListOf<Tutor>()
                 for (document in result) {
-                    Log.d("FIRESTORE", "${document.id} => ${document.data}")
-                    val tutor = document.toTutor()
-                    if (tutor != null) {
-                        tutorsList.add(tutor)
-                        Log.d("FIRESTORE", "Successful add of ${tutor.id}")
-                    }
+                    val tutor = document.toTutor() ?: throw IllegalStateException("Tutor not found")
+                    tutorsList.add(tutor)
                 }
                 deferredTutorsList.complete(tutorsList)
             }
             .addOnFailureListener { exception ->
-                Log.d("FIRESTORE", "Error getting documents: ", exception)
                 deferredTutorsList.completeExceptionally(exception)
             }
 

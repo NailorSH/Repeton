@@ -7,7 +7,7 @@ import com.nailorsh.repeton.features.navigation.graphs.RootNavGraph
 
 @Composable
 fun RepetonApp() {
-    RepetonTheme {
-        RootNavGraph(rememberNavController())
-    }
+
+    RootNavGraph(rememberNavController())
+
 }

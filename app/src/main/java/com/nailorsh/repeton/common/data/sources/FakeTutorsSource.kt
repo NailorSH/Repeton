@@ -25,7 +25,8 @@ object FakeTutorsSource {
             countryCode = "RU",
             taughtLessonNumber = 250,
             experienceYears = 6,
-            languages = mapOf("Русский" to "Носитель")
+            languages = mapOf("Русский" to "Носитель"),
+            photoSrc = ""
         ),
 
         Tutor(
@@ -52,7 +53,8 @@ object FakeTutorsSource {
                 "Русский" to "Носитель",
                 "Английский" to "Выше среднего B2",
                 "Французский" to "Средний B1"
-            )
+            ),
+            photoSrc = ""
         ),
 
         Tutor(
@@ -81,7 +83,8 @@ object FakeTutorsSource {
             languages = mapOf(
                 "Русский" to "Носитель",
                 "Английский" to "Выше среднего B2",
-            )
+            ),
+            photoSrc = ""
         ),
 
         Tutor(
@@ -110,7 +113,8 @@ object FakeTutorsSource {
             languages = mapOf(
                 "Русский" to "Носитель",
                 "Английский" to "Выше среднего B2",
-            )
+            ),
+            photoSrc = ""
         ),
     )
 

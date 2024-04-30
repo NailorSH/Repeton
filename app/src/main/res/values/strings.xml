@@ -118,4 +118,20 @@
     <string name="my_work_schedule">Мой график работы</string>
     <string name="other_subjects">Что ещё я веду</string>
     <string name="tutor">Репетитор</string>
+
+    <string name="profile_screen_profile">Профиль</string>
+    <string name="profile_screen_lessons">Занятия</string>
+    <string name="profile_screen_students">Ученики</string>
+    <string name="profile_screen_homework">Домашние задания</string>
+    <string name="profile_screen_statistics">Статистика</string>
+    <string name="profile_screen_about">О себе</string>
+    <string name="profile_screen_settings">Настройки</string>
+    <string name="profile_screen_security">Безопасность</string>
+    <string name="profile_screen_notification">Уведомления</string>
+    <string name="profile_screen_language">Язык</string>
+    <string name="profile_screen_help">Помощь</string>
+    <string name="profile_screen_theme">Тема</string>
+    <string name="profile_screen_tutor_status">Репетитор</string>
+    <string name="profile_screen_student_status">Ученик</string>
+
 </resources>

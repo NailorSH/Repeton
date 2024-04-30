@@ -20,7 +20,6 @@ data class Tutor(
     val languages: Map<String, String>?
 ) : User
 
-
 fun Tutor.getFlagEmoji(): String {
     val asciiOffset = 'A'.code // ASCII code for 'A'
     val emojiRegionBase = 0x1F1E6 // Base Unicode for regional indicator symbols

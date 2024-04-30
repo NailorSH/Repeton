@@ -18,11 +18,11 @@ fun NavGraphBuilder.tutorViewNavGraph(
         startDestination = TutorViewScreen.TutorView.route
     ) {
         composable(route = TutorViewScreen.TutorView.route) { backStackEntry ->
-            backStackEntry.arguments?.getString("id")?.let { id ->
+            backStackEntry.arguments?.getString(TutorViewScreen.TutorView.ID_PARAM)?.let { id ->
                 val viewModel = backStackEntry.sharedViewModel<TutorProfileViewModel>(navController)
 
                 TutorProfileScreen(
-                    tutorId = id.toInt(),
+                    tutorId = id,
                     onBackClicked = { navController.popBackStack() },
                     viewModel = viewModel
                 )

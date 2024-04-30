@@ -29,12 +29,12 @@ class TutorProfileViewModel @Inject constructor(
     var tutorProfileUiState: TutorProfileUiState by mutableStateOf(TutorProfileUiState.Loading)
         private set
 
-    fun getTutorProfile(lessonId: Int) {
+    fun getTutorProfile(tutorId: String) {
         viewModelScope.launch {
             tutorProfileUiState = TutorProfileUiState.Loading
             tutorProfileUiState = try {
                 val tutor = withContext(Dispatchers.IO) {
-                    tutorProfileRepository.getLesson(lessonId)
+                    tutorProfileRepository.getTutorProfile(tutorId)
                 }
                 TutorProfileUiState.Success(tutor)
             } catch (e: IOException) {

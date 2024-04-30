@@ -5,12 +5,13 @@ import com.nailorsh.repeton.common.data.models.Tutor
 object FakeTutorsSource {
     private val tutors = listOf(
         Tutor(
-            id = 0,
+            id = "0",
             name = "Александр ",
             surname = "Киселёв",
             middleName = "Витальевич",
             about = "Я являюсь техническим руководителем проекта «Учу на Профи.Ру» и активно " +
                     "использую современные технологии на своих занятиях.",
+            photoSrc = null,
             subjects = listOf("Математика", "Информатика"),
             education = "Окончил МФТИ, ФОПФ, два красных диплома, 2005 г.",
             subjectsPrices = mapOf(
@@ -28,11 +29,12 @@ object FakeTutorsSource {
         ),
 
         Tutor(
-            id = 1,
+            id = "1",
             name = "Александр",
             surname = "Коновалов",
             middleName = "Владимирович",
             about = "Преподаватель МГТУ имени Н.Э. Баумана и программист C и Refal",
+            photoSrc = null,
             subjects = listOf("Информатика", "Алгоритмы"),
             education = "",
             subjectsPrices = mapOf(
@@ -54,12 +56,13 @@ object FakeTutorsSource {
         ),
 
         Tutor(
-            id = 2,
+            id = "2",
             name = "Данила",
             surname = "Посевин",
             middleName = "Павлович",
             about = "Я Данила Палыч: не заботал — пересдача! " +
                     "Люблю физику и математику, аналоговые приборы, тумблерочки и проводочки.",
+            photoSrc = null,
             subjects = listOf("ООП", "Компьютерные сети", "Разработка мобильных приложений"),
             education = "2004 — Московский физико-технический институт\n" +
                     "Прикладные математика и физика",
@@ -82,11 +85,12 @@ object FakeTutorsSource {
         ),
 
         Tutor(
-            id = 3,
+            id = "3",
             name = "Иван",
             surname = "Иванов",
             middleName = "Иванович",
-            about = "",
+            about = null,
+            photoSrc = null,
             subjects = listOf("Русский язык", "Английский язык", "Немецкий язык"),
             education = "Новгородский государственный университет имени Ярослава Мудрого, " +
                     "оператор электронно-вычислительных и вычислительных машин второго разряда" +

@@ -66,7 +66,7 @@ fun SearchScreen(
     typingGetSearchResults: (String) -> Unit,
     getSearchResults: () -> Unit,
     searchUiState: SearchUiState,
-    onTutorCardClicked: (Int) -> Unit,
+    onTutorCardClicked: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var query by remember { mutableStateOf("") }
@@ -127,7 +127,7 @@ fun SearchScreen(
 @Composable
 fun TutorList(
     tutors: List<Tutor>,
-    onTutorCardClicked: (Int) -> Unit,
+    onTutorCardClicked: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -151,7 +151,7 @@ fun TutorCard(
     tutor: Tutor,
     onWriteButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    onCardClicked: (Int) -> Unit
+    onCardClicked: (String) -> Unit
 ) {
     var isLiked by remember { mutableStateOf(false) }
 
@@ -229,45 +229,53 @@ fun TutorCard(
                 }
             }
 
-            ExpandableText(
-                modifier = modifier.fillMaxWidth(),
-                text = tutor.about,
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    lineHeight = 24.sp,
-                    fontWeight = FontWeight(400),
-                    color = BodyColor,
-                ),
-                textButtonStyle = TextStyle(
-                    fontSize = 14.sp,
-                    lineHeight = 24.sp,
-                    fontWeight = FontWeight(500),
-                    color = ShowMoreTextButtonColor,
+            tutor.about?.let {
+                ExpandableText(
+                    modifier = modifier.fillMaxWidth(),
+                    text = it,
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        lineHeight = 24.sp,
+                        fontWeight = FontWeight(400),
+                        color = BodyColor,
+                    ),
+                    textButtonStyle = TextStyle(
+                        fontSize = 14.sp,
+                        lineHeight = 24.sp,
+                        fontWeight = FontWeight(500),
+                        color = ShowMoreTextButtonColor,
+                    )
                 )
-            )
+            }
 
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top),
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                InfoSection(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = R.string.subjects_section,
-                    body = tutor.subjects.joinToString(separator = " • ")
-                )
+                tutor.subjects?.let {
+                    InfoSection(
+                        modifier = Modifier.fillMaxWidth(),
+                        title = R.string.subjects_section,
+                        body = it.joinToString(separator = " • ")
+                    )
+                }
 
-                InfoSection(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = R.string.education_section,
-                    body = tutor.education
-                )
+                tutor.education?.let {
+                    InfoSection(
+                        modifier = Modifier.fillMaxWidth(),
+                        title = R.string.education_section,
+                        body = it
+                    )
+                }
 
-                PriceSection(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = R.string.prices_section,
-                    subjectsPrices = tutor.subjectsPrices
-                )
+                tutor.subjectsPrices?.let {
+                    PriceSection(
+                        modifier = Modifier.fillMaxWidth(),
+                        title = R.string.prices_section,
+                        subjectsPrices = it
+                    )
+                }
             }
         }
         Button(
@@ -287,23 +295,6 @@ fun TutorCard(
                 ),
             )
         }
-
-//        RepetonButton(
-//            modifier = Modifier
-//                .fillMaxWidth(),
-//            buttonColor = WriteButtonBackgroundColor,
-//            onClick = onWriteButtonClicked
-//        ) {
-//            Text(
-//                text = stringResource(R.string.message_button),
-//                style = TextStyle(
-//                    fontSize = 14.sp,
-//                    lineHeight = 32.sp,
-//                    fontWeight = FontWeight(600),
-//                    color = WriteButtonTextColor
-//                ),
-//            )
-//        }
     }
 }
 
@@ -408,6 +399,22 @@ fun TutorCardPreview() {
             tutor = FakeTutorsSource.getTutorsList()[0],
             onWriteButtonClicked = {},
             onCardClicked = {}
+        )
+    }
+}
+
+
+@Preview(
+    showSystemUi = true
+)
+@Composable
+fun SearchScreenPreview() {
+    RepetonTheme {
+        SearchScreen(
+            typingGetSearchResults = { _ -> },
+            getSearchResults = { },
+            searchUiState = SearchUiState.None,
+            onTutorCardClicked = {}
         )
     }
 }

@@ -44,7 +44,7 @@ import com.nailorsh.repeton.features.tutorprofile.presentation.viewmodel.TutorPr
 
 @Composable
 fun TutorProfileScreen(
-    tutorId: Int,
+    tutorId: String,
     onBackClicked: () -> Unit,
     viewModel: TutorProfileViewModel = viewModel(),
 ) {
@@ -174,10 +174,12 @@ private fun TutorAdditionalInfoBlock(
             horizontal = dimensionResource(R.dimen.padding_medium)
         )
     ) {
-        TitleWithExpandableText(
-            title = stringResource(R.string.about_me),
-            text = tutor.about
-        )
+        tutor.about?.let {
+            TitleWithExpandableText(
+                title = stringResource(R.string.about_me),
+                text = it
+            )
+        }
 
         HorizontalDivider(
             modifier = Modifier.padding(
@@ -185,7 +187,7 @@ private fun TutorAdditionalInfoBlock(
             )
         )
 
-        LanguageSkills(tutor.languages)
+        tutor.languages?.let { LanguageSkills(it) }
     }
 }
 
@@ -195,6 +197,6 @@ private fun TutorAdditionalInfoBlock(
 @Composable
 private fun TutorProfileCardPreview() {
     RepetonTheme {
-        TutorProfileScreen(2, {})
+        TutorProfileScreen("2", {})
     }
 }

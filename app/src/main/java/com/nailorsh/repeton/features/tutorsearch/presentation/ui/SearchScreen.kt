@@ -193,7 +193,7 @@ fun TutorCard(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = tutor.name + "\n" + tutor.middleName,
+                            text = "${tutor.name}\n${tutor.middleName ?: ""}",
                             style = TextStyle(
                                 fontSize = 22.sp,
                                 lineHeight = 26.sp,

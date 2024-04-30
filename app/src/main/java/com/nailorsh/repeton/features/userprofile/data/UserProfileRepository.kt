@@ -1,7 +1,5 @@
 package com.nailorsh.repeton.features.userprofile.data
 
-import kotlinx.coroutines.flow.Flow
-
 
 interface UserProfileRepository {
 

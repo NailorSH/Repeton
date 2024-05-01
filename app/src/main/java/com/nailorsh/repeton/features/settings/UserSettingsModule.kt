@@ -1,4 +1,4 @@
-package com.nailorsh.repeton.core.settings
+package com.nailorsh.repeton.features.settings
 
 import android.content.Context
 import com.nailorsh.repeton.features.tutorprofile.data.FakeTutorProfileRepository
@@ -23,12 +23,3 @@ object DataStoreModule {
     ): UserSettingsRepository = UserSettingsRepositoryImpl(context)
 
 }
-
-//@Module
-//@InstallIn(SingletonComponent::class)
-//abstract class UserSettingsModule {
-//    @Binds
-//    abstract fun userSettingsRepository(
-//        userSettingsRepositoryImpl: UserSettingsRepositoryImpl
-//    ): UserSettingsRepository
-//}

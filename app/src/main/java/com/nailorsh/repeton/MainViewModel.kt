@@ -1,13 +1,13 @@
 package com.nailorsh.repeton
 
-import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nailorsh.repeton.core.settings.UserSettingsRepository
-import com.nailorsh.repeton.features.userprofile.data.Options
-import com.nailorsh.repeton.features.userprofile.presentation.viewmodel.ProfileScreenUiState
+import com.nailorsh.repeton.features.settings.UserSettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.net.HttpRetryException

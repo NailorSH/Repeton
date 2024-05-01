@@ -1,4 +1,4 @@
-package com.nailorsh.repeton.core.settings
+package com.nailorsh.repeton.features.settings
 
 import kotlinx.coroutines.flow.Flow
 

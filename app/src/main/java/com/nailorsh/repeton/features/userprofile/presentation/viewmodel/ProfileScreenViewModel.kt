@@ -3,8 +3,8 @@ package com.nailorsh.repeton.features.userprofile.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nailorsh.repeton.core.navigation.NavigationRoute
-import com.nailorsh.repeton.core.settings.UserSettingsRepository
 import com.nailorsh.repeton.features.navigation.routes.BottomBarScreen
+import com.nailorsh.repeton.features.settings.UserSettingsRepository
 import com.nailorsh.repeton.features.userprofile.data.Options
 import com.nailorsh.repeton.features.userprofile.data.TrailingContentType
 import com.nailorsh.repeton.features.userprofile.data.UserProfileRepository

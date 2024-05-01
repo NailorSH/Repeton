@@ -2,6 +2,7 @@ package com.nailorsh.repeton.features.tutorprofile.data
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.nailorsh.repeton.common.data.models.Tutor
+import com.nailorsh.repeton.common.data.models.UserId
 import com.nailorsh.repeton.features.tutorsearch.data.toTutor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -11,12 +12,15 @@ import javax.inject.Inject
 class FirestoreTutorProfileRepository @Inject constructor(
     private val db: FirebaseFirestore
 ) : TutorProfileRepository {
-    override suspend fun getTutorProfile(id: String): Tutor = withContext(Dispatchers.IO) {
-        val document = db.collection("users").document(id).get().await()
+    override suspend fun getTutorProfile(id: UserId): Tutor = withContext(Dispatchers.IO) {
+        val document = db.collection("users").document(id.value)
+            .get()
+            .await()
         if (document.exists()) {
-            document.toTutor() ?: throw IllegalStateException("Tutor not found")
+            document.toTutor()
+                ?: throw NoSuchElementException("Tutor could not be found or deserialized for id: ${id.value}")
         } else {
-            throw IllegalStateException("Tutor not found")
+            throw NoSuchElementException("Tutor not found for id: ${id.value}")
         }
     }
 }

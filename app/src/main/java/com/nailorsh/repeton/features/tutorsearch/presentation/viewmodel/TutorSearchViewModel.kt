@@ -68,7 +68,7 @@ class TutorSearchViewModel @Inject constructor(
                 SearchUiState.Error
             } catch (e: HttpRetryException) {
                 SearchUiState.Error
-            } catch (e: Exception) {
+            } catch (e: NoSuchElementException) {
                 SearchUiState.Error
             }
         }

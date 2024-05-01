@@ -1,7 +1,7 @@
 package com.nailorsh.repeton.common.data.models
 
 data class Tutor(
-    override val id: String,
+    override val id: UserId,
     override val name: String,
     override val surname: String,
     override val middleName: String?,
@@ -38,7 +38,7 @@ fun Tutor.getFlagEmoji(): String {
     }
 }
 
-fun mapToTutorWithId(data: Map<String, Any>, id: String): Tutor {
+fun mapToTutorWithId(data: Map<String, Any>, id: UserId): Tutor {
     return Tutor(
         id = id,
         name = data["name"] as? String ?: "",

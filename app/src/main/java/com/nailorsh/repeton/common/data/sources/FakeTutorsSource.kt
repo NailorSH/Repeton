@@ -119,6 +119,4 @@ object FakeTutorsSource {
     fun getTutorsList(): List<Tutor> = tutors
 
     fun getTutorById(id: UserId): Tutor? = tutors.firstOrNull { it.id == id }
-
-
 }

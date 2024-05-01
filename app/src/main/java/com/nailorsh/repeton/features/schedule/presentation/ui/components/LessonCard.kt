@@ -27,9 +27,7 @@ fun LessonCard(lesson: Lesson, onClick: (Lesson) -> Unit, modifier: Modifier = M
         elevation = CardDefaults.cardElevation(
             defaultElevation = 4.dp
         ),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-        ),
+        colors = CardDefaults.elevatedCardColors(),
         modifier = Modifier
             .padding(top = 10.dp, bottom = 10.dp)
             .width(dimensionResource(R.dimen.schedule_screen_button_width))
@@ -53,7 +51,6 @@ fun LessonCard(lesson: Lesson, onClick: (Lesson) -> Unit, modifier: Modifier = M
             {
                 Text(
                     text = lesson.subject.subjectName,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
                     style = MaterialTheme.typography.headlineSmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

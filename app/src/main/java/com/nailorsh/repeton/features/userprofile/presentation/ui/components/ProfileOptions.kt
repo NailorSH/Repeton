@@ -1,7 +1,9 @@
 package com.nailorsh.repeton.features.userprofile.presentation.ui.components
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
@@ -20,8 +22,10 @@ fun ProfileOptions(
 ) {
     ElevatedCard(
         shape = RectangleShape,
+        colors = CardDefaults.elevatedCardColors(),
         modifier = modifier
             .fillMaxWidth()
+
 
     ) {
         Column(
@@ -45,7 +49,6 @@ fun ProfileOptions(
                 }
             }
         }
-
     }
 }
 

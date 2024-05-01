@@ -3,6 +3,7 @@ package com.nailorsh.repeton.features.userprofile.presentation.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -22,6 +23,9 @@ import com.nailorsh.repeton.R
 fun ProfileHeader(modifier: Modifier = Modifier) {
     OutlinedCard(
         shape = RectangleShape,
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+        ),
         modifier = modifier
             .fillMaxWidth()
     ) {

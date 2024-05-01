@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -64,37 +65,39 @@ fun ProfileScreenContent(
     onOptionClicked: (Options) -> Unit,
 ) {
     val scrollState = rememberScrollState()
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-            .verticalScroll(scrollState)
-    ) {
-        Spacer(modifier = Modifier.height(24.dp))
-        ProfileHeader()
-        Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = stringResource(R.string.profile_screen_profile),
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(start = 24.dp, bottom = 8.dp)
-        )
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+        ) {
+            Spacer(modifier = Modifier.height(24.dp))
+            ProfileHeader()
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                text = stringResource(R.string.profile_screen_profile),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(start = 24.dp, bottom = 8.dp)
+            )
 
-        ProfileOptions(
-            optionsList = profileOptions,
-            onOptionClicked = onOptionClicked,
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = stringResource(R.string.profile_screen_settings),
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(start = 24.dp, bottom = 8.dp)
-        )
-        ProfileOptions(
-            optionsList = settingsOptions,
-            onOptionClicked = onOptionClicked,
-        )
+            ProfileOptions(
+                optionsList = profileOptions,
+                onOptionClicked = onOptionClicked,
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                text = stringResource(R.string.profile_screen_settings),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(start = 24.dp, bottom = 8.dp)
+            )
+            ProfileOptions(
+                optionsList = settingsOptions,
+                onOptionClicked = onOptionClicked,
+            )
 
+        }
     }
+
 }
 
 @Preview(

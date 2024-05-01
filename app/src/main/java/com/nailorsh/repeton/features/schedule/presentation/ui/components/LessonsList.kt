@@ -9,8 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -33,19 +32,14 @@ fun LessonsList(
         modifier = modifier
     ) {
         if (lessons.isEmpty()) {
-            Box(
+            ElevatedCard(
                 modifier = Modifier
                     .padding(top = 16.dp)
                     .width(dimensionResource(R.dimen.schedule_screen_button_width))
                     .height(dimensionResource(R.dimen.schedule_screen_lesson_size))
-                    .background(
-                        color = MaterialTheme.colorScheme.secondaryContainer,
-                        shape = MaterialTheme.shapes.medium
-                    )
             ) {
                 Text(
                     text = stringResource(R.string.lessons_not_found),
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier
                         .padding(horizontal = 13.dp, vertical = 16.dp)

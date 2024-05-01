@@ -31,68 +31,68 @@ sealed interface Options {
     val trailingItem: TrailingContentType
 
     object Lessons : Options {
-        override val icon = R.drawable.ic_profilescreen_lessons
+        override val icon = R.drawable.ic_lessons
         override val text = R.string.profile_screen_lessons
         override val type = OptionType.Tutor
         override val trailingItem = TrailingContentType.Empty
     }
 
     object Students : Options {
-        override val icon = R.drawable.ic_profilescreen_students
+        override val icon = R.drawable.ic_students
         override val text = R.string.profile_screen_students
         override val type = OptionType.Tutor
         override val trailingItem = TrailingContentType.Empty
     }
 
     object Statistics : Options {
-        override val icon = R.drawable.ic_profilescreen_statistics
+        override val icon = R.drawable.ic_statistics
         override val text = R.string.profile_screen_statistics
         override val type = OptionType.Tutor
         override val trailingItem = TrailingContentType.Empty
     }
 
     object About : Options {
-        override val icon = R.drawable.ic_profilescreen_about
+        override val icon = R.drawable.ic_about
         override val text = R.string.profile_screen_about
         override val type = OptionType.Tutor
         override val trailingItem = TrailingContentType.Empty
     }
 
     object Security : Options {
-        override val icon = R.drawable.ic_profilescreen_security
+        override val icon = R.drawable.ic_security
         override val text = R.string.profile_screen_security
         override val type = OptionType.Setting
         override val trailingItem = TrailingContentType.Empty
     }
 
     object Notifications : Options {
-        override val icon = R.drawable.ic_profilescreen_notifications
+        override val icon = R.drawable.ic_notifications
         override val text = R.string.profile_screen_notification
         override val type = OptionType.Setting
         override val trailingItem = TrailingContentType.Empty
     }
 
     object Language : Options {
-        override val icon = R.drawable.ic_profilescreen_language
+        override val icon = R.drawable.ic_language
         override val text = R.string.profile_screen_language
         override val type = OptionType.Setting
         override val trailingItem = TrailingContentType.Empty
     }
 
     object Help : Options {
-        override val icon = R.drawable.ic_profilescreen_help
+        override val icon = R.drawable.ic_help
         override val text = R.string.profile_screen_help
         override val type = OptionType.Setting
         override val trailingItem = TrailingContentType.Empty
     }
 
     data class Homework(override val trailingItem: TrailingContentType.HomeworkBadge) : Options {
-        override val icon = R.drawable.ic_profilescreen_homework
+        override val icon = R.drawable.ic_homework
         override val text = R.string.profile_screen_homework
         override val type = OptionType.Tutor
     }
     data class ThemeSwitch(override val trailingItem: TrailingContentType.ThemeSwitcher) : Options {
-        override val icon = R.drawable.ic_profilescreen_theme
+        override val icon = R.drawable.ic_dark_theme
         override val text = R.string.profile_screen_theme
         override val type = OptionType.Setting
     }

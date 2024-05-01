@@ -84,7 +84,7 @@ fun LikeButton(
     onButtonClicked: () -> Unit = {},
     isLiked: Boolean
 ) {
-    val iconRes = if (isLiked) R.drawable.liked_heart_icon else R.drawable.unliked_heart_icon
+    val iconRes = if (isLiked) R.drawable.ic_liked_heart_icon else R.drawable.ic_unliked_heart_icon
 
     Icon(
         imageVector = ImageVector.vectorResource(iconRes),

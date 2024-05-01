@@ -85,8 +85,8 @@ fun SearchScreen(
         ) {
             SearchBarWithFilter(
                 placeholder = R.string.search_placeholder,
-                leadingIcon = R.drawable.search_icon,
-                filterIcon = R.drawable.filter_icon,
+                leadingIcon = R.drawable.ic_search_icon,
+                filterIcon = R.drawable.ic_filter_icon,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Search
@@ -217,12 +217,12 @@ fun TutorCard(
                         verticalAlignment = Alignment.Top,
                     ) {
                         IconWithText(
-                            icon = R.drawable.star_icon,
+                            icon = R.drawable.ic_star_icon,
                             iconTint = StarColor,
                             text = tutor.rating.toString()
                         )
                         IconWithText(
-                            icon = R.drawable.comment_icon,
+                            icon = R.drawable.ic_comment_icon,
                             text = "${tutor.reviewsNumber} отзывов"
                         )
                     }

@@ -95,7 +95,7 @@ private fun DisplayModeToggleButton(
             onClick = { onDisplayModeChange(DisplayMode.Picker) },
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.clock_icon),
+                painter = painterResource(id = R.drawable.ic_clock_icon),
                 contentDescription = "",
             )
         }

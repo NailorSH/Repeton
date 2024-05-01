@@ -19,7 +19,7 @@ import com.nailorsh.repeton.R
 fun TeacherInfo(teacherName: String, modifier: Modifier = Modifier) {
     Row {
         Icon(
-            painter = painterResource(id = R.drawable.teacher_icon),
+            painter = painterResource(id = R.drawable.ic_teacher_icon),
             contentDescription = stringResource(R.string.teacher_icon_desc),
             modifier = modifier
                 .size(24.dp)

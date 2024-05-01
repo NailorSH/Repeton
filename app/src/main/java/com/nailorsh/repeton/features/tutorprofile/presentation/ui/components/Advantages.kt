@@ -18,7 +18,7 @@ fun Advantages(modifier: Modifier = Modifier) {
     // 100% refundable
     Row(modifier = modifier) {
         Icon(
-            painter = painterResource(R.drawable.baseline_verified_24),
+            painter = painterResource(R.drawable.ic_baseline_verified_24),
             contentDescription = null,
             modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_small))
         )

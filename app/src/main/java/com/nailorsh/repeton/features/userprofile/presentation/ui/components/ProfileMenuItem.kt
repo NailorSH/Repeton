@@ -63,7 +63,7 @@ fun ProfileMenuItem(
 @Composable
 fun ProfileMenuItemPreview() {
     ProfileMenuItem(
-        icon = R.drawable.filter_icon,
+        icon = R.drawable.ic_filter_icon,
         text = R.string.search_placeholder,
         onPressCallback = {},
         trailingItem = TrailingContent.Empty

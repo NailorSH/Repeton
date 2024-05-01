@@ -13,7 +13,8 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
-private val Context.dataStore : DataStore<Preferences> by preferencesDataStore(name = "SETTINGS")
+const val SETTINGS = "SETTINGS"
+private val Context.dataStore : DataStore<Preferences> by preferencesDataStore(name = SETTINGS)
 class UserSettingsRepositoryImpl(
     private val context : Context
 ) : UserSettingsRepository {

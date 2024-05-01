@@ -1,4 +1,4 @@
-package com.nailorsh.repeton
+package com.nailorsh.repeton.features.navigation.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

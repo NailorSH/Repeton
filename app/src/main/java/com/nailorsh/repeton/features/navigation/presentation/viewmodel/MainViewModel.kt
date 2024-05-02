@@ -36,13 +36,13 @@ class MainViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             getTheme()
-            userSettingsRepository.getTheme().collect { theme ->
+            userSettingsRepository.getTheme().collect { isDark ->
                 _uiState.update { state ->
                     when (state) {
                         is MainUiState.Error -> state
                         is MainUiState.Loading -> state
                         is MainUiState.Success -> state.copy(
-                            isDarkThemeEnabled = theme
+                            isDarkThemeEnabled = isDark
                         )
                     }
                 }

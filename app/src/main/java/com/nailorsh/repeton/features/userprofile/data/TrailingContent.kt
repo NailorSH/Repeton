@@ -1,6 +1,5 @@
 package com.nailorsh.repeton.features.userprofile.data
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Badge
@@ -30,10 +29,7 @@ class HomeworkBadge private constructor(count: Int) : TrailingContent {
 
     @Composable
     override fun Content(modifier: Modifier) {
-        Badge(
-            modifier = modifier
-                .clickable { count++ }
-        ) {
+        Badge {
             Text(text = count.toString())
         }
     }
@@ -41,8 +37,8 @@ class HomeworkBadge private constructor(count: Int) : TrailingContent {
     companion object {
         @Composable
         fun invoke(
-            count : Int
-        ) : HomeworkBadge = remember { HomeworkBadge(count) }.apply {
+            count: Int
+        ): HomeworkBadge = remember { HomeworkBadge(count) }.apply {
             this.count = count
         }
     }
@@ -73,7 +69,7 @@ class ThemeSwitcher private constructor(switchState: Boolean, onSwitchCallback: 
         fun invoke(
             switchState: Boolean,
             onSwitchCallback: (Boolean) -> Unit
-        ) : ThemeSwitcher = remember { ThemeSwitcher(switchState, onSwitchCallback) }.apply {
+        ): ThemeSwitcher = remember { ThemeSwitcher(switchState, onSwitchCallback) }.apply {
             this.switchState = switchState
             this.onSwitchCallback = onSwitchCallback
         }

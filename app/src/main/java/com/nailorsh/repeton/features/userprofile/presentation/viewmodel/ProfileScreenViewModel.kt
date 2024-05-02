@@ -71,7 +71,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private suspend fun subscribeToTheme() {
-        settingsRepository.getTheme().collect { theme ->
+        settingsRepository.getTheme().collect { isDark ->
             _uiState.update { state ->
                 when (state) {
                     ProfileScreenUiState.Error -> state
@@ -80,9 +80,9 @@ class ProfileViewModel @Inject constructor(
                         settingsOptions = state.settingsOptions.map {
                             if (it is Options.ThemeSwitch) {
                                 it.copy(
-                                    icon = if (!theme) R.drawable.ic_dark_theme else R.drawable.ic_light_theme,
+                                    icon = if (!isDark) R.drawable.ic_dark_theme else R.drawable.ic_light_theme,
                                     trailingItem = TrailingContentType.ThemeSwitcher(
-                                        isEnabled = theme,
+                                        isEnabled = isDark,
                                         onSwitchCallback = this::onThemeUpdate
                                     )
                                 )

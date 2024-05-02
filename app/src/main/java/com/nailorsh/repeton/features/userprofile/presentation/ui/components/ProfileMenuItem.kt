@@ -43,7 +43,7 @@ fun ProfileMenuItem(
             text = stringResource(text),
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier
-                .weight(0.55f)
+                .weight(1f)
                 .padding(start = 8.dp)
         )
         Box(

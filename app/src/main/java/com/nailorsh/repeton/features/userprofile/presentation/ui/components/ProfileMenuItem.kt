@@ -2,6 +2,7 @@ package com.nailorsh.repeton.features.userprofile.presentation.ui.components
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -32,13 +33,13 @@ fun ProfileMenuItem(
             .clickable { onPressCallback() }
             .padding(horizontal = 24.dp, vertical = 12.dp)
     ) {
-        Icon(
-            painter = painterResource(icon),
-            contentDescription = null,
-            modifier = Modifier
-                .weight(0.1f)
+        Crossfade(targetState = icon, label = "profile menu icon anim") { targetIcon ->
+            Icon(
+                painter = painterResource(targetIcon),
+                contentDescription = null,
+            )
+        }
 
-        )
         Text(
             text = stringResource(text),
             style = MaterialTheme.typography.labelLarge,

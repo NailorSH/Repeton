@@ -1,6 +1,7 @@
 package com.nailorsh.repeton.features.navigation.routes
 
 import com.nailorsh.repeton.common.data.models.UserId
+import com.nailorsh.repeton.core.navigation.NavigationRoute
 
 sealed interface TutorViewScreen : NavigationRoute {
     override val route: String

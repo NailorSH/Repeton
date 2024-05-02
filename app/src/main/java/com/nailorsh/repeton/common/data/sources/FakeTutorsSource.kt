@@ -1,11 +1,12 @@
 package com.nailorsh.repeton.common.data.sources
 
 import com.nailorsh.repeton.common.data.models.Tutor
+import com.nailorsh.repeton.common.data.models.UserId
 
 object FakeTutorsSource {
     private val tutors = listOf(
         Tutor(
-            id = "0",
+            id = UserId("0"),
             name = "Александр ",
             surname = "Киселёв",
             middleName = "Витальевич",
@@ -29,7 +30,7 @@ object FakeTutorsSource {
         ),
 
         Tutor(
-            id = "1",
+            id = UserId("1"),
             name = "Александр",
             surname = "Коновалов",
             middleName = "Владимирович",
@@ -56,7 +57,7 @@ object FakeTutorsSource {
         ),
 
         Tutor(
-            id = "2",
+            id = UserId("2"),
             name = "Данила",
             surname = "Посевин",
             middleName = "Павлович",
@@ -85,7 +86,7 @@ object FakeTutorsSource {
         ),
 
         Tutor(
-            id = "3",
+            id = UserId("3"),
             name = "Иван",
             surname = "Иванов",
             middleName = "Иванович",
@@ -114,7 +115,7 @@ object FakeTutorsSource {
         ),
     )
 
-    fun getTutorsList(): List<Tutor> {
-        return tutors
-    }
+    fun getTutorsList(): List<Tutor> = tutors
+
+    fun getTutorById(id: UserId): Tutor? = tutors.firstOrNull { it.id == id }
 }

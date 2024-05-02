@@ -1,6 +1,6 @@
 package com.nailorsh.repeton.features.navigation.routes
 
-import com.nailorsh.repeton.core.navigation.NavigationRoute
+import com.nailorsh.repeton.common.data.models.UserId
 
 sealed interface TutorViewScreen : NavigationRoute {
     override val route: String
@@ -10,6 +10,6 @@ sealed interface TutorViewScreen : NavigationRoute {
         const val ID_PARAM = "id"
 
         override val route: String = "$BASE_ROUTE/{$ID_PARAM}"
-        fun createTutorViewRoute(tutorId: String) = "$BASE_ROUTE/$tutorId"
+        fun createTutorViewRoute(tutorId: UserId) = "$BASE_ROUTE/${tutorId.value}"
     }
 }

@@ -19,9 +19,10 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.common.data.models.Tutor
+import com.nailorsh.repeton.common.data.models.UserId
 import com.nailorsh.repeton.common.data.models.getFlagEmoji
 import com.nailorsh.repeton.core.ui.components.ErrorScreen
 import com.nailorsh.repeton.core.ui.components.LoadingScreen
@@ -44,9 +45,9 @@ import com.nailorsh.repeton.features.tutorprofile.presentation.viewmodel.TutorPr
 
 @Composable
 fun TutorProfileScreen(
-    tutorId: String,
+    tutorId: UserId,
     onBackClicked: () -> Unit,
-    viewModel: TutorProfileViewModel = viewModel(),
+    viewModel: TutorProfileViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(tutorId) {
         viewModel.getTutorProfile(tutorId)
@@ -197,6 +198,6 @@ private fun TutorAdditionalInfoBlock(
 @Composable
 private fun TutorProfileCardPreview() {
     RepetonTheme {
-        TutorProfileScreen("2", {})
+        TutorProfileScreen(UserId("2"), {})
     }
 }

@@ -7,6 +7,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.common.data.models.Subject
+import com.nailorsh.repeton.core.util.CalendarDialog
 import com.nailorsh.repeton.features.newlesson.data.FakeNewLessonRepository
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.NewLessonTopBar
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.*
@@ -73,7 +76,7 @@ fun NewLessonScreen(
     }
 
     val focusManager = LocalFocusManager.current
-
+    val scrollState = rememberScrollState()
 
     val now = remember { LocalDateTime.now() }
 
@@ -162,6 +165,7 @@ fun NewLessonScreen(
                     focusManager.clearFocus()
                 }
             )
+            .verticalScroll(scrollState)
     ) {
 
         NewLessonTopBar(

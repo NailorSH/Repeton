@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.nailorsh.repeton.features.navigation.presentation.ui.HomeScreen
 import com.nailorsh.repeton.features.navigation.routes.Graph
-import com.nailorsh.repeton.features.navigation.ui.HomeScreen
 
 @Composable
 fun RootNavGraph(

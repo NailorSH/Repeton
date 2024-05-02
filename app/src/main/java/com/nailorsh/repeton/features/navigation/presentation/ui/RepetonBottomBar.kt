@@ -1,4 +1,4 @@
-package com.nailorsh.repeton.features.navigation.ui
+package com.nailorsh.repeton.features.navigation.presentation.ui
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height

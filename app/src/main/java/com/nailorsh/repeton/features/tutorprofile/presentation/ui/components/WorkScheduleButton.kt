@@ -27,7 +27,7 @@ fun WorkScheduleButton(
             .padding(horizontal = dimensionResource(R.dimen.padding_medium))
     ) {
         Icon(
-            painter = painterResource(R.drawable.outline_date_range_24),
+            painter = painterResource(R.drawable.ic_outline_date_range_24),
             contentDescription = null
         )
         Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))

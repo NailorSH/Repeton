@@ -42,7 +42,7 @@ fun BottomTutorProfileBar(
             // Go to chat button
             OutlinedButton(onClick = onChatButtonClicked) {
                 Icon(
-                    painterResource(R.drawable.baseline_chat_24),
+                    painterResource(R.drawable.ic_baseline_chat_24),
                     contentDescription = stringResource(R.string.chat),
                 )
             }
@@ -53,7 +53,7 @@ fun BottomTutorProfileBar(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Icon(
-                    painterResource(R.drawable.round_local_library_24),
+                    painterResource(R.drawable.ic_round_local_library_24),
                     contentDescription = null
                 )
                 Spacer(modifier = Modifier.width(8.dp))

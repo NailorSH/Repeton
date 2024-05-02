@@ -92,7 +92,7 @@ fun EnterPhoneNumberUI(
 
         OutlinedButton(onClick = onGuestModeButtonClicked) {
             Icon(
-                painter = painterResource(R.drawable.footprint),
+                painter = painterResource(R.drawable.ic_footprint),
                 contentDescription = null
             )
             Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))

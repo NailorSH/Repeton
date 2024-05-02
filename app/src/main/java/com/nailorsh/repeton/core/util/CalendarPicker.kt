@@ -1,4 +1,4 @@
-package com.nailorsh.repeton.features.newlesson.presentation.ui.components.first
+package com.nailorsh.repeton.core.util
 
 import android.util.Log
 import androidx.compose.material.icons.Icons
@@ -6,11 +6,8 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
+import androidx.compose.ui.window.DialogProperties
+import java.time.*
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,11 +51,11 @@ fun CalendarDialog(
                     contentDescription = null
                 )
             }
-        }
+        },
     )
     {
         DatePicker(
-            state = state
+            state = state,
         )
     }
 }

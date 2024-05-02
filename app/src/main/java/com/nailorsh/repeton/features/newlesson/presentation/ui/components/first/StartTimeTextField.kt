@@ -51,7 +51,7 @@ fun StartTimeTextField(
         ),
         leadingIcon = {
             Icon(
-                painter = painterResource(R.drawable.clock_icon),
+                painter = painterResource(R.drawable.ic_clock_icon),
                 contentDescription = stringResource(R.string.new_lesson_screen_datepick_icon)
             )
         },

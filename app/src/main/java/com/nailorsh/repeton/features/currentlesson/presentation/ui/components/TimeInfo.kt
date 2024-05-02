@@ -19,7 +19,7 @@ import com.nailorsh.repeton.R
 fun TimeInfo(startTime: String, endTime: String, modifier: Modifier = Modifier) {
     Row {
         Icon(
-            painter = painterResource(id = R.drawable.clock_icon),
+            painter = painterResource(id = R.drawable.ic_clock_icon),
             contentDescription = stringResource(R.string.lessonscreen_timeinfo_descrpition),
             modifier = modifier
                 .size(24.dp)

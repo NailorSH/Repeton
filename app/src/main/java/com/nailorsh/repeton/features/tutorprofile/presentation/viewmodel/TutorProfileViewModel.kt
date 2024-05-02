@@ -44,6 +44,8 @@ class TutorProfileViewModel @Inject constructor(
                 TutorProfileUiState.Error
             } catch (e: NoSuchElementException) {
                 TutorProfileUiState.Error
+            } catch (e: Exception) {
+                TutorProfileUiState.Error
             }
         }
     }

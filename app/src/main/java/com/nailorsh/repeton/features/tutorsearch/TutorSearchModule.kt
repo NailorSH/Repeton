@@ -1,6 +1,5 @@
 package com.nailorsh.repeton.features.tutorsearch
 
-//import com.nailorsh.repeton.features.tutorsearch.data.FakeTutorSearchRepository
 import com.nailorsh.repeton.features.tutorsearch.data.FirestoreTutorSearchRepository
 import com.nailorsh.repeton.features.tutorsearch.data.TutorSearchRepository
 import dagger.Binds

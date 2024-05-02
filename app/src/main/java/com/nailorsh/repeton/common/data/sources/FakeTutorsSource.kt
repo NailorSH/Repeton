@@ -2,12 +2,11 @@ package com.nailorsh.repeton.common.data.sources
 
 import com.nailorsh.repeton.common.data.models.Tutor
 import com.nailorsh.repeton.common.data.models.UserId
-import com.nailorsh.repeton.common.data.models.toUserId
 
 object FakeTutorsSource {
     private val tutors = listOf(
         Tutor(
-            id = "0".toUserId(),
+            id = UserId("0"),
             name = "Александр ",
             surname = "Киселёв",
             middleName = "Витальевич",
@@ -31,7 +30,7 @@ object FakeTutorsSource {
         ),
 
         Tutor(
-            id = "1".toUserId(),
+            id = UserId("1"),
             name = "Александр",
             surname = "Коновалов",
             middleName = "Владимирович",
@@ -58,7 +57,7 @@ object FakeTutorsSource {
         ),
 
         Tutor(
-            id = "2".toUserId(),
+            id = UserId("2"),
             name = "Данила",
             surname = "Посевин",
             middleName = "Павлович",
@@ -87,7 +86,7 @@ object FakeTutorsSource {
         ),
 
         Tutor(
-            id = "3".toUserId(),
+            id = UserId("3"),
             name = "Иван",
             surname = "Иванов",
             middleName = "Иванович",

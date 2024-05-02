@@ -24,7 +24,6 @@ import com.nailorsh.repeton.R
 import com.nailorsh.repeton.common.data.models.Tutor
 import com.nailorsh.repeton.common.data.models.UserId
 import com.nailorsh.repeton.common.data.models.getFlagEmoji
-import com.nailorsh.repeton.common.data.models.toUserId
 import com.nailorsh.repeton.core.ui.components.ErrorScreen
 import com.nailorsh.repeton.core.ui.components.LoadingScreen
 import com.nailorsh.repeton.core.ui.components.TitleWithExpandableText
@@ -199,6 +198,6 @@ private fun TutorAdditionalInfoBlock(
 @Composable
 private fun TutorProfileCardPreview() {
     RepetonTheme {
-        TutorProfileScreen("2".toUserId(), {})
+        TutorProfileScreen(UserId("2"), {})
     }
 }

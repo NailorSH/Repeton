@@ -38,10 +38,10 @@ class MainViewModel @Inject constructor(
             getTheme()
             userSettingsRepository.getTheme().collect { theme ->
                 _uiState.update { state ->
-                    when (val currentState = _uiState.value) {
-                        is MainUiState.Error -> currentState
-                        is MainUiState.Loading -> currentState
-                        is MainUiState.Success -> currentState.copy(
+                    when (state) {
+                        is MainUiState.Error -> state
+                        is MainUiState.Loading -> state
+                        is MainUiState.Success -> state.copy(
                             isDarkThemeEnabled = theme
                         )
                     }

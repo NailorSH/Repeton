@@ -6,10 +6,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
@@ -27,31 +24,41 @@ interface TrailingContent {
     }
 }
 
-class HomeworkBadge(count: Int) : TrailingContent {
-    private var _count by mutableStateOf(count)
+@Stable
+class HomeworkBadge private constructor(count: Int) : TrailingContent {
+    private var count by mutableStateOf(count)
 
     @Composable
     override fun Content(modifier: Modifier) {
         Badge(
             modifier = modifier
-                .clickable { _count++ }
+                .clickable { count++ }
         ) {
-            Text(text = _count.toString())
+            Text(text = count.toString())
         }
     }
 
+    companion object {
+        @Composable
+        fun invoke(
+            count : Int
+        ) : HomeworkBadge = remember { HomeworkBadge(count) }.apply {
+            this.count = count
+        }
+    }
 
 }
 
-class ThemeSwitcher(switchState: Boolean, onSwitchCallback: (Boolean) -> Unit) : TrailingContent {
+@Stable
+class ThemeSwitcher private constructor(switchState: Boolean, onSwitchCallback: (Boolean) -> Unit) : TrailingContent {
 
-    private var state by mutableStateOf(switchState)
+    private var switchState by mutableStateOf(switchState)
     private var onSwitchCallback by mutableStateOf(onSwitchCallback)
 
     @Composable
     override fun Content(modifier: Modifier) {
         Switch(
-            checked = state,
+            checked = switchState,
             onCheckedChange = {
                 onSwitchCallback(it)
             },
@@ -61,5 +68,14 @@ class ThemeSwitcher(switchState: Boolean, onSwitchCallback: (Boolean) -> Unit) :
         )
     }
 
-
+    companion object {
+        @Composable
+        fun invoke(
+            switchState: Boolean,
+            onSwitchCallback: (Boolean) -> Unit
+        ) : ThemeSwitcher = remember { ThemeSwitcher(switchState, onSwitchCallback) }.apply {
+            this.switchState = switchState
+            this.onSwitchCallback = onSwitchCallback
+        }
+    }
 }

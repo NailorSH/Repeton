@@ -13,11 +13,11 @@ enum class OptionType() {
 sealed interface TrailingContentType {
     object Empty : TrailingContentType
 
-    data class ThemeSwitcher(val isEnabled: Boolean = false, val onSwitchCallback: (Boolean) -> Unit = {}) : TrailingContentType
+    data class ThemeSwitcher(val isEnabled: Boolean = false, val onSwitchCallback: (Boolean) -> Unit = {}) :
+        TrailingContentType
 
     data class HomeworkBadge(val count: Int = 0) : TrailingContentType
 }
-
 
 
 sealed interface Options {
@@ -91,8 +91,11 @@ sealed interface Options {
         override val text = R.string.profile_screen_homework
         override val type = OptionType.Tutor
     }
-    data class ThemeSwitch(override val trailingItem: TrailingContentType.ThemeSwitcher) : Options {
-        override val icon = R.drawable.ic_dark_theme
+
+    data class ThemeSwitch(
+        override val trailingItem: TrailingContentType.ThemeSwitcher,
+        override val icon: Int = R.drawable.ic_light_theme
+    ) : Options {
         override val text = R.string.profile_screen_theme
         override val type = OptionType.Setting
     }

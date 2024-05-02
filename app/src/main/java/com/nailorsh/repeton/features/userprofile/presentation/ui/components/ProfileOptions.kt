@@ -40,11 +40,11 @@ fun ProfileOptions(
                     onPressCallback = { onOptionClicked(item) },
                     trailingItem = when(val currentItem = item.trailingItem) {
                         TrailingContentType.Empty -> TrailingContent.Empty
-                        is TrailingContentType.HomeworkBadge -> HomeworkBadge(currentItem.count)
-                        is TrailingContentType.ThemeSwitcher -> ThemeSwitcher(currentItem.isEnabled, currentItem.onSwitchCallback)
+                        is TrailingContentType.HomeworkBadge -> HomeworkBadge.invoke(currentItem.count)
+                        is TrailingContentType.ThemeSwitcher -> ThemeSwitcher.invoke(currentItem.isEnabled, currentItem.onSwitchCallback)
                     }
                 )
-                if (index != optionsList.size - 1) {
+                if (index != optionsList.lastIndex) {
                     HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
                 }
             }

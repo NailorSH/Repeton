@@ -2,6 +2,7 @@ package com.nailorsh.repeton.features.userprofile.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nailorsh.repeton.R
 import com.nailorsh.repeton.core.navigation.NavigationRoute
 import com.nailorsh.repeton.features.navigation.routes.BottomBarScreen
 import com.nailorsh.repeton.features.settings.UserSettingsRepository
@@ -72,16 +73,19 @@ class ProfileViewModel @Inject constructor(
     private suspend fun subscribeToTheme() {
         settingsRepository.getTheme().collect { theme ->
             _uiState.update { state ->
-                when (val currentState = _uiState.value) {
-                    ProfileScreenUiState.Error -> currentState
-                    ProfileScreenUiState.Loading -> currentState
-                    is ProfileScreenUiState.Success -> currentState.copy(
-                        settingsOptions = currentState.settingsOptions.map {
+                when (state) {
+                    ProfileScreenUiState.Error -> state
+                    ProfileScreenUiState.Loading -> state
+                    is ProfileScreenUiState.Success -> state.copy(
+                        settingsOptions = state.settingsOptions.map {
                             if (it is Options.ThemeSwitch) {
-                                it.copy(trailingItem = TrailingContentType.ThemeSwitcher(
-                                    isEnabled = theme,
-                                    onSwitchCallback = this::onThemeUpdate
-                                ))
+                                it.copy(
+                                    icon = if (!theme) R.drawable.ic_dark_theme else R.drawable.ic_light_theme,
+                                    trailingItem = TrailingContentType.ThemeSwitcher(
+                                        isEnabled = theme,
+                                        onSwitchCallback = this::onThemeUpdate
+                                    )
+                                )
                             } else {
                                 it
                             }
@@ -92,9 +96,9 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun onThemeUpdate(theme : Boolean) {
+    fun onThemeUpdate(isDarkThemeEnabled: Boolean) {
         viewModelScope.launch {
-            settingsRepository.updateTheme(theme)
+            settingsRepository.updateTheme(isDarkThemeEnabled)
         }
     }
 
@@ -110,9 +114,7 @@ class ProfileViewModel @Inject constructor(
                 is Options.Language -> _sideEffect.emit(BottomBarScreen.Home)
                 is Options.Help -> _sideEffect.emit(BottomBarScreen.Home)
                 is Options.Homework -> _sideEffect.emit(BottomBarScreen.Home)
-                is Options.ThemeSwitch -> {
-                    onThemeUpdate(false)
-                }
+                is Options.ThemeSwitch -> {}
             }
         }
     }

@@ -14,15 +14,12 @@ import kotlinx.coroutines.flow.map
 import java.io.IOException
 
 const val SETTINGS = "SETTINGS"
-private val Context.dataStore : DataStore<Preferences> by preferencesDataStore(name = SETTINGS)
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = SETTINGS)
+
 class UserSettingsRepositoryImpl(
-    private val context : Context
+    private val context: Context
 ) : UserSettingsRepository {
 
-
-    companion object {
-        val IS_DARK_THEME = booleanPreferencesKey("is_dark_theme")
-    }
 
     override suspend fun updateTheme(isDarkTheme: Boolean) {
         try {
@@ -47,5 +44,9 @@ class UserSettingsRepositoryImpl(
                 settings[IS_DARK_THEME] ?: false
             }
         return isDarkTheme
+    }
+
+    companion object {
+        val IS_DARK_THEME = booleanPreferencesKey("is_dark_theme")
     }
 }

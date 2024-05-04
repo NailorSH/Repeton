@@ -15,6 +15,7 @@ data class Lesson(
     val additionalMaterials: String? = null
 ) {
 
+
     companion object {
         private var lessonsNum : Int = 0
     }

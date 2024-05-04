@@ -1,13 +1,18 @@
 package com.nailorsh.repeton.common.data.models.user
 
+import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.lesson.Subject
+import com.nailorsh.repeton.common.data.models.location.Location
+
 data class Tutor(
-    override val id: UserId,
+    override val id: Id,
     override val name: String,
     override val surname: String,
     override val middleName: String?,
     override val about: String?,
     override val photoSrc: String?,
-    val subjects: List<String>?,
+    override val location: Location?,
+    val subjects: List<Subject>?,
     val education: String?,
     val subjectsPrices: Map<String, String>?,
     val averagePrice: Int,
@@ -17,8 +22,11 @@ data class Tutor(
     val countryCode: String?,
     val taughtLessonNumber: Int,
     val experienceYears: Int,
-    val languages: Map<String, String>?
+    val languages: Map<String, String>?,
 ) : User
+
+
+
 
 
 fun Tutor.getFlagEmoji(): String {

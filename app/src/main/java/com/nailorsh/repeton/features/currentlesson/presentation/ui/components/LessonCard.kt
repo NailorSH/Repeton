@@ -10,7 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.nailorsh.repeton.common.data.models.Lesson
+import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 

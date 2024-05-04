@@ -1,15 +1,15 @@
 package com.nailorsh.repeton.common.data.models.user
 
+import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.location.Location
+
 sealed interface User {
-    val id: UserId
+    val id: Id
     val name: String
     val surname: String
     val middleName: String?
     val about: String?
     val photoSrc: String?
+    val location : Location?
 }
 
-@JvmInline
-value class UserId(val value: String)
-
-fun String.toUserId(): UserId = UserId(this)

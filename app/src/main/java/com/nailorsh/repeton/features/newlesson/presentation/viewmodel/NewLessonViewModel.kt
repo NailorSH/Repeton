@@ -2,10 +2,9 @@ package com.nailorsh.repeton.features.newlesson.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nailorsh.repeton.common.data.models.Homework
-import com.nailorsh.repeton.common.data.models.Lesson
-import com.nailorsh.repeton.common.data.models.Subject
-import com.nailorsh.repeton.features.currentlesson.presentation.viewmodel.CurrentLessonUiState
+import com.nailorsh.repeton.common.data.models.lesson.Homework
+import com.nailorsh.repeton.common.data.models.lesson.Lesson
+import com.nailorsh.repeton.common.data.models.lesson.Subject
 import com.nailorsh.repeton.features.newlesson.data.NewLessonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

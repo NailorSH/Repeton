@@ -1,8 +1,8 @@
 package com.nailorsh.repeton.common.data.sources
 
 import android.util.Log
-import com.nailorsh.repeton.common.data.models.Homework
-import com.nailorsh.repeton.common.data.models.Lesson
+import com.nailorsh.repeton.common.data.models.lesson.Homework
+import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import java.time.LocalDateTime
 import kotlin.random.Random
 

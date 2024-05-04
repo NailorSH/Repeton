@@ -17,7 +17,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.common.data.models.Subject
+import com.nailorsh.repeton.common.data.models.lesson.Subject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

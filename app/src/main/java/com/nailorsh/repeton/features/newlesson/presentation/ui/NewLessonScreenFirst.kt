@@ -22,7 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.common.data.models.Subject
+import com.nailorsh.repeton.common.data.models.lesson.Subject
 import com.nailorsh.repeton.core.util.CalendarDialog
 import com.nailorsh.repeton.features.newlesson.data.FakeNewLessonRepository
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.NewLessonTopBar

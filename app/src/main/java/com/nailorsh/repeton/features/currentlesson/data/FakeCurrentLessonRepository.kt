@@ -1,6 +1,6 @@
 package com.nailorsh.repeton.features.currentlesson.data
 
-import com.nailorsh.repeton.common.data.models.Lesson
+import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.sources.FakeLessonSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

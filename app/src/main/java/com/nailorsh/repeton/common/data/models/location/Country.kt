@@ -1,4 +1,4 @@
-package com.nailorsh.repeton.common.data.models.user
+package com.nailorsh.repeton.common.data.models.location
 
 data class Country(
     val id : String,

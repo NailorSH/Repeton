@@ -1,6 +1,6 @@
 package com.nailorsh.repeton.common.data.sources
 
-import com.nailorsh.repeton.common.data.models.Subject
+import com.nailorsh.repeton.common.data.models.lesson.Subject
 
 object FakeSubjectsSource {
 

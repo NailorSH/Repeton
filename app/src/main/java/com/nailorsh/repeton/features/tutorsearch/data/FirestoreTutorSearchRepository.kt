@@ -2,9 +2,9 @@ package com.nailorsh.repeton.features.tutorsearch.data
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.nailorsh.repeton.common.data.models.Tutor
-import com.nailorsh.repeton.common.data.models.UserId
-import com.nailorsh.repeton.common.data.models.mapToTutorWithId
+import com.nailorsh.repeton.common.data.models.user.Tutor
+import com.nailorsh.repeton.common.data.models.user.UserId
+import com.nailorsh.repeton.common.data.models.user.mapToTutorWithId
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

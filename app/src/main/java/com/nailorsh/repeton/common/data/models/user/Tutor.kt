@@ -1,4 +1,4 @@
-package com.nailorsh.repeton.common.data.models
+package com.nailorsh.repeton.common.data.models.user
 
 data class Tutor(
     override val id: UserId,

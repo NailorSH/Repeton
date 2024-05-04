@@ -1,8 +1,8 @@
 package com.nailorsh.repeton.features.tutorprofile.data
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.nailorsh.repeton.common.data.models.Tutor
-import com.nailorsh.repeton.common.data.models.UserId
+import com.nailorsh.repeton.common.data.models.user.Tutor
+import com.nailorsh.repeton.common.data.models.user.UserId
 import com.nailorsh.repeton.features.tutorsearch.data.toTutor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await

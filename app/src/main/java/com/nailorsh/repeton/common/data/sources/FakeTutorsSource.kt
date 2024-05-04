@@ -1,7 +1,7 @@
 package com.nailorsh.repeton.common.data.sources
 
-import com.nailorsh.repeton.common.data.models.Tutor
-import com.nailorsh.repeton.common.data.models.UserId
+import com.nailorsh.repeton.common.data.models.user.Tutor
+import com.nailorsh.repeton.common.data.models.user.UserId
 
 object FakeTutorsSource {
     private val tutors = listOf(

@@ -1,7 +1,7 @@
 package com.nailorsh.repeton.features.tutorprofile.data
 
-import com.nailorsh.repeton.common.data.models.Tutor
-import com.nailorsh.repeton.common.data.models.UserId
+import com.nailorsh.repeton.common.data.models.user.Tutor
+import com.nailorsh.repeton.common.data.models.user.UserId
 import com.nailorsh.repeton.common.data.sources.FakeTutorsSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

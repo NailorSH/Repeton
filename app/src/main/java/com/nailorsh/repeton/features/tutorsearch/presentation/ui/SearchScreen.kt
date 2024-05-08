@@ -41,8 +41,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
+import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.user.Tutor
-import com.nailorsh.repeton.common.data.models.user.UserId
 import com.nailorsh.repeton.common.data.sources.FakeTutorsSource
 import com.nailorsh.repeton.core.ui.components.ErrorScreen
 import com.nailorsh.repeton.core.ui.components.ExpandableText
@@ -67,7 +67,7 @@ fun SearchScreen(
     typingGetSearchResults: (String) -> Unit,
     getSearchResults: () -> Unit,
     searchUiState: SearchUiState,
-    onTutorCardClicked: (UserId) -> Unit,
+    onTutorCardClicked: (Id) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var query by remember { mutableStateOf("") }
@@ -128,7 +128,7 @@ fun SearchScreen(
 @Composable
 fun TutorList(
     tutors: List<Tutor>,
-    onTutorCardClicked: (UserId) -> Unit,
+    onTutorCardClicked: (Id) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -152,7 +152,7 @@ fun TutorCard(
     tutor: Tutor,
     onWriteButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    onCardClicked: (UserId) -> Unit
+    onCardClicked: (Id) -> Unit
 ) {
     var isLiked by remember { mutableStateOf(false) }
 

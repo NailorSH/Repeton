@@ -6,28 +6,24 @@ import com.nailorsh.repeton.common.data.models.location.Location
 
 data class Tutor(
     override val id: Id,
-    override val name: String,
-    override val surname: String,
-    override val middleName: String?,
-    override val about: String?,
-    override val photoSrc: String?,
-    override val location: Location?,
-    val subjects: List<Subject>?,
-    val education: String?,
-    val subjectsPrices: Map<String, String>?,
+    override var name: String,
+    override var surname: String,
+    override var middleName: String? = null,
+    override var about: String? = null,
+    override var photoSrc: String? = null,
+    override var location: Location? = null,
+    val subjects: List<Subject>? = null,
+    val education: String? = null,
+    val subjectsPrices: Map<String, String>? = null,
     val averagePrice: Int,
     val rating: Double,
     val reviewsNumber: Int,
-    val country: String?,
-    val countryCode: String?,
+    val country: String? = null,
+    val countryCode: String? = null,
     val taughtLessonNumber: Int,
     val experienceYears: Int,
-    val languages: Map<String, String>?,
+    val languages: Map<String, String>? = null,
 ) : User
-
-
-
-
 
 fun Tutor.getFlagEmoji(): String {
     val asciiOffset = 'A'.code // ASCII code for 'A'
@@ -46,7 +42,7 @@ fun Tutor.getFlagEmoji(): String {
     }
 }
 
-fun mapToTutorWithId(data: Map<String, Any>, id: UserId): Tutor {
+fun mapToTutorWithId(data: Map<String, Any>, id: Id): Tutor {
     return Tutor(
         id = id,
         name = data["name"] as? String ?: "",
@@ -54,7 +50,8 @@ fun mapToTutorWithId(data: Map<String, Any>, id: UserId): Tutor {
         middleName = data["middleName"] as? String,
         about = data["about"] as? String,
         photoSrc = data["photoSrc"] as? String,
-        subjects = (data["subjects"] as? List<*>)?.filterIsInstance<String>(),
+        location = data["location"] as? Location,
+        subjects = (data["subjects"] as? List<*>)?.filterIsInstance<Subject>(),
         education = data["education"] as? String,
         subjectsPrices = (data["subjectsPrices"] as? Map<*, *>)?.mapNotNull { (key, value) ->
             (key as? String)?.let { k ->

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.features.currentlesson.data.CurrentLessonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +28,7 @@ class CurrentLessonViewModel @Inject constructor(
     var currentLessonUiState: CurrentLessonUiState by mutableStateOf(CurrentLessonUiState.Loading)
         private set
 
-    fun getLesson(lessonId: Int) {
+    fun getLesson(lessonId: Id) {
         viewModelScope.launch {
             currentLessonUiState = CurrentLessonUiState.Loading
             currentLessonUiState = try {

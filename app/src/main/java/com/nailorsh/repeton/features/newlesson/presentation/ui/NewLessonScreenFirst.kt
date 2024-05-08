@@ -6,14 +6,26 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -26,12 +38,19 @@ import com.nailorsh.repeton.common.data.models.lesson.Subject
 import com.nailorsh.repeton.core.util.CalendarDialog
 import com.nailorsh.repeton.features.newlesson.data.FakeNewLessonRepository
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.NewLessonTopBar
-import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.*
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.DateTextField
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.EndTimeTextField
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.LessonTimePicker
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.StartTimeTextField
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.SubjectTextField
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.TopicTextField
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonState
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonUiState
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonViewModel
-import java.time.*
-import java.util.*
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.Calendar
 
 const val TAG = "NEW_LESSON"
 
@@ -51,7 +70,7 @@ fun NewLessonScreen(
     var showStartTimePickerTextField by remember { mutableStateOf(false) }
     var showEndTimePickerTextField by remember { mutableStateOf(false) }
 
-    var localSubject by remember { mutableStateOf(lessonState.subject.subjectName) }
+    var localSubject by remember { mutableStateOf(lessonState.subject.name) }
     var localTopic by remember { mutableStateOf(lessonState.topic) }
     var localStartTime by remember { mutableStateOf(lessonState.startTime) }
     var localEndTime by remember { mutableStateOf(lessonState.endTime) }

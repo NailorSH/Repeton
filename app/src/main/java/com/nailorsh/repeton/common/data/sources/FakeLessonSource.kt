@@ -1,6 +1,7 @@
 package com.nailorsh.repeton.common.data.sources
 
 import android.util.Log
+import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import java.time.LocalDateTime
@@ -19,10 +20,11 @@ object FakeLessonSource {
     private var _lessons = mutableListOf(
         getRandomStartDateTime().let { startTime ->
             Lesson(
+                id = Id("1"),
                 subject = FakeSubjectsSource.getSubjects(1),
                 topic = "Algebra Basics",
                 description = "Introduction to algebraic concepts.",
-                teacherName = "Alex Johnson",
+                tutor = FakeTutorsSource.getTutorById(Id("0")),
                 startTime = startTime,
                 endTime = startTime.plusMinutes(90),
                 homework = Homework("http://homework.example.com/algebra"),
@@ -31,10 +33,11 @@ object FakeLessonSource {
         },
         getRandomStartDateTime().let { startTime ->
             Lesson(
+                id = Id("2"),
                 subject = FakeSubjectsSource.getSubjects(3),
                 topic = "Kinematics",
                 description = "Study of motion.",
-                teacherName = "Marie Curie",
+                tutor = FakeTutorsSource.getTutorById(Id("2")),
                 startTime = startTime.plusMinutes(90),
                 endTime = startTime.plusMinutes(180),
                 homework = null,
@@ -43,10 +46,11 @@ object FakeLessonSource {
         },
         getRandomStartDateTime().let { startTime ->
             Lesson(
+                id = Id("3"),
                 subject = FakeSubjectsSource.getSubjects(5),
                 topic = "The French Revolution",
                 description = "A deep dive into the causes of the French Revolution.",
-                teacherName = "Jean Valjean",
+                tutor = FakeTutorsSource.getTutorById(Id("3")),
                 startTime = startTime.plusDays(1),
                 endTime = startTime.plusDays(1).plusMinutes(90),
                 homework = Homework("http://homework.example.com/french-revolution"),
@@ -55,10 +59,11 @@ object FakeLessonSource {
         },
         getRandomStartDateTime().let { startTime ->
             Lesson(
+                id = Id("3"),
                 subject = FakeSubjectsSource.getSubjects(7),
                 topic = "Shakespeare's Plays",
                 description = "Exploring the major plays of William Shakespeare.",
-                teacherName = "Elizabeth Bennett",
+                tutor = FakeTutorsSource.getTutorById(Id("1")),
                 startTime = startTime.plusDays(2),
                 endTime = startTime.plusDays(2).plusMinutes(90),
                 homework = null,
@@ -67,10 +72,11 @@ object FakeLessonSource {
         },
         getRandomStartDateTime().let { startTime ->
             Lesson(
+                id = Id("4"),
                 subject = FakeSubjectsSource.getSubjects(4),
                 topic = "Introduction to Programming",
                 description = null,
-                teacherName = "Alan Turing",
+                tutor = FakeTutorsSource.getTutorById(Id("1")),
                 startTime = startTime.plusDays(2).plusMinutes(90),
                 endTime = startTime.plusDays(2).plusMinutes(180),
                 homework = Homework("http://homework.example.com/programming"),
@@ -79,10 +85,11 @@ object FakeLessonSource {
         },
         getRandomStartDateTime().let { startTime ->
             Lesson(
+                id = Id("5"),
                 subject = FakeSubjectsSource.getSubjects(8),
                 topic = "Impressionism",
                 description = "Understanding the Impressionist art movement.",
-                teacherName = "Claude Monet",
+                tutor = FakeTutorsSource.getTutorById(Id("1")),
                 startTime = startTime.minusDays(1),
                 endTime = startTime.minusDays(1).plusMinutes(90),
                 homework = null,
@@ -101,5 +108,4 @@ object FakeLessonSource {
         _lessons.add(lesson)
         Log.d("FAKE_LESSON", _lessons.toString())
     }
-
 }

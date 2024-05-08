@@ -2,8 +2,8 @@ package com.nailorsh.repeton.features.tutorsearch.data
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.user.Tutor
-import com.nailorsh.repeton.common.data.models.user.UserId
 import com.nailorsh.repeton.common.data.models.user.mapToTutorWithId
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +23,7 @@ class FirestoreTutorSearchRepository @Inject constructor(
                 val tutorsList = mutableListOf<Tutor>()
                 for (document in result) {
                     val tutor = document.toTutor()
-                        ?: throw throw NoSuchElementException("Tutor could not be deserialized")
+                        ?: throw NoSuchElementException("Tutor could not be deserialized")
                     tutorsList.add(tutor)
                 }
                 deferredTutorsList.complete(tutorsList)
@@ -38,5 +38,5 @@ class FirestoreTutorSearchRepository @Inject constructor(
 
 fun DocumentSnapshot.toTutor(): Tutor? {
     val data = this.data ?: return null
-    return mapToTutorWithId(data, UserId(this.id))
+    return mapToTutorWithId(data, Id(this.id))
 }

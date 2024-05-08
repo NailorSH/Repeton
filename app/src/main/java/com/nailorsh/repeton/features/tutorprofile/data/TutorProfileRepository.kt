@@ -1,8 +1,8 @@
 package com.nailorsh.repeton.features.tutorprofile.data
 
+import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.user.Tutor
-import com.nailorsh.repeton.common.data.models.user.UserId
 
 interface TutorProfileRepository {
-    suspend fun getTutorProfile(id: UserId): Tutor
+    suspend fun getTutorProfile(id: Id): Tutor
 }

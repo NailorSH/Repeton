@@ -1,19 +1,21 @@
 package com.nailorsh.repeton.common.data.sources
 
+import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.user.Tutor
-import com.nailorsh.repeton.common.data.models.user.UserId
 
 object FakeTutorsSource {
     private val tutors = listOf(
         Tutor(
-            id = UserId("0"),
+            id = Id("0"),
             name = "Александр ",
             surname = "Киселёв",
             middleName = "Витальевич",
             about = "Я являюсь техническим руководителем проекта «Учу на Профи.Ру» и активно " +
                     "использую современные технологии на своих занятиях.",
-            photoSrc = null,
-            subjects = listOf("Математика", "Информатика"),
+            subjects = listOf(
+                FakeSubjectsSource.getSubjects(1),
+                FakeSubjectsSource.getSubjects(2)
+            ),
             education = "Окончил МФТИ, ФОПФ, два красных диплома, 2005 г.",
             subjectsPrices = mapOf(
                 "Математика" to "500-1000 ₽ / 60 мин",
@@ -30,13 +32,15 @@ object FakeTutorsSource {
         ),
 
         Tutor(
-            id = UserId("1"),
+            id = Id("1"),
             name = "Александр",
             surname = "Коновалов",
             middleName = "Владимирович",
             about = "Преподаватель МГТУ имени Н.Э. Баумана и программист C и Refal",
-            photoSrc = null,
-            subjects = listOf("Информатика", "Алгоритмы"),
+            subjects = listOf(
+                FakeSubjectsSource.getSubjects(1),
+                FakeSubjectsSource.getSubjects(2)
+            ),
             education = "",
             subjectsPrices = mapOf(
                 "Информатика" to "800-1000 ₽ / 60 мин",
@@ -57,14 +61,16 @@ object FakeTutorsSource {
         ),
 
         Tutor(
-            id = UserId("2"),
+            id = Id("2"),
             name = "Данила",
             surname = "Посевин",
             middleName = "Павлович",
             about = "Я Данила Палыч: не заботал — пересдача! " +
                     "Люблю физику и математику, аналоговые приборы, тумблерочки и проводочки.",
-            photoSrc = null,
-            subjects = listOf("ООП", "Компьютерные сети", "Разработка мобильных приложений"),
+            subjects = listOf(
+                FakeSubjectsSource.getSubjects(7),
+                FakeSubjectsSource.getSubjects(8)
+            ),
             education = "2004 — Московский физико-технический институт\n" +
                     "Прикладные математика и физика",
             subjectsPrices = mapOf(
@@ -86,13 +92,16 @@ object FakeTutorsSource {
         ),
 
         Tutor(
-            id = UserId("3"),
+            id = Id("3"),
             name = "Иван",
             surname = "Иванов",
             middleName = "Иванович",
             about = null,
             photoSrc = null,
-            subjects = listOf("Русский язык", "Английский язык", "Немецкий язык"),
+            subjects = listOf(
+                FakeSubjectsSource.getSubjects(1),
+                FakeSubjectsSource.getSubjects(2)
+            ),
             education = "Новгородский государственный университет имени Ярослава Мудрого, " +
                     "оператор электронно-вычислительных и вычислительных машин второго разряда" +
                     "\n2014–2015 гг.",
@@ -117,5 +126,6 @@ object FakeTutorsSource {
 
     fun getTutorsList(): List<Tutor> = tutors
 
-    fun getTutorById(id: UserId): Tutor? = tutors.firstOrNull { it.id == id }
+    fun getTutorById(id: Id): Tutor = tutors.firstOrNull { it.id.value == id.value }
+        ?: throw NoSuchElementException("The tutor could not be found")
 }

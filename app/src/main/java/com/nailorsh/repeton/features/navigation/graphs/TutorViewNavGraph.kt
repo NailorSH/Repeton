@@ -4,7 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.nailorsh.repeton.common.data.models.user.UserId
+import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.core.navigation.sharedViewModel
 import com.nailorsh.repeton.features.navigation.routes.Graph
 import com.nailorsh.repeton.features.navigation.routes.TutorViewScreen
@@ -23,7 +23,7 @@ fun NavGraphBuilder.tutorViewNavGraph(
                 val viewModel = backStackEntry.sharedViewModel<TutorProfileViewModel>(navController)
 
                 TutorProfileScreen(
-                    tutorId = UserId(id),
+                    tutorId = Id(id),
                     onBackClicked = { navController.popBackStack() },
                     viewModel = viewModel
                 )

@@ -34,7 +34,7 @@ fun LessonCard(lesson: Lesson, modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.height(48.dp))
-            TeacherInfo(lesson.teacherName)
+            TeacherInfo(lesson.tutor.name)
             Spacer(modifier = Modifier.height(16.dp))
             TimeInfo(
                 lesson.startTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)),

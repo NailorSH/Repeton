@@ -2,9 +2,11 @@ package com.nailorsh.repeton.features.newlesson.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.models.lesson.Subject
+import com.nailorsh.repeton.common.data.sources.FakeTutorsSource
 import com.nailorsh.repeton.features.newlesson.data.NewLessonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +38,7 @@ enum class NewLessonSecondUiState {
 data class NewLessonState(
     val uiState: NewLessonUiState = NewLessonUiState.Loading,
     val secondUiState: NewLessonSecondUiState = NewLessonSecondUiState.None,
-    val subject: Subject = Subject(-1, ""),
+    val subject: Subject = Subject("-1", ""),
     val topic: String = "",
     val startTime: LocalDateTime = LocalDateTime.now().plusMinutes(1),
     val endTime: LocalDateTime = LocalDateTime.now().plusMinutes(30),
@@ -80,11 +82,12 @@ class NewLessonViewModel @Inject constructor(
         viewModelScope.launch {
             newLessonRepository.saveNewLesson(
                 Lesson(
+                    id = Id("0"),
                     subject = _state.value.subject,
                     topic = _state.value.topic,
                     startTime = _state.value.startTime,
                     endTime = _state.value.endTime,
-                    teacherName = "Placeholder",
+                    tutor = FakeTutorsSource.getTutorById(Id("1"))!!,
                     description = description,
                     homework = homework,
                     additionalMaterials = additionalMaterials
@@ -98,7 +101,7 @@ class NewLessonViewModel @Inject constructor(
         getSubjects()
         _state.update {
             it.copy(
-                subject = Subject(-1, ""),
+                subject = Subject("-1", ""),
                 topic = "",
                 startTime = LocalDateTime.now().plusMinutes(1),
                 endTime = LocalDateTime.now().plusMinutes(30),
@@ -118,15 +121,15 @@ class NewLessonViewModel @Inject constructor(
             }
 
             _filteredSubjects.value = allSubjects.filter { subject ->
-                subject.subjectName.lowercase().startsWith(filter.lowercase())
+                subject.name.lowercase().startsWith(filter.lowercase())
             }
         }
     }
 
     fun saveRequiredFields(subject: String, title: String, startTime: LocalDateTime, endTime: LocalDateTime) {
         viewModelScope.launch {
-            val resultSubject = newLessonRepository.getSubject(subject) ?: Subject(-1, "")
-            val error = resultSubject.id == -1
+            val resultSubject = newLessonRepository.getSubject(subject) ?: Subject("-1", "")
+            val error = resultSubject.id == "-1"
 
             if (error) {
                 _state.update {

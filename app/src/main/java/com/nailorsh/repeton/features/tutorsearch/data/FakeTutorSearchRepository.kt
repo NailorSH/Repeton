@@ -1,6 +1,6 @@
 package com.nailorsh.repeton.features.tutorsearch.data
 
-import com.nailorsh.repeton.common.data.models.Tutor
+import com.nailorsh.repeton.common.data.models.user.Tutor
 import com.nailorsh.repeton.common.data.sources.FakeTutorsSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

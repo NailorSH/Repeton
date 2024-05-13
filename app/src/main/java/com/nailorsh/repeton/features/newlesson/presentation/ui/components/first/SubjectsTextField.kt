@@ -9,7 +9,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -17,7 +23,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.common.data.models.Subject
+import com.nailorsh.repeton.common.data.models.lesson.Subject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -98,9 +104,9 @@ fun SubjectTextField(
             ) {
                 subjects.forEach {
                     DropdownMenuItem(
-                        text = { Text(text = it.subjectName) },
+                        text = { Text(text = it.name["ru"] ?: "") },
                         onClick = {
-                            onSubjectChange(it.subjectName)
+                            onSubjectChange(it.name["ru"] ?: "")
                             onExpandedChange(false)
                             onChangeError()
                         }

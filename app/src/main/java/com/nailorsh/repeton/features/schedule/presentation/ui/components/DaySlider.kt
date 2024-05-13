@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.common.data.models.Lesson
+import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.features.schedule.presentation.ui.BASE_DATE
 import java.time.LocalDate
 

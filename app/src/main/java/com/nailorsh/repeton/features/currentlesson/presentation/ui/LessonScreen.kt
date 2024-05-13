@@ -22,9 +22,10 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.common.data.models.Lesson
+import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.core.ui.theme.LineColor
 import com.nailorsh.repeton.core.ui.theme.RepetonTheme
 import com.nailorsh.repeton.features.currentlesson.presentation.ui.components.AdditionalMaterialsCard
@@ -36,9 +37,9 @@ import com.nailorsh.repeton.features.currentlesson.presentation.viewmodel.Curren
 
 @Composable
 fun LessonScreen(
-    lessonId: Int,
+    lessonId: Id,
     modifier: Modifier = Modifier,
-    viewModel: CurrentLessonViewModel = viewModel(),
+    viewModel: CurrentLessonViewModel = hiltViewModel(),
 ) {
 
     LaunchedEffect(lessonId) {
@@ -98,10 +99,14 @@ fun LessonContent(lesson: Lesson, modifier: Modifier = Modifier) {
                 thickness = dimensionResource(R.dimen.divider_thickness),
             )
             Spacer(modifier = Modifier.height(24.dp))
-            LessonSubject(
-                lesson.subject.subjectName,
-                modifier = Modifier.padding(start = 8.dp)
-            )
+
+            // TODO - передавать locale из настроек
+            lesson.subject.name?.get("ru")?.let {
+                LessonSubject(
+                    it,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+            }
             LessonCard(lesson, Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium)))
             HomeworkCard(lesson.homework)
             Spacer(modifier = Modifier.height(32.dp))
@@ -123,6 +128,6 @@ fun LessonContent(lesson: Lesson, modifier: Modifier = Modifier) {
 @Composable
 fun LessonScreenPreview() {
     RepetonTheme {
-        LessonScreen(lessonId = 0)
+        LessonScreen(lessonId = Id("1"))
     }
 }

@@ -4,6 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.core.navigation.sharedViewModel
 import com.nailorsh.repeton.features.currentlesson.presentation.ui.LessonScreen
 import com.nailorsh.repeton.features.currentlesson.presentation.viewmodel.CurrentLessonViewModel
@@ -23,7 +24,7 @@ fun NavGraphBuilder.lessonViewNavGraph(
                     backStackEntry.sharedViewModel<CurrentLessonViewModel>(navController)
 
                 LessonScreen(
-                    lessonId = id.toInt(),
+                    lessonId = Id(id),
                     viewModel = viewModel
                 )
             }

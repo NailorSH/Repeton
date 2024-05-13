@@ -21,9 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.common.data.models.Tutor
-import com.nailorsh.repeton.common.data.models.UserId
-import com.nailorsh.repeton.common.data.models.getFlagEmoji
+import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.user.Tutor
 import com.nailorsh.repeton.core.ui.components.ErrorScreen
 import com.nailorsh.repeton.core.ui.components.LoadingScreen
 import com.nailorsh.repeton.core.ui.components.TitleWithExpandableText
@@ -45,7 +44,7 @@ import com.nailorsh.repeton.features.tutorprofile.presentation.viewmodel.TutorPr
 
 @Composable
 fun TutorProfileScreen(
-    tutorId: UserId,
+    tutorId: Id,
     onBackClicked: () -> Unit,
     viewModel: TutorProfileViewModel = hiltViewModel(),
 ) {
@@ -133,8 +132,7 @@ private fun TutorMainInfoBlock(
         ProfileInfoRow(
             profileImageId = R.drawable.man_photo,
             name = "${tutor.name} ${tutor.surname.first()}.",
-            country = tutor.country,
-            flagEmoji = tutor.getFlagEmoji()
+            country = tutor.location?.country
         )
 
         HorizontalDivider(
@@ -198,6 +196,6 @@ private fun TutorAdditionalInfoBlock(
 @Composable
 private fun TutorProfileCardPreview() {
     RepetonTheme {
-        TutorProfileScreen(UserId("2"), {})
+        TutorProfileScreen(Id("2"), {})
     }
 }

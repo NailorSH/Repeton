@@ -6,7 +6,7 @@ import com.nailorsh.repeton.common.data.models.Id
 data class Country(
     val id: Id,
     val code: String,
-    val name: Map<String, String>? = null,
+    val name: Map<String, String>,
 ) {
     fun getFlagEmoji(): String {
         val asciiOffset = 'A'.code // ASCII code for 'A'
@@ -29,14 +29,14 @@ data class Country(
     }
 }
 
-fun DocumentSnapshot.toCountryWithId(): Country? {
+fun DocumentSnapshot.toCountryWithId(): Country {
     val id = Id(id)
-    val code = getString("code") ?: return null
+    val code = getString("code") ?: throw NoSuchElementException("Country code field not found")
     val name = (get("name") as? Map<*, *>)?.mapNotNull { (key, value) ->
         (key as? String)?.let { k ->
             (value as? String)?.let { v -> k to v }
         }
-    }?.toMap()
+    }?.toMap() ?: throw NoSuchElementException("Country name field not found")
 
     return Country(
         id = id,

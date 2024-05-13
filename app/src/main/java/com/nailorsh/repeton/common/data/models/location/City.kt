@@ -5,7 +5,7 @@ import com.nailorsh.repeton.common.data.models.Id
 
 data class City(
     val id: Id,
-    val name: Map<String, String>? = null,
+    val name: Map<String, String>
 )
 
 fun DocumentSnapshot.toCityWithId(): City {
@@ -14,7 +14,7 @@ fun DocumentSnapshot.toCityWithId(): City {
         (key as? String)?.let { k ->
             (value as? String)?.let { v -> k to v }
         }
-    }?.toMap()
+    }?.toMap() ?: throw NoSuchElementException("City name field not found")
 
     return City(
         id = id,

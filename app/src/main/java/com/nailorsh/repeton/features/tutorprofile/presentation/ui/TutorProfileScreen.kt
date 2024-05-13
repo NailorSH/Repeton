@@ -23,7 +23,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.user.Tutor
-import com.nailorsh.repeton.common.data.models.user.getFlagEmoji
 import com.nailorsh.repeton.core.ui.components.ErrorScreen
 import com.nailorsh.repeton.core.ui.components.LoadingScreen
 import com.nailorsh.repeton.core.ui.components.TitleWithExpandableText
@@ -133,8 +132,7 @@ private fun TutorMainInfoBlock(
         ProfileInfoRow(
             profileImageId = R.drawable.man_photo,
             name = "${tutor.name} ${tutor.surname.first()}.",
-            country = tutor.country,
-            flagEmoji = tutor.getFlagEmoji()
+            country = tutor.location?.country
         )
 
         HorizontalDivider(

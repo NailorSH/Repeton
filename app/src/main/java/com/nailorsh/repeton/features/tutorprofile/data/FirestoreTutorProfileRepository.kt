@@ -3,7 +3,7 @@ package com.nailorsh.repeton.features.tutorprofile.data
 import com.google.firebase.firestore.FirebaseFirestore
 import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.user.Tutor
-import com.nailorsh.repeton.features.tutorsearch.data.toTutor
+import com.nailorsh.repeton.common.data.models.user.toTutorWithId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -17,8 +17,7 @@ class FirestoreTutorProfileRepository @Inject constructor(
             .get()
             .await()
         if (document.exists()) {
-            document.toTutor()
-                ?: throw NoSuchElementException("Tutor could not be found or deserialized for id: ${id.value}")
+            document.toTutorWithId()
         } else {
             throw NoSuchElementException("Tutor not found for id: ${id.value}")
         }

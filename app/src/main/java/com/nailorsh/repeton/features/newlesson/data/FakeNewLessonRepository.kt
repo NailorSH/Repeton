@@ -19,7 +19,7 @@ class FakeNewLessonRepository @Inject constructor() : NewLessonRepository {
     }
 
     override suspend fun getSubject(subjectName: String) = withContext(Dispatchers.IO) {
-        FakeSubjectsSource.getSubjects(subjectName)
+        FakeSubjectsSource.getSubjectByName(subjectName)
     }
 
 }

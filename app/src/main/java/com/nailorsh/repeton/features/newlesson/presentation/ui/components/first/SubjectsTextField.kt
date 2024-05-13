@@ -104,9 +104,9 @@ fun SubjectTextField(
             ) {
                 subjects.forEach {
                     DropdownMenuItem(
-                        text = { Text(text = it.name) },
+                        text = { Text(text = it.name["ru"] ?: "") },
                         onClick = {
-                            onSubjectChange(it.name)
+                            onSubjectChange(it.name["ru"] ?: "")
                             onExpandedChange(false)
                             onChangeError()
                         }

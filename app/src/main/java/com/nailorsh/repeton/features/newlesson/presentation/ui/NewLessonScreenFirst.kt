@@ -70,14 +70,14 @@ fun NewLessonScreen(
     var showStartTimePickerTextField by remember { mutableStateOf(false) }
     var showEndTimePickerTextField by remember { mutableStateOf(false) }
 
-    var localSubject by remember { mutableStateOf(lessonState.subject.name) }
+    var localSubject by remember { mutableStateOf(lessonState.subject.name["ru"]) }
     var localTopic by remember { mutableStateOf(lessonState.topic) }
     var localStartTime by remember { mutableStateOf(lessonState.startTime) }
     var localEndTime by remember { mutableStateOf(lessonState.endTime) }
     var expanded by remember { mutableStateOf(false) }
 
     LaunchedEffect(localSubject) {
-        onFilterSubjects(localSubject)
+        onFilterSubjects(localSubject ?: "")
     }
 
     var subjectError by remember { mutableStateOf(false) }
@@ -200,7 +200,7 @@ fun NewLessonScreen(
         ) {
 
             SubjectTextField(
-                subject = localSubject,
+                subject = localSubject ?: "",
                 onSubjectChange = {
                     localSubject = it
                 },
@@ -273,7 +273,12 @@ fun NewLessonScreen(
                             !dateError && !startTimeError && !endTimeError,
                     onClick = {
                         // Fields validation
-                        onSaveRequiredFields(localSubject, localTopic, localStartTime, localEndTime)
+                        onSaveRequiredFields(
+                            localSubject ?: "",
+                            localTopic,
+                            localStartTime,
+                            localEndTime
+                        )
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
@@ -301,7 +306,7 @@ fun NewLessonScreenPreview() {
     NewLessonScreen(
         lessonState = NewLessonViewModel(FakeNewLessonRepository()).state.collectAsState().value,
         onNavigateBack = {},
-        onSaveRequiredFields = { a, b, c, d -> },
+        onSaveRequiredFields = { _, _, _, _ -> },
         onNavigateNext = {},
         filteredSubjects = listOf(),
         onFilterSubjects = {}

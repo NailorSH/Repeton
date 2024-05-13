@@ -58,7 +58,7 @@ fun LessonCard(lesson: Lesson, onClick: (Lesson) -> Unit, modifier: Modifier = M
             )
             {
                 Text(
-                    text = lesson.subject.name,
+                    text = lesson.subject.name["ru"] ?: "", // TODO передать текущую локаль
                     style = MaterialTheme.typography.headlineSmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

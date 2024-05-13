@@ -13,8 +13,8 @@ object FakeTutorsSource {
             about = "Я являюсь техническим руководителем проекта «Учу на Профи.Ру» и активно " +
                     "использую современные технологии на своих занятиях.",
             subjects = listOf(
-                FakeSubjectsSource.getSubjects(1),
-                FakeSubjectsSource.getSubjects(2)
+                FakeSubjectsSource.getSubject(1),
+                FakeSubjectsSource.getSubject(2)
             ),
             education = "Окончил МФТИ, ФОПФ, два красных диплома, 2005 г.",
             subjectsPrices = mapOf(
@@ -24,8 +24,6 @@ object FakeTutorsSource {
             averagePrice = 500,
             rating = 4.93,
             reviewsNumber = 100,
-            country = "Россия",
-            countryCode = "RU",
             taughtLessonNumber = 250,
             experienceYears = 6,
             languages = mapOf("Русский" to "Носитель"),
@@ -38,8 +36,8 @@ object FakeTutorsSource {
             middleName = "Владимирович",
             about = "Преподаватель МГТУ имени Н.Э. Баумана и программист C и Refal",
             subjects = listOf(
-                FakeSubjectsSource.getSubjects(1),
-                FakeSubjectsSource.getSubjects(2)
+                FakeSubjectsSource.getSubject(1),
+                FakeSubjectsSource.getSubject(2)
             ),
             education = "",
             subjectsPrices = mapOf(
@@ -49,8 +47,6 @@ object FakeTutorsSource {
             averagePrice = 1000,
             rating = 4.0,
             reviewsNumber = 3,
-            country = "Казахстан",
-            countryCode = "KZ",
             taughtLessonNumber = 10,
             experienceYears = 1,
             languages = mapOf(
@@ -68,8 +64,8 @@ object FakeTutorsSource {
             about = "Я Данила Палыч: не заботал — пересдача! " +
                     "Люблю физику и математику, аналоговые приборы, тумблерочки и проводочки.",
             subjects = listOf(
-                FakeSubjectsSource.getSubjects(7),
-                FakeSubjectsSource.getSubjects(8)
+                FakeSubjectsSource.getSubject(7),
+                FakeSubjectsSource.getSubject(8)
             ),
             education = "2004 — Московский физико-технический институт\n" +
                     "Прикладные математика и физика",
@@ -81,8 +77,6 @@ object FakeTutorsSource {
             averagePrice = 1500,
             rating = 4.5,
             reviewsNumber = 10,
-            country = "Россия",
-            countryCode = "RU",
             taughtLessonNumber = 50,
             experienceYears = 2,
             languages = mapOf(
@@ -99,8 +93,8 @@ object FakeTutorsSource {
             about = null,
             photoSrc = null,
             subjects = listOf(
-                FakeSubjectsSource.getSubjects(1),
-                FakeSubjectsSource.getSubjects(2)
+                FakeSubjectsSource.getSubject(1),
+                FakeSubjectsSource.getSubject(2)
             ),
             education = "Новгородский государственный университет имени Ярослава Мудрого, " +
                     "оператор электронно-вычислительных и вычислительных машин второго разряда" +
@@ -113,8 +107,6 @@ object FakeTutorsSource {
             averagePrice = 800,
             rating = 3.9,
             reviewsNumber = 19,
-            country = "Россия",
-            countryCode = "RU",
             taughtLessonNumber = 100,
             experienceYears = 8,
             languages = mapOf(

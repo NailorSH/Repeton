@@ -38,7 +38,7 @@ enum class NewLessonSecondUiState {
 data class NewLessonState(
     val uiState: NewLessonUiState = NewLessonUiState.Loading,
     val secondUiState: NewLessonSecondUiState = NewLessonSecondUiState.None,
-    val subject: Subject = Subject("-1", ""),
+    val subject: Subject = Subject(Id("-1"), mapOf("ru" to "")),
     val topic: String = "",
     val startTime: LocalDateTime = LocalDateTime.now().plusMinutes(1),
     val endTime: LocalDateTime = LocalDateTime.now().plusMinutes(30),
@@ -64,7 +64,12 @@ class NewLessonViewModel @Inject constructor(
 
     fun getSubjects() {
         viewModelScope.launch {
-            _state.update { it.copy(uiState = NewLessonUiState.Loading, secondUiState = NewLessonSecondUiState.None) }
+            _state.update {
+                it.copy(
+                    uiState = NewLessonUiState.Loading,
+                    secondUiState = NewLessonSecondUiState.None
+                )
+            }
             try {
                 val subjects = newLessonRepository.getSubjects()
                 _state.update { currentState ->
@@ -87,7 +92,7 @@ class NewLessonViewModel @Inject constructor(
                     topic = _state.value.topic,
                     startTime = _state.value.startTime,
                     endTime = _state.value.endTime,
-                    tutor = FakeTutorsSource.getTutorById(Id("1"))!!,
+                    tutor = FakeTutorsSource.getTutorById(Id("1")),
                     description = description,
                     homework = homework,
                     additionalMaterials = additionalMaterials
@@ -101,7 +106,7 @@ class NewLessonViewModel @Inject constructor(
         getSubjects()
         _state.update {
             it.copy(
-                subject = Subject("-1", ""),
+                subject = Subject(Id("-1"), mapOf("ru" to "")),
                 topic = "",
                 startTime = LocalDateTime.now().plusMinutes(1),
                 endTime = LocalDateTime.now().plusMinutes(30),
@@ -121,15 +126,22 @@ class NewLessonViewModel @Inject constructor(
             }
 
             _filteredSubjects.value = allSubjects.filter { subject ->
-                subject.name.lowercase().startsWith(filter.lowercase())
+                subject.name["ru"]!!.lowercase().startsWith(filter.lowercase())
             }
         }
     }
 
-    fun saveRequiredFields(subject: String, title: String, startTime: LocalDateTime, endTime: LocalDateTime) {
+    fun saveRequiredFields(
+        subject: String,
+        title: String,
+        startTime: LocalDateTime,
+        endTime: LocalDateTime
+    ) {
         viewModelScope.launch {
-            val resultSubject = newLessonRepository.getSubject(subject) ?: Subject("-1", "")
-            val error = resultSubject.id == "-1"
+            val resultSubject =
+                newLessonRepository.getSubject(subject) ?: Subject(Id("-1"), mapOf("ru" to ""))
+
+            val error = resultSubject.id == Id("-1")
 
             if (error) {
                 _state.update {

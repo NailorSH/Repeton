@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class FakeCurrentLessonRepository @Inject constructor() : CurrentLessonRepository {
     override suspend fun getLesson(id: Id): Lesson = withContext(Dispatchers.IO) {
-        FakeLessonSource.loadLessons()[id.value.toInt()]
+        FakeLessonSource.getLesson(id)
     }
 
     override suspend fun addLesson(lesson: Lesson) = withContext(Dispatchers.IO) {

@@ -21,7 +21,7 @@ object FakeLessonSource {
         getRandomStartDateTime().let { startTime ->
             Lesson(
                 id = Id("1"),
-                subject = FakeSubjectsSource.getSubjects(1),
+                subject = FakeSubjectsSource.getSubject(0),
                 topic = "Algebra Basics",
                 description = "Introduction to algebraic concepts.",
                 tutor = FakeTutorsSource.getTutorById(Id("0")),
@@ -34,7 +34,7 @@ object FakeLessonSource {
         getRandomStartDateTime().let { startTime ->
             Lesson(
                 id = Id("2"),
-                subject = FakeSubjectsSource.getSubjects(3),
+                subject = FakeSubjectsSource.getSubject(2),
                 topic = "Kinematics",
                 description = "Study of motion.",
                 tutor = FakeTutorsSource.getTutorById(Id("2")),
@@ -47,7 +47,7 @@ object FakeLessonSource {
         getRandomStartDateTime().let { startTime ->
             Lesson(
                 id = Id("3"),
-                subject = FakeSubjectsSource.getSubjects(5),
+                subject = FakeSubjectsSource.getSubject(2),
                 topic = "The French Revolution",
                 description = "A deep dive into the causes of the French Revolution.",
                 tutor = FakeTutorsSource.getTutorById(Id("3")),
@@ -60,7 +60,7 @@ object FakeLessonSource {
         getRandomStartDateTime().let { startTime ->
             Lesson(
                 id = Id("3"),
-                subject = FakeSubjectsSource.getSubjects(7),
+                subject = FakeSubjectsSource.getSubject(7),
                 topic = "Shakespeare's Plays",
                 description = "Exploring the major plays of William Shakespeare.",
                 tutor = FakeTutorsSource.getTutorById(Id("1")),
@@ -73,7 +73,7 @@ object FakeLessonSource {
         getRandomStartDateTime().let { startTime ->
             Lesson(
                 id = Id("4"),
-                subject = FakeSubjectsSource.getSubjects(4),
+                subject = FakeSubjectsSource.getSubject(1),
                 topic = "Introduction to Programming",
                 description = null,
                 tutor = FakeTutorsSource.getTutorById(Id("1")),
@@ -86,7 +86,7 @@ object FakeLessonSource {
         getRandomStartDateTime().let { startTime ->
             Lesson(
                 id = Id("5"),
-                subject = FakeSubjectsSource.getSubjects(8),
+                subject = FakeSubjectsSource.getSubject(4),
                 topic = "Impressionism",
                 description = "Understanding the Impressionist art movement.",
                 tutor = FakeTutorsSource.getTutorById(Id("1")),
@@ -107,5 +107,11 @@ object FakeLessonSource {
         Log.d("FAKE_LESSON", _lessons.toString())
         _lessons.add(lesson)
         Log.d("FAKE_LESSON", _lessons.toString())
+    }
+
+    fun getLesson(id: Id): Lesson {
+        return _lessons.first {
+            it.id == id
+        }
     }
 }

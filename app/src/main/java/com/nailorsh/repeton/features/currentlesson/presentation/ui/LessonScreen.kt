@@ -99,10 +99,14 @@ fun LessonContent(lesson: Lesson, modifier: Modifier = Modifier) {
                 thickness = dimensionResource(R.dimen.divider_thickness),
             )
             Spacer(modifier = Modifier.height(24.dp))
-            LessonSubject(
-                lesson.subject.name,
-                modifier = Modifier.padding(start = 8.dp)
-            )
+
+            // TODO - передавать locale из настроек
+            lesson.subject.name?.get("ru")?.let {
+                LessonSubject(
+                    it,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+            }
             LessonCard(lesson, Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium)))
             HomeworkCard(lesson.homework)
             Spacer(modifier = Modifier.height(32.dp))

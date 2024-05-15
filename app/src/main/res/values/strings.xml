@@ -133,5 +133,12 @@
     <string name="profile_screen_theme">Тема</string>
     <string name="profile_screen_tutor_status">Репетитор</string>
     <string name="profile_screen_student_status">Ученик</string>
+    <string name="new_lesson_screen_subject_error">Предмет не найден и/или Вы его не преподаёте</string>
+    <string name="new_lesson_screen_topic_error">Поле темы не может быть пустым</string>
+    <string name="new_lesson_screen_date_error">Некорректная дата</string>
+    <string name="new_lesson_screen_start_time_error">Некорректное время начала занятия</string>
+    <string name="new_lesson_screen_end_time_error">Некорректное время конца занятия</string>
+    <string name="new_lesson_screen_error_file_not_chosen">Файл не был выбран</string>
+    <string name="new_lessson_screen_error_no_camera_perm">Нет доступа к камере</string>
 
 </resources>

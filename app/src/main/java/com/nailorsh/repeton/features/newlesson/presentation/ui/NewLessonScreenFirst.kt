@@ -28,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
@@ -45,9 +46,9 @@ import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.StartTimeTextField
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.SubjectTextField
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.TopicTextField
-import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonCallback
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonFirstCallback
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonFirstState
-import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonFirstUiState
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonFirstUIState
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonUIEvent
 import kotlinx.coroutines.flow.Flow
 import java.time.Instant
@@ -59,18 +60,18 @@ const val TAG = "NEW_LESSON"
 
 @Composable
 fun NewLessonScreen(
-    uiState: NewLessonFirstUiState,
-    onCallback: (NewLessonCallback) -> Unit,
-    eventChannel: Flow<NewLessonUIEvent>,
+    uiState: NewLessonFirstUIState,
+    onCallback: (NewLessonFirstCallback) -> Unit,
+    uiEventChannel: Flow<NewLessonUIEvent>,
 ) {
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
         when (uiState) {
-            NewLessonFirstUiState.Error -> {}
-            NewLessonFirstUiState.Loading -> CircularProgressIndicator()
-            is NewLessonFirstUiState.Success -> NewLessonScreenContent(
+            NewLessonFirstUIState.Error -> {}
+            NewLessonFirstUIState.Loading -> CircularProgressIndicator()
+            is NewLessonFirstUIState.Success -> NewLessonScreenContent(
                 lessonState = uiState.state,
                 onCallback = onCallback,
-                uiEventChannel = eventChannel
+                uiEventChannel = uiEventChannel
             )
         }
     }
@@ -79,25 +80,24 @@ fun NewLessonScreen(
 @Composable
 fun NewLessonScreenContent(
     lessonState: NewLessonFirstState,
-    onCallback: (NewLessonCallback) -> Unit,
+    onCallback: (NewLessonFirstCallback) -> Unit,
     uiEventChannel: Flow<NewLessonUIEvent>,
 ) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(lifecycleOwner.lifecycle) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             uiEventChannel.collect { uiEvent ->
-                when (uiEvent) {
-                    NewLessonUIEvent.DateError -> snackbarHostState.showSnackbar(message = "Date Error")
-                    NewLessonUIEvent.EndTimeError -> snackbarHostState.showSnackbar(message = "End Time Error")
-                    NewLessonUIEvent.StartTimeError -> snackbarHostState.showSnackbar(message = "Start Time Error")
-                    NewLessonUIEvent.SubjectError -> snackbarHostState.showSnackbar(message = "Subject Error")
-                    NewLessonUIEvent.TopicError -> snackbarHostState.showSnackbar(message = "Topic Error")
-                }
+                snackbarHostState.showSnackbar(
+                    message = context.getString(uiEvent.errorMsg),
+                    withDismissAction = true
+                )
             }
         }
     }
+
 
 
     val focusManager = LocalFocusManager.current
@@ -105,8 +105,7 @@ fun NewLessonScreenContent(
 
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        modifier = Modifier.fillMaxSize()
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
         if (lessonState.showDatePicker) {
             CalendarDialog(
@@ -114,7 +113,7 @@ fun NewLessonScreenContent(
                 onDateChange = {
                     if (it != null) {
                         onCallback(
-                            NewLessonCallback.UpdateDate(
+                            NewLessonFirstCallback.UpdateDate(
                                 Instant
                                     .ofEpochMilli(it)
                                     .atZone(ZoneId.systemDefault())
@@ -123,35 +122,33 @@ fun NewLessonScreenContent(
                         )
                     }
                 },
-                onDismissRequest = { onCallback(NewLessonCallback.UpdateShowDatePicker(false)) }
+                onDismissRequest = { onCallback(NewLessonFirstCallback.UpdateShowDatePicker(false)) }
             )
 
         }
 
         if (lessonState.showTimePickerStart) {
             LessonTimePicker(
-                onCancel = { onCallback(NewLessonCallback.UpdateShowTimePickerStart(false)) },
+                onCancel = { onCallback(NewLessonFirstCallback.UpdateShowTimePickerStart(false)) },
                 onConfirm = {
                     onCallback(
-                        NewLessonCallback.UpdateStartTime(
+                        NewLessonFirstCallback.UpdateStartTime(
                             lessonState.startTime.withHour(it.get(Calendar.HOUR_OF_DAY))
                                 .withMinute(it.get(Calendar.MINUTE))
                         )
                     )
-
                 },
                 initialTime = lessonState.startTime.toLocalTime()
             )
-
         }
 
         if (lessonState.showTimePickerEnd) {
 
             LessonTimePicker(
-                onCancel = { onCallback(NewLessonCallback.UpdateShowTimePickerEnd(false)) },
+                onCancel = { onCallback(NewLessonFirstCallback.UpdateShowTimePickerEnd(false)) },
                 onConfirm = {
                     onCallback(
-                        NewLessonCallback.UpdateEndTime(
+                        NewLessonFirstCallback.UpdateEndTime(
                             lessonState.endTime.withHour(it.get(Calendar.HOUR_OF_DAY))
                                 .withMinute(it.get(Calendar.MINUTE))
                         )
@@ -163,7 +160,6 @@ fun NewLessonScreenContent(
         }
 
 
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -173,7 +169,7 @@ fun NewLessonScreenContent(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = {
-                        onCallback(NewLessonCallback.UpdateShowDropDownMenu(false))
+                        onCallback(NewLessonFirstCallback.UpdateShowDropDownMenu(false))
                         focusManager.clearFocus()
                     }
                 )
@@ -195,25 +191,25 @@ fun NewLessonScreenContent(
                 SubjectTextField(
                     subject = lessonState.subjectText,
                     onSubjectChange = {
-                        onCallback(NewLessonCallback.UpdateSubjectText(it))
+                        onCallback(NewLessonFirstCallback.UpdateSubjectText(it))
                     },
                     subjects = lessonState.loadedSubjects,
                     expanded = lessonState.showDropdownMenu,
-                    onExpandedChange = { onCallback(NewLessonCallback.UpdateShowDropDownMenu(it)) },
+                    onExpandedChange = { onCallback(NewLessonFirstCallback.UpdateShowDropDownMenu(it)) },
                     onChangeError = { },
                     isError = false
                 )
 
                 TopicTextField(
                     topic = lessonState.topic,
-                    onTopicChange = { onCallback(NewLessonCallback.UpdateTopicText(it)) }
+                    onTopicChange = { onCallback(NewLessonFirstCallback.UpdateTopicText(it)) }
                 )
 
                 DateTextField(
                     date = lessonState.startTime.toLocalDate(),
                     firstSet = !lessonState.showTimePickerStartTextField,
                     onClick = {
-                        onCallback(NewLessonCallback.UpdateShowDatePicker(true))
+                        onCallback(NewLessonFirstCallback.UpdateShowDatePicker(true))
                     },
                     isError = false
                 )
@@ -225,7 +221,7 @@ fun NewLessonScreenContent(
                         time = lessonState.startTime.toLocalTime(),
                         firstSet = !lessonState.showTimePickerStartTextField,
                         onClick = {
-                            onCallback(NewLessonCallback.UpdateShowTimePickerStart(true))
+                            onCallback(NewLessonFirstCallback.UpdateShowTimePickerStart(true))
                         },
                         isError = false
                     )
@@ -237,7 +233,7 @@ fun NewLessonScreenContent(
                 ) {
                     EndTimeTextField(
                         time = lessonState.endTime.toLocalTime(),
-                        onClick = { onCallback(NewLessonCallback.UpdateShowTimePickerEnd(true)) },
+                        onClick = { onCallback(NewLessonFirstCallback.UpdateShowTimePickerEnd(true)) },
                         isError = false
                     )
                 }
@@ -249,7 +245,7 @@ fun NewLessonScreenContent(
                     Button(
                         onClick = {
                             focusManager.clearFocus()
-                            onCallback(NewLessonCallback.NavigateBack)
+                            onCallback(NewLessonFirstCallback.NavigateBack)
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.tertiary,
@@ -267,7 +263,7 @@ fun NewLessonScreenContent(
                         enabled = lessonState.showTimePickerEndTextField,
                         onClick = {
                             focusManager.clearFocus()
-                            onCallback(NewLessonCallback.SaveData)
+                            onCallback(NewLessonFirstCallback.SaveData)
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,

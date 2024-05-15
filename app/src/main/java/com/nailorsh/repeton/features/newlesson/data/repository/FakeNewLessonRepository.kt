@@ -1,4 +1,4 @@
-package com.nailorsh.repeton.features.newlesson.data
+package com.nailorsh.repeton.features.newlesson.data.repository
 
 
 import com.nailorsh.repeton.common.data.models.lesson.Lesson

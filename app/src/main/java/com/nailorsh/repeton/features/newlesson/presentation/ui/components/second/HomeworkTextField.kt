@@ -9,7 +9,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -24,7 +28,7 @@ fun HomeworkTextField(
     homeworkText: String,
     onHomeworkTextChange: (String) -> Unit,
     onClickAttachFile: () -> Unit,
-    onClickAddAPhoto: () -> Unit,
+    onClickCameraRequest: () -> Unit,
 ) {
     var lines by remember { mutableIntStateOf(3) }
     Box() {
@@ -53,7 +57,7 @@ fun HomeworkTextField(
                     contentDescription = null
                 )
             }
-            IconButton(onClick = onClickAddAPhoto) {
+            IconButton(onClick = onClickCameraRequest) {
                 Icon(
                     painter = painterResource(R.drawable.ic_add_a_photo_w300),
                     contentDescription = null

@@ -1,7 +1,7 @@
 package com.nailorsh.repeton.features.newlesson
 
-import com.nailorsh.repeton.features.newlesson.data.FakeNewLessonRepository
-import com.nailorsh.repeton.features.newlesson.data.NewLessonRepository
+import com.nailorsh.repeton.features.newlesson.data.repository.FakeNewLessonRepository
+import com.nailorsh.repeton.features.newlesson.data.repository.NewLessonRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

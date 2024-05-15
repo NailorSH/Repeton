@@ -4,6 +4,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavGraphBuilder
@@ -11,11 +12,16 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.nailorsh.repeton.core.navigation.sharedViewModel
+import com.nailorsh.repeton.features.navigation.routes.BottomBarScreen
 import com.nailorsh.repeton.features.navigation.routes.Graph
 import com.nailorsh.repeton.features.navigation.routes.LessonCreationScreen
 import com.nailorsh.repeton.features.newlesson.presentation.ui.NewLessonScreen
-import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonNavigationEvent
-import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonViewModel
+import com.nailorsh.repeton.features.newlesson.presentation.ui.NewLessonScreenSecond
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonFirstNavigationEvent
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonFirstViewModel
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonSecondNavigationEvent
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonSecondViewModel
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonSharedViewModel
 
 fun NavGraphBuilder.lessonCreationNavGraph(
     navController: NavHostController
@@ -25,9 +31,10 @@ fun NavGraphBuilder.lessonCreationNavGraph(
         startDestination = LessonCreationScreen.NewLesson.route
     ) {
         composable(route = LessonCreationScreen.NewLesson.route) {
-            val viewModel = it.sharedViewModel<NewLessonViewModel>(navController)
+            val viewModel = hiltViewModel<NewLessonFirstViewModel>()
+            val sharedViewModel = it.sharedViewModel<NewLessonSharedViewModel>(navController)
             val uiState by viewModel.state.collectAsState()
-            val eventsChannel = viewModel.uiEventsChannel
+            val uiEventChannel = viewModel.uiEventsChannel
             val navigationChannel = viewModel.navigationEventsChannel
 
             val lifecycleOwner = LocalLifecycleOwner.current
@@ -36,9 +43,10 @@ fun NavGraphBuilder.lessonCreationNavGraph(
                 lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     navigationChannel.collect { navigationEvent ->
                         when (navigationEvent) {
-                            NewLessonNavigationEvent.NavigateBack -> navController.popBackStack()
-                            is NewLessonNavigationEvent.NavigateToNext -> {
-                                /* TODO("Navigation to the second screen") */
+                            NewLessonFirstNavigationEvent.NavigateBack -> navController.popBackStack()
+                            is NewLessonFirstNavigationEvent.NavigateToNext -> {
+                                sharedViewModel.updateState(navigationEvent.firstScreenData)
+                                navController.navigate(LessonCreationScreen.NewLessonSecond.route)
                             }
                         }
                     }
@@ -47,31 +55,43 @@ fun NavGraphBuilder.lessonCreationNavGraph(
 
             NewLessonScreen(
                 uiState = uiState,
-                eventChannel = eventsChannel,
+                uiEventChannel = uiEventChannel,
                 onCallback = viewModel::onCallback
             )
         }
-
         composable(route = LessonCreationScreen.NewLessonSecond.route) {
-            val viewModel = it.sharedViewModel<NewLessonViewModel>(navController)
-            val lessonState by viewModel.state.collectAsState()
+            val viewModel = hiltViewModel<NewLessonSecondViewModel>()
+            val sharedViewModel = it.sharedViewModel<NewLessonSharedViewModel>(navController)
+            val firstScreenData by sharedViewModel.state.collectAsState()
 
-//            NewLessonScreenSecond(
-//                lessonState = lessonState,
-//                onNavigateBack = {
-//                    navController.navigateUp()
-//                },
-//                onNavigateSuccessfulSave = {
-//                    navController.popBackStack(
-//                        route = BottomBarScreen.Home.route,
-//                        inclusive = false
-//                    )
-//                    viewModel.clearData()
-//                },
-//                onSaveLesson = { description, homework, additionalMaterials ->
-//                    viewModel.saveLesson(description, homework, additionalMaterials)
-//                }
-//            )
+            val lessonState by viewModel.state.collectAsState()
+            val navigationChannel = viewModel.navigationEventsChannel
+            val uiEventChannel = viewModel.uiEventsChannel
+            val lifecycleOwner = LocalLifecycleOwner.current
+
+            LaunchedEffect(Unit) {
+                viewModel.passFirstScreenData(firstScreenData)
+            }
+
+            LaunchedEffect(lifecycleOwner.lifecycle) {
+                lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    navigationChannel.collect { navigationEvent ->
+                        when (navigationEvent) {
+                            NewLessonSecondNavigationEvent.NavigateBack -> navController.popBackStack()
+                            NewLessonSecondNavigationEvent.SaveLesson -> navController.popBackStack(
+                                route = BottomBarScreen.Home.route,
+                                inclusive = false
+                            )
+                        }
+                    }
+                }
+            }
+
+            NewLessonScreenSecond(
+                uiState = lessonState,
+                onCallback = viewModel::onCallback,
+                uiEventChannel = uiEventChannel
+            )
         }
     }
 }

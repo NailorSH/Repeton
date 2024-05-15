@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,27 +17,27 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.common.data.models.lesson.Subject
 import com.nailorsh.repeton.core.util.CalendarDialog
-import com.nailorsh.repeton.features.newlesson.data.FakeNewLessonRepository
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.NewLessonTopBar
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.DateTextField
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.EndTimeTextField
@@ -44,255 +45,245 @@ import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.StartTimeTextField
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.SubjectTextField
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.TopicTextField
-import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonState
-import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonUiState
-import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonViewModel
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonCallback
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonFirstState
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonFirstUiState
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonUIEvent
+import kotlinx.coroutines.flow.Flow
 import java.time.Instant
-import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.Calendar
 
 const val TAG = "NEW_LESSON"
 
+
 @Composable
 fun NewLessonScreen(
-    lessonState: NewLessonState,
-    filteredSubjects: List<Subject>,
-    onFilterSubjects: (String) -> Unit,
-    onNavigateBack: () -> Unit,
-    onNavigateNext: () -> Unit,
-    onSaveRequiredFields: (String, String, LocalDateTime, LocalDateTime) -> Unit,
-    modifier: Modifier = Modifier
+    uiState: NewLessonFirstUiState,
+    onCallback: (NewLessonCallback) -> Unit,
+    eventChannel: Flow<NewLessonUIEvent>,
 ) {
-    var showDatePicker by remember { mutableStateOf(false) }
-    var showStartTimePicker by remember { mutableStateOf(false) }
-    var showEndTimePicker by remember { mutableStateOf(false) }
-    var showStartTimePickerTextField by remember { mutableStateOf(false) }
-    var showEndTimePickerTextField by remember { mutableStateOf(false) }
-
-    var localSubject by remember { mutableStateOf(lessonState.subject.name["ru"]) }
-    var localTopic by remember { mutableStateOf(lessonState.topic) }
-    var localStartTime by remember { mutableStateOf(lessonState.startTime) }
-    var localEndTime by remember { mutableStateOf(lessonState.endTime) }
-    var expanded by remember { mutableStateOf(false) }
-
-    LaunchedEffect(localSubject) {
-        onFilterSubjects(localSubject ?: "")
-    }
-
-    var subjectError by remember { mutableStateOf(false) }
-
-
-    LaunchedEffect(lessonState.uiState) {
-        when (lessonState.uiState) {
-            is NewLessonUiState.ErrorSaving -> {
-                subjectError = lessonState.uiState.error
-            }
-
-            NewLessonUiState.SuccessSaving -> onNavigateNext()
-            else -> {}
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+        when (uiState) {
+            NewLessonFirstUiState.Error -> {}
+            NewLessonFirstUiState.Loading -> CircularProgressIndicator()
+            is NewLessonFirstUiState.Success -> NewLessonScreenContent(
+                lessonState = uiState.state,
+                onCallback = onCallback,
+                uiEventChannel = eventChannel
+            )
         }
     }
+}
+
+@Composable
+fun NewLessonScreenContent(
+    lessonState: NewLessonFirstState,
+    onCallback: (NewLessonCallback) -> Unit,
+    uiEventChannel: Flow<NewLessonUIEvent>,
+) {
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(lifecycleOwner.lifecycle) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            uiEventChannel.collect { uiEvent ->
+                when (uiEvent) {
+                    NewLessonUIEvent.DateError -> snackbarHostState.showSnackbar(message = "Date Error")
+                    NewLessonUIEvent.EndTimeError -> snackbarHostState.showSnackbar(message = "End Time Error")
+                    NewLessonUIEvent.StartTimeError -> snackbarHostState.showSnackbar(message = "Start Time Error")
+                    NewLessonUIEvent.SubjectError -> snackbarHostState.showSnackbar(message = "Subject Error")
+                    NewLessonUIEvent.TopicError -> snackbarHostState.showSnackbar(message = "Topic Error")
+                }
+            }
+        }
+    }
+
 
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
-    val now = remember { LocalDateTime.now() }
 
-    val (dateError, startTimeError, endTimeError) = remember {
-        derivedStateOf {
-            val dateErrorValue = now.toLocalDate() > localStartTime.toLocalDate()
-            val startTimeErrorValue = if (now.toLocalDate() == localStartTime.toLocalDate()) {
-                now.toLocalTime() > localStartTime.toLocalTime()
-            } else {
-                false
-            }
-            val endTimeErrorValue = if (!startTimeErrorValue) {
-                localStartTime.toLocalTime() >= localEndTime.toLocalTime()
-            } else {
-                false
-            }
-            Triple(dateErrorValue, startTimeErrorValue, endTimeErrorValue)
-        }
-    }.value
-
-
-
-
-    if (showDatePicker) {
-
-
-        CalendarDialog(
-            date = localStartTime,
-            onDateChange = {
-                if (it != null) {
-                    localStartTime = localStartTime.with(
-                        Instant
-                            .ofEpochMilli(it)
-                            .atZone(ZoneId.systemDefault())
-                            .toLocalDate()
-                    )
-                }
-                showDatePicker = false
-                showStartTimePickerTextField = true
-            },
-            onDismissRequest = { showDatePicker = false }
-        )
-
-    }
-
-    if (showStartTimePicker) {
-
-        LessonTimePicker(
-            onCancel = { showStartTimePicker = false },
-            onConfirm = {
-                localStartTime =
-                    localStartTime.withHour(it.get(Calendar.HOUR_OF_DAY)).withMinute(it.get(Calendar.MINUTE))
-                showStartTimePicker = false
-                showEndTimePickerTextField = true
-                localEndTime = localStartTime.plusMinutes(30)
-                showEndTimePicker = true
-
-            },
-            initialTime = localStartTime.toLocalTime()
-        )
-
-    }
-
-    if (showEndTimePicker) {
-
-        LessonTimePicker(
-            onCancel = { showEndTimePicker = false },
-            onConfirm = {
-                localEndTime = localEndTime.withHour(it.get(Calendar.HOUR_OF_DAY)).withMinute(it.get(Calendar.MINUTE))
-                showEndTimePicker = false
-            },
-            initialTime = localEndTime.toLocalTime(),
-            startTime = localStartTime.toLocalTime()
-        )
-    }
-
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.surfaceBright)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = {
-                    expanded = false
-                    focusManager.clearFocus()
-                }
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        modifier = Modifier.fillMaxSize()
+    ) { paddingValues ->
+        if (lessonState.showDatePicker) {
+            CalendarDialog(
+                date = lessonState.startTime,
+                onDateChange = {
+                    if (it != null) {
+                        onCallback(
+                            NewLessonCallback.UpdateDate(
+                                Instant
+                                    .ofEpochMilli(it)
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate()
+                            )
+                        )
+                    }
+                },
+                onDismissRequest = { onCallback(NewLessonCallback.UpdateShowDatePicker(false)) }
             )
-            .verticalScroll(scrollState)
-    ) {
 
-        NewLessonTopBar(
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
+        }
+
+        if (lessonState.showTimePickerStart) {
+            LessonTimePicker(
+                onCancel = { onCallback(NewLessonCallback.UpdateShowTimePickerStart(false)) },
+                onConfirm = {
+                    onCallback(
+                        NewLessonCallback.UpdateStartTime(
+                            lessonState.startTime.withHour(it.get(Calendar.HOUR_OF_DAY))
+                                .withMinute(it.get(Calendar.MINUTE))
+                        )
+                    )
+
+                },
+                initialTime = lessonState.startTime.toLocalTime()
+            )
+
+        }
+
+        if (lessonState.showTimePickerEnd) {
+
+            LessonTimePicker(
+                onCancel = { onCallback(NewLessonCallback.UpdateShowTimePickerEnd(false)) },
+                onConfirm = {
+                    onCallback(
+                        NewLessonCallback.UpdateEndTime(
+                            lessonState.endTime.withHour(it.get(Calendar.HOUR_OF_DAY))
+                                .withMinute(it.get(Calendar.MINUTE))
+                        )
+                    )
+                },
+                initialTime = lessonState.endTime.toLocalTime(),
+                startTime = lessonState.startTime.toLocalTime()
+            )
+        }
+
+
 
         Column(
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(24.dp),
             modifier = Modifier
-                .padding(horizontal = 32.dp)
-                .fillMaxWidth()
+                .fillMaxSize()
+                .background(color = MaterialTheme.colorScheme.surfaceBright)
+                .padding(paddingValues)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = {
+                        onCallback(NewLessonCallback.UpdateShowDropDownMenu(false))
+                        focusManager.clearFocus()
+                    }
+                )
+                .verticalScroll(scrollState)
         ) {
 
-            SubjectTextField(
-                subject = localSubject ?: "",
-                onSubjectChange = {
-                    localSubject = it
-                },
-                subjects = filteredSubjects,
-                expanded = expanded,
-                onExpandedChange = { expanded = it },
-                onChangeError = { subjectError = false },
-                isError = subjectError
+            NewLessonTopBar(
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
 
-            TopicTextField(
-                topic = localTopic,
-                onTopicChange = { localTopic = it }
-            )
-
-            DateTextField(
-                date = localStartTime.toLocalDate(),
-                firstSet = !showStartTimePickerTextField,
-                onClick = {
-                    showDatePicker = true
-                },
-                isError = dateError
-            )
-            AnimatedVisibility(
-                visible = showStartTimePickerTextField,
-                enter = slideInHorizontally() + fadeIn(initialAlpha = 0.3f)
+            Column(
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+                modifier = Modifier
+                    .padding(horizontal = 32.dp)
+                    .fillMaxWidth()
             ) {
-                StartTimeTextField(
-                    time = localStartTime.toLocalTime(),
-                    firstSet = !showEndTimePickerTextField,
-                    onClick = {
-                        showStartTimePicker = true
+
+                SubjectTextField(
+                    subject = lessonState.subjectText,
+                    onSubjectChange = {
+                        onCallback(NewLessonCallback.UpdateSubjectText(it))
                     },
-                    isError = startTimeError
+                    subjects = lessonState.loadedSubjects,
+                    expanded = lessonState.showDropdownMenu,
+                    onExpandedChange = { onCallback(NewLessonCallback.UpdateShowDropDownMenu(it)) },
+                    onChangeError = { },
+                    isError = false
                 )
-            }
 
-            AnimatedVisibility(
-                visible = showEndTimePickerTextField,
-                enter = slideInHorizontally() + fadeIn(initialAlpha = 0.3f)
-            ) {
-                EndTimeTextField(
-                    time = localEndTime.toLocalTime(),
-                    onClick = { showEndTimePicker = true },
-                    isError = endTimeError
+                TopicTextField(
+                    topic = lessonState.topic,
+                    onTopicChange = { onCallback(NewLessonCallback.UpdateTopicText(it)) }
                 )
-            }
 
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Button(
-                    onClick = onNavigateBack,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.tertiary,
-                        contentColor = MaterialTheme.colorScheme.onTertiary
-                    )
+                DateTextField(
+                    date = lessonState.startTime.toLocalDate(),
+                    firstSet = !lessonState.showTimePickerStartTextField,
+                    onClick = {
+                        onCallback(NewLessonCallback.UpdateShowDatePicker(true))
+                    },
+                    isError = false
+                )
+                AnimatedVisibility(
+                    visible = lessonState.showTimePickerStartTextField,
+                    enter = slideInHorizontally() + fadeIn(initialAlpha = 0.3f)
                 ) {
-                    Text(
-                        text = stringResource(R.string.cancel),
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold,
+                    StartTimeTextField(
+                        time = lessonState.startTime.toLocalTime(),
+                        firstSet = !lessonState.showTimePickerStartTextField,
+                        onClick = {
+                            onCallback(NewLessonCallback.UpdateShowTimePickerStart(true))
+                        },
+                        isError = false
                     )
                 }
 
-                Button(
-                    enabled = localSubject != "" && localTopic != ""
-                            && showEndTimePickerTextField &&
-                            !dateError && !startTimeError && !endTimeError,
-                    onClick = {
-                        // Fields validation
-                        onSaveRequiredFields(
-                            localSubject ?: "",
-                            localTopic,
-                            localStartTime,
-                            localEndTime
-                        )
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    )
+                AnimatedVisibility(
+                    visible = lessonState.showTimePickerEndTextField,
+                    enter = slideInHorizontally() + fadeIn(initialAlpha = 0.3f)
                 ) {
-                    Text(
-                        text = stringResource(R.string.next),
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold,
+                    EndTimeTextField(
+                        time = lessonState.endTime.toLocalTime(),
+                        onClick = { onCallback(NewLessonCallback.UpdateShowTimePickerEnd(true)) },
+                        isError = false
                     )
+                }
+
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Button(
+                        onClick = {
+                            focusManager.clearFocus()
+                            onCallback(NewLessonCallback.NavigateBack)
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.tertiary,
+                            contentColor = MaterialTheme.colorScheme.onTertiary
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.cancel),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
+
+                    Button(
+                        enabled = lessonState.showTimePickerEndTextField,
+                        onClick = {
+                            focusManager.clearFocus()
+                            onCallback(NewLessonCallback.SaveData)
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.next),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
                 }
             }
         }
+
     }
 
 
@@ -303,13 +294,13 @@ fun NewLessonScreen(
 @Composable
 fun NewLessonScreenPreview() {
 
-    NewLessonScreen(
-        lessonState = NewLessonViewModel(FakeNewLessonRepository()).state.collectAsState().value,
-        onNavigateBack = {},
-        onSaveRequiredFields = { _, _, _, _ -> },
-        onNavigateNext = {},
-        filteredSubjects = listOf(),
-        onFilterSubjects = {}
-    )
+//    NewLessonScreen(
+//        lessonState = NewLessonViewModel(FakeNewLessonRepository()).state.collectAsState().value,
+//        onNavigateBack = {},
+//        onSaveRequiredFields = { _, _, _, _ -> },
+//        onNavigateNext = {},
+//        filteredSubjects = listOf(),
+//        onFilterSubjects = {}
+//    )
 
 }

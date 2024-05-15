@@ -5,7 +5,7 @@ import com.nailorsh.repeton.common.data.models.lesson.Subject
 
 interface NewLessonRepository {
 
-    suspend fun getSubjects() : List<Subject>
+    suspend fun getSubjects(filter : String) : List<String>
     suspend fun getSubject(subjectName : String) : Subject?
     suspend fun saveNewLesson(lesson : Lesson)
 }

@@ -8,6 +8,7 @@ import com.nailorsh.repeton.common.data.models.lesson.Subject
 import com.nailorsh.repeton.features.newlesson.data.models.NewLessonFirstScreenData
 import com.nailorsh.repeton.features.newlesson.data.repository.NewLessonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -116,21 +117,9 @@ class NewLessonFirstViewModel @Inject constructor(
         clearData()
     }
 
-    fun clearData() {
-        viewModelScope.launch {
-            _state.value = NewLessonFirstUIState.Loading
-            _state.update {
-                try {
-                    val subjects = newLessonRepository.getSubjects("")
-                    NewLessonFirstUIState.Success(NewLessonFirstState(loadedSubjects = subjects))
-                } catch (e: IOException) {
-                    NewLessonFirstUIState.Error
-                } catch (e: HttpRetryException) {
-                    NewLessonFirstUIState.Error
-                }
-            }
-        }
-
+    private fun clearData() {
+        _state.value = NewLessonFirstUIState.Loading
+        updateFilteredSubjects("")
     }
 
 
@@ -282,9 +271,37 @@ class NewLessonFirstViewModel @Inject constructor(
                         else -> it
                     }
                 }
+                if (callback is NewLessonFirstCallback.UpdateSubjectText) {
+                    updateFilteredSubjects(callback.subjectText)
+                }
             }
         }
 
+    }
+
+    private fun updateFilteredSubjects(subjectText: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val filteredSubjects = newLessonRepository.getSubjects(subjectText)
+                _state.update { currentState ->
+                    if (currentState is NewLessonFirstUIState.Success) {
+                        currentState.copy(
+                            state = currentState.state.copy(
+                                loadedSubjects = filteredSubjects
+                            )
+                        )
+                    } else {
+                        NewLessonFirstUIState.Success(state = NewLessonFirstState(
+                            loadedSubjects = filteredSubjects
+                        ))
+                    }
+                }
+            } catch (e: IOException) {
+                /* TODO Обработать ошибку */
+            } catch (e: HttpRetryException) {
+                /* TODO Обработать ошибку */
+            }
+        }
     }
 
 
@@ -345,11 +362,9 @@ class NewLessonFirstViewModel @Inject constructor(
         state: NewLessonFirstUIState.Success,
         subjectText: String
     ): NewLessonFirstUIState {
-        val filteredSubjects = newLessonRepository.getSubjects(subjectText)
         return state.copy(
             state = state.state.copy(
                 subjectText = subjectText,
-                loadedSubjects = filteredSubjects
             )
         )
     }

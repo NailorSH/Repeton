@@ -5,17 +5,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.common.data.models.lesson.Subject
+import com.nailorsh.repeton.common.data.models.user.User
 import com.nailorsh.repeton.features.newlesson.data.models.NewLessonFirstScreenData
 import com.nailorsh.repeton.features.newlesson.data.repository.NewLessonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.net.HttpRetryException
 import java.time.LocalDate
@@ -31,26 +33,30 @@ sealed interface NewLessonFirstUIState {
 
 }
 
-sealed interface NewLessonFirstCallback {
+sealed interface NewLessonFirstAction {
 
-    object NavigateBack : NewLessonFirstCallback
-    object SaveData : NewLessonFirstCallback
-    data class UpdateSubjectText(val subjectText: String) : NewLessonFirstCallback
-    data class UpdateTopicText(val topic: String) : NewLessonFirstCallback
-    data class UpdateDate(val date: LocalDate) : NewLessonFirstCallback
-    data class UpdateStartTime(val startTime: LocalDateTime) : NewLessonFirstCallback
-    data class UpdateEndTime(val endTime: LocalDateTime) : NewLessonFirstCallback
-    data class UpdateShowDatePicker(val datePickerEnabled: Boolean) : NewLessonFirstCallback
-    data class UpdateShowTimePickerStart(val timePickerStartEnabled: Boolean) : NewLessonFirstCallback
-    data class UpdateShowTimePickerEnd(val timePickerEndEnabled: Boolean) : NewLessonFirstCallback
+    object NavigateBack : NewLessonFirstAction
+    object SaveData : NewLessonFirstAction
+    data class AddUser(val user: User) : NewLessonFirstAction
+    data class RemoveUser(val user: User) : NewLessonFirstAction
+    data class UpdateSubjectText(val subjectText: String) : NewLessonFirstAction
+    data class UpdateTopicText(val topic: String) : NewLessonFirstAction
+    data class UpdateDate(val date: LocalDate) : NewLessonFirstAction
+    data class UpdateStartTime(val startTime: LocalDateTime) : NewLessonFirstAction
+    data class UpdateEndTime(val endTime: LocalDateTime) : NewLessonFirstAction
+    data class UpdateShowDatePicker(val datePickerEnabled: Boolean) : NewLessonFirstAction
+    data class UpdateShowTimePickerStart(val timePickerStartEnabled: Boolean) : NewLessonFirstAction
+    data class UpdateShowTimePickerEnd(val timePickerEndEnabled: Boolean) : NewLessonFirstAction
 
-    data class UpdateShowDropDownMenu(val dropDownMenuEnabled: Boolean) : NewLessonFirstCallback
+    data class UpdateShowDropDownMenu(val dropDownMenuEnabled: Boolean) : NewLessonFirstAction
 
     data class UpdateShowTimePickerStartTextField(val timePickerStartTextFieldEnabled: Boolean) :
-        NewLessonFirstCallback
+        NewLessonFirstAction
 
     data class UpdateShowTimePickerEndTextField(val timePickerEndTextFieldEnabled: Boolean) :
-        NewLessonFirstCallback
+        NewLessonFirstAction
+
+    data class UpdateShowAddUserDialogue(val addUserDialogueEnable: Boolean) : NewLessonFirstAction
 
 }
 
@@ -66,6 +72,11 @@ sealed class NewLessonUIEvent(@StringRes val errorMsg: Int) {
 
     object EndTimeError : NewLessonUIEvent(R.string.new_lesson_screen_end_time_error)
 
+    object NoStudentsError : NewLessonUIEvent(R.string.new_lesson_screen_error_no_students)
+
+    object StudentAlreadyInListError :
+        NewLessonUIEvent(R.string.new_lesson_screen_error_student_already_in_list)
+
 }
 
 
@@ -75,6 +86,7 @@ sealed interface NewLessonFirstNavigationEvent {
     ) : NewLessonFirstNavigationEvent
 
     object NavigateBack : NewLessonFirstNavigationEvent
+
 }
 
 
@@ -89,10 +101,14 @@ data class NewLessonFirstState(
     val subjectText: String = "",
     val loadedSubjects: List<String> = emptyList(),
 
+    val allStudents: List<User> = emptyList(),
+    val pickedStudents: List<User> = emptyList(),
+
     val showDropdownMenu: Boolean = false,
     val showDatePicker: Boolean = false,
     val showTimePickerStart: Boolean = false,
     val showTimePickerEnd: Boolean = false,
+    val showAddUserDialogue: Boolean = false,
 
     val showTimePickerStartTextField: Boolean = false,
     val showTimePickerEndTextField: Boolean = false,
@@ -107,44 +123,74 @@ class NewLessonFirstViewModel @Inject constructor(
     private val _state = MutableStateFlow<NewLessonFirstUIState>(NewLessonFirstUIState.Loading)
     val state: StateFlow<NewLessonFirstUIState> = _state.asStateFlow()
 
-    private val _uiEventsChannel = Channel<NewLessonUIEvent>()
-    val uiEventsChannel = _uiEventsChannel.receiveAsFlow()
+    private val _uiEvents = MutableSharedFlow<NewLessonUIEvent>()
+    val uiEvents = _uiEvents.asSharedFlow()
 
-    private val _navigationEventsChannel = Channel<NewLessonFirstNavigationEvent>()
-    val navigationEventsChannel = _navigationEventsChannel.receiveAsFlow()
+    private val _navigationEvents = MutableSharedFlow<NewLessonFirstNavigationEvent>()
+    val navigationEvents = _navigationEvents.asSharedFlow()
+
+    private var subject: Subject? = null
 
     init {
         clearData()
     }
 
     private fun clearData() {
-        _state.value = NewLessonFirstUIState.Loading
-        updateFilteredSubjects("")
+        viewModelScope.launch {
+            _state.value = NewLessonFirstUIState.Loading
+
+            withContext(Dispatchers.IO) {
+                try {
+                    val subjects = getFilteredSubjects("")
+                    val students = newLessonRepository.getStudents()
+                    _state.update {
+                        NewLessonFirstUIState.Success(
+                            NewLessonFirstState(
+                                loadedSubjects = subjects,
+                                allStudents = students
+                            )
+                        )
+                    }
+                } catch (e: IOException) {
+                    /* TODO Обработать ошибку */
+                } catch (e: HttpRetryException) {
+                    /* TODO Обработать ошибку */
+                }
+            }
+
+        }
+
+    }
+
+    private suspend fun getFilteredSubjects(subjectText: String) = withContext(Dispatchers.IO) {
+        newLessonRepository.getSubjects(subjectText)
+    }
+
+    private suspend fun getSubject(subjectText: String) = withContext(Dispatchers.IO) {
+        subject = newLessonRepository.getSubject(subjectText)
     }
 
 
     private suspend fun onSave() {
         if (_state.value is NewLessonFirstUIState.Success) {
             val state = (_state.value as NewLessonFirstUIState.Success).state
-            val subject = newLessonRepository.getSubject(state.subjectText)
-            if (!checkSubject(subject)) {
-                return
-            }
-            if (!checkTopic(state.topic)) {
-                return
-            }
+            if (!checkStudents(state.pickedStudents)) return
+            if (!checkTopic(state.topic)) return
+            getSubject(state.subjectText)
+            if (!checkSubject()) return
             if (checkDate(state.startTime.toLocalDate()) && checkStartTime(state.startTime) && checkEndTime(
                     startTime = state.startTime,
                     endTime = state.endTime
                 )
             ) {
-                _navigationEventsChannel.send(
+                _navigationEvents.emit(
                     NewLessonFirstNavigationEvent.NavigateToNext(
                         NewLessonFirstScreenData(
                             subject = subject!!,
                             topic = state.topic,
                             startTime = state.startTime,
-                            endTime = state.endTime
+                            endTime = state.endTime,
+                            students =  state.pickedStudents
                         )
                     )
                 )
@@ -153,20 +199,29 @@ class NewLessonFirstViewModel @Inject constructor(
 
     }
 
-    private suspend fun checkTopic(topic: String): Boolean {
-        return if (topic.isNotBlank()) {
+    private suspend fun checkStudents(students: List<User>) : Boolean {
+        return if (students.isNotEmpty()) {
             true
         } else {
-            _uiEventsChannel.send(NewLessonUIEvent.TopicError)
+            _uiEvents.emit(NewLessonUIEvent.NoStudentsError)
             false
         }
     }
 
-    private suspend fun checkSubject(subject: Subject?): Boolean {
+    private suspend fun checkTopic(topic: String): Boolean {
+        return if (topic.isNotBlank()) {
+            true
+        } else {
+            _uiEvents.emit(NewLessonUIEvent.TopicError)
+            false
+        }
+    }
+
+    private suspend fun checkSubject(): Boolean {
         return if (subject != null) {
             true
         } else {
-            _uiEventsChannel.send(NewLessonUIEvent.SubjectError)
+            _uiEvents.emit(NewLessonUIEvent.SubjectError)
             false
         }
     }
@@ -175,7 +230,7 @@ class NewLessonFirstViewModel @Inject constructor(
         return if (startTime >= LocalDateTime.now()) {
             true
         } else {
-            _uiEventsChannel.send(NewLessonUIEvent.StartTimeError)
+            _uiEvents.emit(NewLessonUIEvent.StartTimeError)
             false
         }
     }
@@ -184,7 +239,7 @@ class NewLessonFirstViewModel @Inject constructor(
         return if (startTime < endTime) {
             true
         } else {
-            _uiEventsChannel.send(NewLessonUIEvent.EndTimeError)
+            _uiEvents.emit(NewLessonUIEvent.EndTimeError)
             false
         }
     }
@@ -193,117 +248,159 @@ class NewLessonFirstViewModel @Inject constructor(
         return if (date >= LocalDate.now()) {
             true
         } else {
-            _uiEventsChannel.send(NewLessonUIEvent.DateError)
+            _uiEvents.emit(NewLessonUIEvent.DateError)
             false
         }
     }
 
-    fun onCallback(callback: NewLessonFirstCallback) {
+    fun onAction(action: NewLessonFirstAction) {
         viewModelScope.launch {
-            if (callback is NewLessonFirstCallback.SaveData) {
-                onSave()
-            } else if (callback is NewLessonFirstCallback.NavigateBack) {
-                _navigationEventsChannel.send(NewLessonFirstNavigationEvent.NavigateBack)
-            } else {
-                _state.update {
-                    when (val state = it) {
-                        is NewLessonFirstUIState.Success -> {
-                            when (callback) {
-                                is NewLessonFirstCallback.UpdateDate -> updateDate(
-                                    state,
-                                    callback.date
-                                )
+            when (action) {
+                is NewLessonFirstAction.SaveData -> {
+                    onSave()
+                }
 
-                                is NewLessonFirstCallback.UpdateEndTime -> updateEndTime(
-                                    state,
-                                    callback.endTime
-                                )
+                is NewLessonFirstAction.NavigateBack -> {
+                    _navigationEvents.emit(NewLessonFirstNavigationEvent.NavigateBack)
+                }
 
-                                is NewLessonFirstCallback.UpdateStartTime -> updateStartTime(
-                                    state,
-                                    callback.startTime
-                                )
 
-                                is NewLessonFirstCallback.UpdateSubjectText -> updateSubjectText(
-                                    state,
-                                    callback.subjectText
-                                )
+                else -> {
+                    _state.update {
+                        when (val state = it) {
+                            is NewLessonFirstUIState.Success -> {
+                                when (action) {
+                                    is NewLessonFirstAction.RemoveUser -> removeUser(
+                                        state,
+                                        action.user
+                                    )
 
-                                is NewLessonFirstCallback.UpdateTopicText -> updateTopic(
-                                    state,
-                                    callback.topic
-                                )
+                                    is NewLessonFirstAction.AddUser -> addUser(
+                                        state,
+                                        action.user
+                                    )
 
-                                is NewLessonFirstCallback.UpdateShowDatePicker -> updateDatePickerState(
-                                    state,
-                                    callback.datePickerEnabled
-                                )
+                                    is NewLessonFirstAction.UpdateDate -> updateDate(
+                                        state,
+                                        action.date
+                                    )
 
-                                is NewLessonFirstCallback.UpdateShowTimePickerEnd -> updateTimePickerEndState(
-                                    state,
-                                    callback.timePickerEndEnabled
-                                )
+                                    is NewLessonFirstAction.UpdateEndTime -> updateEndTime(
+                                        state,
+                                        action.endTime
+                                    )
 
-                                is NewLessonFirstCallback.UpdateShowTimePickerStart -> updateTimePickerStartState(
-                                    state,
-                                    callback.timePickerStartEnabled
-                                )
+                                    is NewLessonFirstAction.UpdateStartTime -> updateStartTime(
+                                        state,
+                                        action.startTime
+                                    )
 
-                                is NewLessonFirstCallback.UpdateShowDropDownMenu -> updateDropDownMenuState(
-                                    state,
-                                    callback.dropDownMenuEnabled
-                                )
+                                    is NewLessonFirstAction.UpdateSubjectText -> updateSubjectText(
+                                        state,
+                                        action.subjectText
+                                    )
 
-                                is NewLessonFirstCallback.UpdateShowTimePickerStartTextField -> updateTimePickerStartTextFieldState(
-                                    state,
-                                    callback.timePickerStartTextFieldEnabled
-                                )
+                                    is NewLessonFirstAction.UpdateTopicText -> updateTopic(
+                                        state,
+                                        action.topic
+                                    )
 
-                                is NewLessonFirstCallback.UpdateShowTimePickerEndTextField -> updateTimePickerEndTextFieldState(
-                                    state,
-                                    callback.timePickerEndTextFieldEnabled
-                                )
+                                    is NewLessonFirstAction.UpdateShowDatePicker -> updateDatePickerState(
+                                        state,
+                                        action.datePickerEnabled
+                                    )
 
-                                else -> state
+                                    is NewLessonFirstAction.UpdateShowTimePickerEnd -> updateTimePickerEndState(
+                                        state,
+                                        action.timePickerEndEnabled
+                                    )
+
+                                    is NewLessonFirstAction.UpdateShowTimePickerStart -> updateTimePickerStartState(
+                                        state,
+                                        action.timePickerStartEnabled
+                                    )
+
+                                    is NewLessonFirstAction.UpdateShowDropDownMenu -> updateDropDownMenuState(
+                                        state,
+                                        action.dropDownMenuEnabled
+                                    )
+
+                                    is NewLessonFirstAction.UpdateShowTimePickerStartTextField -> updateTimePickerStartTextFieldState(
+                                        state,
+                                        action.timePickerStartTextFieldEnabled
+                                    )
+
+                                    is NewLessonFirstAction.UpdateShowTimePickerEndTextField -> updateTimePickerEndTextFieldState(
+                                        state,
+                                        action.timePickerEndTextFieldEnabled
+                                    )
+
+                                    is NewLessonFirstAction.UpdateShowAddUserDialogue -> updateAddUserDialogueState(
+                                        state,
+                                        action.addUserDialogueEnable
+                                    )
+
+                                    else -> state
+                                }
                             }
+
+                            else -> it
+                        }
+                    }
+                    if (action is NewLessonFirstAction.UpdateSubjectText) {
+                        try {
+                            val filteredSubjects = getFilteredSubjects(action.subjectText)
+                            _state.update { currentState ->
+                                if (currentState is NewLessonFirstUIState.Success) {
+                                    currentState.copy(
+                                        state = currentState.state.copy(
+                                            loadedSubjects = filteredSubjects
+                                        )
+                                    )
+                                } else {
+                                    currentState
+                                }
+                            }
+                        } catch (e: IOException) {
+                            /* TODO Обработать ошибку */
+                        } catch (e: HttpRetryException) {
+                            /* TODO Обработать ошибку */
                         }
 
-                        else -> it
                     }
-                }
-                if (callback is NewLessonFirstCallback.UpdateSubjectText) {
-                    updateFilteredSubjects(callback.subjectText)
                 }
             }
         }
 
     }
 
-    private fun updateFilteredSubjects(subjectText: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val filteredSubjects = newLessonRepository.getSubjects(subjectText)
-                _state.update { currentState ->
-                    if (currentState is NewLessonFirstUIState.Success) {
-                        currentState.copy(
-                            state = currentState.state.copy(
-                                loadedSubjects = filteredSubjects
-                            )
-                        )
-                    } else {
-                        NewLessonFirstUIState.Success(state = NewLessonFirstState(
-                            loadedSubjects = filteredSubjects
-                        ))
-                    }
-                }
-            } catch (e: IOException) {
-                /* TODO Обработать ошибку */
-            } catch (e: HttpRetryException) {
-                /* TODO Обработать ошибку */
-            }
+    private suspend fun addUser(
+        state: NewLessonFirstUIState.Success,
+        user: User
+    ): NewLessonFirstUIState {
+        return if (user !in state.state.pickedStudents) {
+            state.copy(
+                state = state.state.copy(
+                    pickedStudents = state.state.pickedStudents.plus(user)
+                )
+            )
+        } else {
+            _uiEvents.emit(NewLessonUIEvent.StudentAlreadyInListError)
+            state
         }
+
     }
 
+    private suspend fun removeUser(
+        state: NewLessonFirstUIState.Success,
+        user: User
+    ): NewLessonFirstUIState {
+        return state.copy(
+            state = state.state.copy(
+                pickedStudents = state.state.pickedStudents.minusElement(user)
+            )
+        )
+    }
 
     private suspend fun updateDate(
         state: NewLessonFirstUIState.Success,
@@ -422,5 +519,10 @@ class NewLessonFirstViewModel @Inject constructor(
         return state.copy(state = state.state.copy(showTimePickerEndTextField = timePickerEndTextFieldEnabled))
     }
 
-
+    private fun updateAddUserDialogueState(
+        state: NewLessonFirstUIState.Success,
+        addUserDialogueEnabled: Boolean
+    ): NewLessonFirstUIState {
+        return state.copy(state = state.state.copy(showAddUserDialogue = addUserDialogueEnabled))
+    }
 }

@@ -34,8 +34,8 @@ fun NavGraphBuilder.lessonCreationNavGraph(
             val viewModel = hiltViewModel<NewLessonFirstViewModel>()
             val sharedViewModel = it.sharedViewModel<NewLessonSharedViewModel>(navController)
             val uiState by viewModel.state.collectAsState()
-            val uiEventChannel = viewModel.uiEventsChannel
-            val navigationChannel = viewModel.navigationEventsChannel
+            val uiEventChannel = viewModel.uiEvents
+            val navigationChannel = viewModel.navigationEvents
 
             val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -48,6 +48,8 @@ fun NavGraphBuilder.lessonCreationNavGraph(
                                 sharedViewModel.updateState(navigationEvent.firstScreenData)
                                 navController.navigate(LessonCreationScreen.NewLessonSecond.route)
                             }
+
+
                         }
                     }
                 }
@@ -56,7 +58,7 @@ fun NavGraphBuilder.lessonCreationNavGraph(
             NewLessonScreen(
                 uiState = uiState,
                 uiEventChannel = uiEventChannel,
-                onCallback = viewModel::onCallback
+                onAction = viewModel::onAction
             )
         }
         composable(route = LessonCreationScreen.NewLessonSecond.route) {
@@ -89,7 +91,7 @@ fun NavGraphBuilder.lessonCreationNavGraph(
 
             NewLessonScreenSecond(
                 uiState = lessonState,
-                onCallback = viewModel::onCallback,
+                onAction = viewModel::onAction,
                 uiEventChannel = uiEventChannel
             )
         }

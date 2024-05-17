@@ -93,6 +93,9 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-firestore")
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.6.0")
 }
 
 // Allow references to generated code

@@ -11,13 +11,14 @@ import com.nailorsh.repeton.common.data.models.lesson.Attachment
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.sources.FakeTutorsSource
+import com.nailorsh.repeton.features.auth.data.FirebaseAuthRepository
 import com.nailorsh.repeton.features.newlesson.data.models.NewLessonFirstScreenData
 import com.nailorsh.repeton.features.newlesson.data.repository.NewLessonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,7 +32,6 @@ sealed interface NewLessonSecondUIState {
 
 sealed interface NewLessonSecondNavigationEvent {
     object NavigateBack : NewLessonSecondNavigationEvent
-
     object SaveLesson : NewLessonSecondNavigationEvent
 }
 
@@ -46,32 +46,32 @@ sealed class NewLessonSecondUIEvent(@StringRes val msg: Int) {
 
 }
 
-sealed interface NewLessonSecondCallBack {
+sealed interface NewLessonSecondAction {
 
-    object NavigateBack : NewLessonSecondCallBack
+    object NavigateBack : NewLessonSecondAction
 
-    object SaveLesson : NewLessonSecondCallBack
+    object SaveLesson : NewLessonSecondAction
 
-    object CameraRequest : NewLessonSecondCallBack
+    object CameraRequest : NewLessonSecondAction
 
-    object AttachFile : NewLessonSecondCallBack
+    object AttachFile : NewLessonSecondAction
 
-    object CameraRequestFail : NewLessonSecondCallBack
+    object CameraRequestFail : NewLessonSecondAction
 
-    object AttachFileFail : NewLessonSecondCallBack
+    object AttachFileFail : NewLessonSecondAction
 
-    data class CameraRequestSuccess(val image: Bitmap) : NewLessonSecondCallBack
-    data class AttachFileSuccess(val uri: Uri) : NewLessonSecondCallBack
+    data class CameraRequestSuccess(val image: Bitmap) : NewLessonSecondAction
+    data class AttachFileSuccess(val uri: Uri) : NewLessonSecondAction
 
-    data class UpdateDescription(val description: String) : NewLessonSecondCallBack
+    data class UpdateDescription(val description: String) : NewLessonSecondAction
 
-    data class UpdateHomeworkText(val homeworkText: String) : NewLessonSecondCallBack
+    data class UpdateHomeworkText(val homeworkText: String) : NewLessonSecondAction
 
-    data class AddHomeworkAttachment(val homeworkAttachment: Attachment) : NewLessonSecondCallBack
+    data class AddHomeworkAttachment(val homeworkAttachment: Attachment) : NewLessonSecondAction
 
-    data class RemoveHomeworkAttachment(val attachmentID: Int) : NewLessonSecondCallBack
+    data class RemoveHomeworkAttachment(val attachmentID: Int) : NewLessonSecondAction
 
-    data class UpdateAdditionalMaterials(val additionalMaterials: String) : NewLessonSecondCallBack
+    data class UpdateAdditionalMaterials(val additionalMaterials: String) : NewLessonSecondAction
 
 }
 
@@ -85,29 +85,30 @@ data class NewLessonSecondState(
 
 @HiltViewModel
 class NewLessonSecondViewModel @Inject constructor(
-    private val newLessonRepository: NewLessonRepository
+    private val newLessonRepository: NewLessonRepository,
+    private val firebaseAuthRepository: FirebaseAuthRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<NewLessonSecondUIState>(NewLessonSecondUIState.Loading)
     val state = _state.asStateFlow()
 
-    private val _navigationEventsChannel = Channel<NewLessonSecondNavigationEvent>()
-    val navigationEventsChannel = _navigationEventsChannel.receiveAsFlow()
+    private val _navigationEventsChannel = MutableSharedFlow<NewLessonSecondNavigationEvent>()
+    val navigationEventsChannel = _navigationEventsChannel.asSharedFlow()
 
     private lateinit var firstScreenData: NewLessonFirstScreenData
 
-    private val _uiEventsChannel = Channel<NewLessonSecondUIEvent>()
-    val uiEventsChannel = _uiEventsChannel.receiveAsFlow()
+    private val _uiEventsChannel = MutableSharedFlow<NewLessonSecondUIEvent>()
+    val uiEventsChannel = _uiEventsChannel.asSharedFlow()
     fun passFirstScreenData(data: NewLessonFirstScreenData) {
         firstScreenData = data
         _state.value = NewLessonSecondUIState.Loading
         _state.update { NewLessonSecondUIState.Success(NewLessonSecondState()) }
     }
 
-    fun onCallback(callback: NewLessonSecondCallBack) {
+    fun onAction(action: NewLessonSecondAction) {
         viewModelScope.launch {
-            when (callback) {
-                is NewLessonSecondCallBack.SaveLesson -> {
+            when (action) {
+                is NewLessonSecondAction.SaveLesson -> {
                     when (val state = _state.value) {
                         is NewLessonSecondUIState.Success -> {
                             /* TODO Сделать проверку времени */
@@ -121,12 +122,14 @@ class NewLessonSecondViewModel @Inject constructor(
                                 description = state.state.description,
                                 homework = Homework(
                                     text = state.state.homeworkText,
-                                    attachments = state.state.homeworkAttachments
+                                    attachments = state.state.homeworkAttachments,
+                                    reviews = null,
+                                    authorID = Id("1")
                                 ),
                                 additionalMaterials = state.state.additionalMaterials
                             )
                             newLessonRepository.saveNewLesson(newLesson)
-                            _navigationEventsChannel.send(NewLessonSecondNavigationEvent.SaveLesson)
+                            _navigationEventsChannel.emit(NewLessonSecondNavigationEvent.SaveLesson)
                         }
 
                         else -> {}
@@ -134,53 +137,53 @@ class NewLessonSecondViewModel @Inject constructor(
 
                 }
 
-                is NewLessonSecondCallBack.NavigateBack -> {
-                    _navigationEventsChannel.send(NewLessonSecondNavigationEvent.NavigateBack)
+                is NewLessonSecondAction.NavigateBack -> {
+                    _navigationEventsChannel.emit(NewLessonSecondNavigationEvent.NavigateBack)
                 }
 
-                is NewLessonSecondCallBack.AttachFileFail -> {
-                    _uiEventsChannel.send(NewLessonSecondUIEvent.AttachmentFail(R.string.new_lesson_screen_error_file_not_chosen))
+                is NewLessonSecondAction.AttachFileFail -> {
+                    _uiEventsChannel.emit(NewLessonSecondUIEvent.AttachmentFail(R.string.new_lesson_screen_error_file_not_chosen))
                 }
 
-                is NewLessonSecondCallBack.CameraRequestFail -> {
-                    _uiEventsChannel.send(NewLessonSecondUIEvent.CameraFail(R.string.new_lessson_screen_error_no_camera_perm))
+                is NewLessonSecondAction.CameraRequestFail -> {
+                    _uiEventsChannel.emit(NewLessonSecondUIEvent.CameraFail(R.string.new_lesson_screen_error_no_camera_perm))
                 }
 
-                is NewLessonSecondCallBack.CameraRequestSuccess -> {
+                is NewLessonSecondAction.CameraRequestSuccess -> {
                     /* TODO Обработка изображения с камеры */
                 }
 
-                is NewLessonSecondCallBack.AttachFileSuccess -> {
+                is NewLessonSecondAction.AttachFileSuccess -> {
                     /* TODO Обработка добавленного файла */
                 }
 
                 else -> {
                     _state.update { state ->
                         if (state is NewLessonSecondUIState.Success) {
-                            when (callback) {
-                                is NewLessonSecondCallBack.AddHomeworkAttachment -> addHomeworkAttachment(
+                            when (action) {
+                                is NewLessonSecondAction.AddHomeworkAttachment -> addHomeworkAttachment(
                                     state,
-                                    callback.homeworkAttachment
+                                    action.homeworkAttachment
                                 )
 
-                                is NewLessonSecondCallBack.RemoveHomeworkAttachment -> removeHomeworkAttachment(
+                                is NewLessonSecondAction.RemoveHomeworkAttachment -> removeHomeworkAttachment(
                                     state,
-                                    callback.attachmentID
+                                    action.attachmentID
                                 )
 
-                                is NewLessonSecondCallBack.UpdateAdditionalMaterials -> updateAdditionalMaterials(
+                                is NewLessonSecondAction.UpdateAdditionalMaterials -> updateAdditionalMaterials(
                                     state,
-                                    callback.additionalMaterials
+                                    action.additionalMaterials
                                 )
 
-                                is NewLessonSecondCallBack.UpdateDescription -> updateDescription(
+                                is NewLessonSecondAction.UpdateDescription -> updateDescription(
                                     state,
-                                    callback.description
+                                    action.description
                                 )
 
-                                is NewLessonSecondCallBack.UpdateHomeworkText -> updateHomeworkText(
+                                is NewLessonSecondAction.UpdateHomeworkText -> updateHomeworkText(
                                     state,
-                                    callback.homeworkText
+                                    action.homeworkText
                                 )
 
                                 else -> state

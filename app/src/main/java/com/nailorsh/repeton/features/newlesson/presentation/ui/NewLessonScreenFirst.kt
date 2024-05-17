@@ -9,15 +9,14 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -31,8 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -40,17 +38,20 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.core.util.CalendarDialog
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.NewLessonTopBar
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.AddUserDialogue
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.AddedStudents
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.DateTextField
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.EndTimeTextField
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.LessonTimePicker
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.StartTimeTextField
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.SubjectTextField
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.TopicTextField
-import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonFirstCallback
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonFirstAction
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonFirstState
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonFirstUIState
 import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonUIEvent
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 import java.time.Instant
 import java.time.ZoneId
 import java.util.Calendar
@@ -61,8 +62,8 @@ const val TAG = "NEW_LESSON"
 @Composable
 fun NewLessonScreen(
     uiState: NewLessonFirstUIState,
-    onCallback: (NewLessonFirstCallback) -> Unit,
-    uiEventChannel: Flow<NewLessonUIEvent>,
+    onAction: (NewLessonFirstAction) -> Unit,
+    uiEventChannel: SharedFlow<NewLessonUIEvent>,
 ) {
     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
         when (uiState) {
@@ -70,7 +71,7 @@ fun NewLessonScreen(
             NewLessonFirstUIState.Loading -> CircularProgressIndicator()
             is NewLessonFirstUIState.Success -> NewLessonScreenContent(
                 lessonState = uiState.state,
-                onCallback = onCallback,
+                onAction = onAction,
                 uiEventChannel = uiEventChannel
             )
         }
@@ -80,7 +81,7 @@ fun NewLessonScreen(
 @Composable
 fun NewLessonScreenContent(
     lessonState: NewLessonFirstState,
-    onCallback: (NewLessonFirstCallback) -> Unit,
+    onAction: (NewLessonFirstAction) -> Unit,
     uiEventChannel: Flow<NewLessonUIEvent>,
 ) {
 
@@ -99,21 +100,38 @@ fun NewLessonScreenContent(
     }
 
 
-
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        topBar = {
+            NewLessonTopBar(
+                onNavigateBack = {
+                    onAction(NewLessonFirstAction.NavigateBack)
+                }
+            )
+        },
+        floatingActionButton = {
+            AnimatedVisibility(visible = lessonState.showTimePickerStartTextField && lessonState.showTimePickerEndTextField) {
+                FloatingActionButton(onClick = { onAction(NewLessonFirstAction.SaveData) }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_right_alt),
+                        contentDescription = null
+                    )
+                }
+            }
+
+        }
     ) { paddingValues ->
         if (lessonState.showDatePicker) {
             CalendarDialog(
                 date = lessonState.startTime,
                 onDateChange = {
                     if (it != null) {
-                        onCallback(
-                            NewLessonFirstCallback.UpdateDate(
+                        onAction(
+                            NewLessonFirstAction.UpdateDate(
                                 Instant
                                     .ofEpochMilli(it)
                                     .atZone(ZoneId.systemDefault())
@@ -122,17 +140,28 @@ fun NewLessonScreenContent(
                         )
                     }
                 },
-                onDismissRequest = { onCallback(NewLessonFirstCallback.UpdateShowDatePicker(false)) }
+                onDismissRequest = { onAction(NewLessonFirstAction.UpdateShowDatePicker(false)) }
             )
 
         }
 
+        if (lessonState.showAddUserDialogue) {
+            AddUserDialogue(
+                students = lessonState.allStudents,
+                onAddUser = {
+                    onAction(NewLessonFirstAction.AddUser(it))
+                    onAction(NewLessonFirstAction.UpdateShowAddUserDialogue(false))
+                },
+                onDismissRequest = { onAction(NewLessonFirstAction.UpdateShowAddUserDialogue(false)) }
+            )
+        }
+
         if (lessonState.showTimePickerStart) {
             LessonTimePicker(
-                onCancel = { onCallback(NewLessonFirstCallback.UpdateShowTimePickerStart(false)) },
+                onCancel = { onAction(NewLessonFirstAction.UpdateShowTimePickerStart(false)) },
                 onConfirm = {
-                    onCallback(
-                        NewLessonFirstCallback.UpdateStartTime(
+                    onAction(
+                        NewLessonFirstAction.UpdateStartTime(
                             lessonState.startTime.withHour(it.get(Calendar.HOUR_OF_DAY))
                                 .withMinute(it.get(Calendar.MINUTE))
                         )
@@ -145,10 +174,10 @@ fun NewLessonScreenContent(
         if (lessonState.showTimePickerEnd) {
 
             LessonTimePicker(
-                onCancel = { onCallback(NewLessonFirstCallback.UpdateShowTimePickerEnd(false)) },
+                onCancel = { onAction(NewLessonFirstAction.UpdateShowTimePickerEnd(false)) },
                 onConfirm = {
-                    onCallback(
-                        NewLessonFirstCallback.UpdateEndTime(
+                    onAction(
+                        NewLessonFirstAction.UpdateEndTime(
                             lessonState.endTime.withHour(it.get(Calendar.HOUR_OF_DAY))
                                 .withMinute(it.get(Calendar.MINUTE))
                         )
@@ -161,124 +190,82 @@ fun NewLessonScreenContent(
 
 
         Column(
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(24.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = MaterialTheme.colorScheme.surfaceBright)
                 .padding(paddingValues)
+                .padding(horizontal = 32.dp, vertical = 16.dp)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = {
-                        onCallback(NewLessonFirstCallback.UpdateShowDropDownMenu(false))
+                        onAction(NewLessonFirstAction.UpdateShowDropDownMenu(false))
                         focusManager.clearFocus()
                     }
                 )
                 .verticalScroll(scrollState)
         ) {
-
-            NewLessonTopBar(
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+            Text("Ученики", style = MaterialTheme.typography.headlineMedium)
+            AddedStudents(
+                students = lessonState.pickedStudents,
+                onRemoveUser = { onAction(NewLessonFirstAction.RemoveUser(it)) },
+                onAddUserShowDialogue = { onAction(NewLessonFirstAction.UpdateShowAddUserDialogue(true)) }
+            )
+            HorizontalDivider()
+            Text("Информация", style = MaterialTheme.typography.headlineMedium)
+            SubjectTextField(
+                subject = lessonState.subjectText,
+                onSubjectChange = {
+                    onAction(NewLessonFirstAction.UpdateSubjectText(it))
+                },
+                subjects = lessonState.loadedSubjects,
+                expanded = lessonState.showDropdownMenu,
+                onExpandedChange = { onAction(NewLessonFirstAction.UpdateShowDropDownMenu(it)) },
+                onChangeError = { },
+                isError = false
             )
 
-            Column(
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-                modifier = Modifier
-                    .padding(horizontal = 32.dp)
-                    .fillMaxWidth()
+            TopicTextField(
+                topic = lessonState.topic,
+                onTopicChange = { onAction(NewLessonFirstAction.UpdateTopicText(it)) }
+            )
+
+            DateTextField(
+                date = lessonState.startTime.toLocalDate(),
+                firstSet = !lessonState.showTimePickerStartTextField,
+                onClick = {
+                    onAction(NewLessonFirstAction.UpdateShowDatePicker(true))
+                },
+                isError = false
+            )
+            AnimatedVisibility(
+                visible = lessonState.showTimePickerStartTextField,
+                enter = slideInHorizontally() + fadeIn(initialAlpha = 0.3f)
             ) {
-
-                SubjectTextField(
-                    subject = lessonState.subjectText,
-                    onSubjectChange = {
-                        onCallback(NewLessonFirstCallback.UpdateSubjectText(it))
-                    },
-                    subjects = lessonState.loadedSubjects,
-                    expanded = lessonState.showDropdownMenu,
-                    onExpandedChange = { onCallback(NewLessonFirstCallback.UpdateShowDropDownMenu(it)) },
-                    onChangeError = { },
-                    isError = false
-                )
-
-                TopicTextField(
-                    topic = lessonState.topic,
-                    onTopicChange = { onCallback(NewLessonFirstCallback.UpdateTopicText(it)) }
-                )
-
-                DateTextField(
-                    date = lessonState.startTime.toLocalDate(),
+                StartTimeTextField(
+                    time = lessonState.startTime.toLocalTime(),
                     firstSet = !lessonState.showTimePickerStartTextField,
                     onClick = {
-                        onCallback(NewLessonFirstCallback.UpdateShowDatePicker(true))
+                        onAction(NewLessonFirstAction.UpdateShowTimePickerStart(true))
                     },
                     isError = false
                 )
-                AnimatedVisibility(
-                    visible = lessonState.showTimePickerStartTextField,
-                    enter = slideInHorizontally() + fadeIn(initialAlpha = 0.3f)
-                ) {
-                    StartTimeTextField(
-                        time = lessonState.startTime.toLocalTime(),
-                        firstSet = !lessonState.showTimePickerStartTextField,
-                        onClick = {
-                            onCallback(NewLessonFirstCallback.UpdateShowTimePickerStart(true))
-                        },
-                        isError = false
-                    )
-                }
+            }
 
-                AnimatedVisibility(
-                    visible = lessonState.showTimePickerEndTextField,
-                    enter = slideInHorizontally() + fadeIn(initialAlpha = 0.3f)
-                ) {
-                    EndTimeTextField(
-                        time = lessonState.endTime.toLocalTime(),
-                        onClick = { onCallback(NewLessonFirstCallback.UpdateShowTimePickerEnd(true)) },
-                        isError = false
-                    )
-                }
-
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Button(
-                        onClick = {
-                            focusManager.clearFocus()
-                            onCallback(NewLessonFirstCallback.NavigateBack)
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.tertiary,
-                            contentColor = MaterialTheme.colorScheme.onTertiary
-                        )
-                    ) {
-                        Text(
-                            text = stringResource(R.string.cancel),
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                    }
-
-                    Button(
-                        enabled = lessonState.showTimePickerEndTextField,
-                        onClick = {
-                            focusManager.clearFocus()
-                            onCallback(NewLessonFirstCallback.SaveData)
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        )
-                    ) {
-                        Text(
-                            text = stringResource(R.string.next),
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                    }
-                }
+            AnimatedVisibility(
+                visible = lessonState.showTimePickerEndTextField,
+                enter = slideInHorizontally() + fadeIn(initialAlpha = 0.3f)
+            ) {
+                EndTimeTextField(
+                    time = lessonState.endTime.toLocalTime(),
+                    onClick = { onAction(NewLessonFirstAction.UpdateShowTimePickerEnd(true)) },
+                    isError = false
+                )
             }
         }
+
 
     }
 

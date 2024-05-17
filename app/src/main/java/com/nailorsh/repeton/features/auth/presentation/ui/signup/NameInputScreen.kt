@@ -31,7 +31,7 @@ import com.nailorsh.repeton.features.auth.data.model.UserData
 fun NameInputScreen(
     newUserState: UserData,
     setNameAndSurname: (String, String) -> Unit,
-    onCompleted: () -> Unit = {}
+    onCompleted: () -> Unit
 ) {
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
@@ -126,5 +126,5 @@ fun NameTextField(
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreviewNameInputScreen() {
-    NameInputScreen(UserData(), { _, _ -> })
+    NameInputScreen(UserData(), { _, _ -> }, {})
 }

@@ -28,6 +28,7 @@ import com.nailorsh.repeton.features.auth.data.model.UserData
 @Composable
 fun RoleSelectionScreen(
     newUserState: UserData,
+    navigateNext: () -> Unit = {}
 ) {
     var canBeTutor by remember { mutableStateOf(newUserState.canBeTutor) }
 
@@ -47,7 +48,10 @@ fun RoleSelectionScreen(
         Row {
             RoleButton(
                 role = stringResource(R.string.pupil),
-                onClick = { canBeTutor = false },
+                onClick = {
+                    canBeTutor = false
+                    navigateNext()
+                },
                 modifier = Modifier.weight(0.5f)
             )
 
@@ -55,7 +59,10 @@ fun RoleSelectionScreen(
 
             RoleButton(
                 role = stringResource(R.string.tutor),
-                onClick = { canBeTutor = true },
+                onClick = {
+                    canBeTutor = true
+                    navigateNext()
+                },
                 modifier = Modifier.weight(0.5f)
             )
         }

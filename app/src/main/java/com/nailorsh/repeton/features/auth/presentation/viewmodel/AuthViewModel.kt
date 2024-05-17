@@ -8,10 +8,14 @@ import androidx.lifecycle.viewModelScope
 import com.nailorsh.repeton.features.auth.data.AuthRepository
 import com.nailorsh.repeton.features.auth.data.model.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.net.HttpRetryException
 import javax.inject.Inject
 
 sealed class AuthUiState {
@@ -22,9 +26,9 @@ sealed class AuthUiState {
 }
 
 sealed class RegistrationUiState {
-    class Loading(val message: String?) : RegistrationUiState()
+    object Loading : RegistrationUiState()
     class Success(val message: String?) : RegistrationUiState()
-    class Error(val exception: Throwable?) : RegistrationUiState()
+    object Error : RegistrationUiState()
     object NotInitialized : RegistrationUiState()
 }
 
@@ -35,7 +39,7 @@ class AuthViewModel @Inject constructor(
     val authUiState: MutableStateFlow<AuthUiState> = authService.authState
 
     private val _newUserUIState = MutableStateFlow(UserData())
-    val newUserUIState: StateFlow<UserData> = _newUserUIState.asStateFlow()
+    val newUserUiState: StateFlow<UserData> = _newUserUIState.asStateFlow()
 
     var registrationUiState: RegistrationUiState by mutableStateOf(RegistrationUiState.NotInitialized)
         private set
@@ -70,7 +74,29 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun registerNewUser() {
+    fun checkUserExists(onComplete: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            authService.checkUserExists(onComplete)
+        }
+    }
 
+    fun registerNewUser() {
+        viewModelScope.launch {
+            registrationUiState = RegistrationUiState.Loading
+            registrationUiState = try {
+                withContext(Dispatchers.IO) {
+                    authService.register(_newUserUIState.value)
+                    RegistrationUiState.Success("Пользователь зарегистрирован")
+                }
+            } catch (e: IOException) {
+                RegistrationUiState.Error
+            } catch (e: HttpRetryException) {
+                RegistrationUiState.Error
+            } catch (e: NoSuchElementException) {
+                RegistrationUiState.Error
+            } catch (e: Exception) {
+                RegistrationUiState.Error
+            }
+        }
     }
 }

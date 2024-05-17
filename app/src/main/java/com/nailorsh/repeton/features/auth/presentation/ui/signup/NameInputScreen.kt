@@ -35,7 +35,7 @@ fun NameInputScreen(
     var lastName by remember { mutableStateOf(newUserState.surname) }
     var isFirstNameError by remember { mutableStateOf(false) }
     var isLastNameError by remember { mutableStateOf(false) }
-
+    val isTutor = newUserState.canBeTutor
 
     Surface {
         Column(
@@ -46,7 +46,8 @@ fun NameInputScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = stringResource(R.string.enter_name_surname),
+                text = if (isTutor) stringResource(R.string.enter_name_surname_tutor) else
+                    stringResource(R.string.enter_name_surname_pupil),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_large))
             )

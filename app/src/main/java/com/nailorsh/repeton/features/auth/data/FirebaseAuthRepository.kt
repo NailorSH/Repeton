@@ -13,8 +13,10 @@ import com.nailorsh.repeton.MainActivity
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.features.auth.data.model.UserData
 import com.nailorsh.repeton.features.auth.presentation.viewmodel.AuthUiState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -153,7 +155,32 @@ class FirebaseAuthRepository @Inject constructor(
         }
     }
 
-    override suspend fun register(user: UserData) {
+    override fun checkUserExists(onComplete: (Boolean) -> Unit) {
+        // Пытаемся получить документ с данным UID
+        val uid = auth.currentUser?.uid
+        if (uid != null) {
+            val docRef = db.collection("users").document(uid)
+            docRef.get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        // Пользователь с данным UID существует
+                        onComplete(true)
+                    } else {
+                        // Пользователь с данным UID не существует
+                        onComplete(false)
+                    }
+                }
+                .addOnFailureListener { e ->
+                    // Произошла ошибка при попытке получить документ
+                    Log.d("FIRESTORE", "Error checking user existence: $e")
+                    onComplete(false)
+                }
+        } else {
+            onComplete(false)
+        }
+    }
+
+    override suspend fun register(user: UserData) = withContext(Dispatchers.IO) {
         val currentUid = auth.currentUser?.uid
         if (currentUid != null) {
             val newUserRef = db.collection("users").document(currentUid)

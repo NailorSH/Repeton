@@ -1,7 +1,6 @@
 package com.nailorsh.repeton.features.newlesson.presentation.ui.components.first
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,26 +28,25 @@ fun AddUserDialogue(
         ElevatedCard {
             LazyColumn(modifier = Modifier.padding(vertical = 32.dp)) {
                 itemsIndexed(students) { index, user ->
-                    Box {
-                        ListItem(
-                            leadingContent = {
-                                UserListImage(photoSrc = user.photoSrc)
-                            },
-                            headlineContent =  {
-                                Column() {
-                                    Text(text = user.name)
-                                    Text(text = user.surname)
-                                }
-                            },
-                            trailingContent = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_person_add),
-                                    contentDescription = null,
-                                )
-                            },
-                            modifier = Modifier.clickable { onAddUser(user) }
-                        )
-                    }
+
+                    ListItem(
+                        leadingContent = {
+                            UserListImage(photoSrc = user.photoSrc)
+                        },
+                        headlineContent = {
+                            Column() {
+                                Text(text = user.name)
+                                Text(text = user.surname)
+                            }
+                        },
+                        trailingContent = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_person_add),
+                                contentDescription = null,
+                            )
+                        },
+                        modifier = Modifier.clickable { onAddUser(user) }
+                    )
 
                     if (index != students.size - 1) {
                         HorizontalDivider()

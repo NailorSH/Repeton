@@ -15,12 +15,16 @@ import com.nailorsh.repeton.features.auth.data.FirebaseAuthRepository
 import com.nailorsh.repeton.features.newlesson.data.models.NewLessonFirstScreenData
 import com.nailorsh.repeton.features.newlesson.data.repository.NewLessonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.net.HttpRetryException
 import javax.inject.Inject
 
 sealed interface NewLessonSecondUIState {
@@ -128,8 +132,20 @@ class NewLessonSecondViewModel @Inject constructor(
                                 ),
                                 additionalMaterials = state.state.additionalMaterials
                             )
-                            newLessonRepository.saveNewLesson(newLesson)
-                            _navigationEventsChannel.emit(NewLessonSecondNavigationEvent.SaveLesson)
+                            withContext(Dispatchers.IO) {
+                                try {
+                                    newLessonRepository.saveNewLesson(newLesson)
+                                    _navigationEventsChannel.emit(NewLessonSecondNavigationEvent.SaveLesson)
+                                } catch (e: IOException) {
+                                    /* TODO Обработать ошибку */
+                                } catch (e: HttpRetryException) {
+                                    /* TODO Обработать ошибку */
+                                } catch (e : Exception) {
+                                    /* TODO Обработать ошибку */
+                                }
+
+                            }
+
                         }
 
                         else -> {}

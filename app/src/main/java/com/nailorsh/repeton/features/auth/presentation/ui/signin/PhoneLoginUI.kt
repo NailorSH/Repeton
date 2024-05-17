@@ -19,20 +19,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.features.auth.presentation.viewmodel.AuthUiState
+import com.nailorsh.repeton.features.auth.presentation.viewmodel.AuthState
 import com.nailorsh.repeton.features.auth.presentation.viewmodel.AuthViewModel
 
 @Composable
 fun PhoneLoginUI(
     navigateNext: () -> Unit,
     viewModel: AuthViewModel = viewModel(),
-    restartLogin: () -> Unit = { viewModel.authUiState.value = AuthUiState.NotInitialized }
+    restartLogin: () -> Unit = { viewModel.authUiState.value = AuthState.NotInitialized }
 ) {
     val context = LocalContext.current
 
     // Sign up state
     val uiState by viewModel.authUiState
-        .collectAsState(initial = AuthUiState.NotInitialized)
+        .collectAsState(initial = AuthState.NotInitialized)
 
     // SMS code 
     val code by viewModel.code.collectAsState(initial = "")
@@ -44,7 +44,7 @@ fun PhoneLoginUI(
 
     when (uiState) {
         // Nothing happening yet
-        is AuthUiState.NotInitialized -> {
+        is AuthState.NotInitialized -> {
             EnterPhoneNumberUI(
                 modifier = Modifier
                     .padding(vertical = 56.dp, horizontal = 24.dp),
@@ -65,8 +65,8 @@ fun PhoneLoginUI(
         }
 
         // State loading
-        is AuthUiState.Loading -> {
-            val text = (uiState as AuthUiState.Loading).message
+        is AuthState.Loading -> {
+            val text = (uiState as AuthState.Loading).message
             if (text == context.getString(R.string.code_sent)) {
 
                 // If the code is sent, display the screen for code
@@ -101,13 +101,13 @@ fun PhoneLoginUI(
         }
 
         // If it is the error state, show the error UI
-        is AuthUiState.Error -> {
-            val throwable = (uiState as AuthUiState.Error).exception!!
+        is AuthState.Error -> {
+            val throwable = (uiState as AuthState.Error).exception!!
             ErrorUi(exc = throwable, onRestart = restartLogin)
         }
 
         // You can navigate when the auth process is successful
-        is AuthUiState.Success -> {
+        is AuthState.Success -> {
             navigateNext()
         }
     }

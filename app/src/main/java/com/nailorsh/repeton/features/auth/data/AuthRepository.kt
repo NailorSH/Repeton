@@ -3,11 +3,11 @@ package com.nailorsh.repeton.features.auth.data
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import com.nailorsh.repeton.features.auth.data.model.UserData
-import com.nailorsh.repeton.features.auth.presentation.viewmodel.AuthUiState
+import com.nailorsh.repeton.features.auth.presentation.viewmodel.AuthState
 import kotlinx.coroutines.flow.MutableStateFlow
 
 interface AuthRepository {
-    val authState: MutableStateFlow<AuthUiState>
+    val authState: MutableStateFlow<AuthState>
     fun authenticate(phone: String)
     suspend fun register(user: UserData)
     fun onCodeSent(

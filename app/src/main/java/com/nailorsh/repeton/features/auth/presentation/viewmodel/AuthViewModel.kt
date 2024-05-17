@@ -18,11 +18,11 @@ import java.io.IOException
 import java.net.HttpRetryException
 import javax.inject.Inject
 
-sealed class AuthUiState {
-    object NotInitialized : AuthUiState()
-    class Loading(val message: String?) : AuthUiState()
-    class Success(val message: String?) : AuthUiState()
-    class Error(val exception: Throwable?) : AuthUiState()
+sealed class AuthState {
+    object NotInitialized : AuthState()
+    class Loading(val message: String?) : AuthState()
+    class Success(val message: String?) : AuthState()
+    class Error(val exception: Throwable?) : AuthState()
 }
 
 sealed class RegistrationUiState {
@@ -36,7 +36,7 @@ sealed class RegistrationUiState {
 class AuthViewModel @Inject constructor(
     private val authService: AuthRepository
 ) : ViewModel() {
-    val authUiState: MutableStateFlow<AuthUiState> = authService.authState
+    val authUiState: MutableStateFlow<AuthState> = authService.authState
 
     private val _newUserUIState = MutableStateFlow(UserData())
     val newUserUiState: StateFlow<UserData> = _newUserUIState.asStateFlow()

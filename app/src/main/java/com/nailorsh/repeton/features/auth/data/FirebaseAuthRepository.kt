@@ -12,7 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.nailorsh.repeton.MainActivity
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.features.auth.data.model.UserData
-import com.nailorsh.repeton.features.auth.presentation.viewmodel.AuthUiState
+import com.nailorsh.repeton.features.auth.presentation.viewmodel.AuthState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.tasks.await
@@ -29,8 +29,8 @@ class FirebaseAuthRepository @Inject constructor(
 
     var verificationOtp: String = ""
     var resentToken: PhoneAuthProvider.ForceResendingToken? = null
-    override var authState: MutableStateFlow<AuthUiState> =
-        MutableStateFlow(AuthUiState.NotInitialized)
+    override var authState: MutableStateFlow<AuthState> =
+        MutableStateFlow(AuthState.NotInitialized)
         private set
 
     private val authCallbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -40,7 +40,7 @@ class FirebaseAuthRepository @Inject constructor(
                 "onVerificationCompleted: Verification completed. ${context.getString(R.string.verification_complete)}"
             )
             authState.value =
-                AuthUiState.Loading(message = context.getString(R.string.verification_complete))
+                AuthState.Loading(message = context.getString(R.string.verification_complete))
 
             // Use obtained credential to sign in user
             signInWithAuthCredential(credential)
@@ -49,19 +49,19 @@ class FirebaseAuthRepository @Inject constructor(
         override fun onVerificationFailed(exception: FirebaseException) {
             when (exception) {
                 is FirebaseAuthInvalidCredentialsException -> {
-                    authState.value = AuthUiState.Error(
+                    authState.value = AuthState.Error(
                         exception = Exception(context.getString(R.string.verification_failed_try_again))
                     )
                 }
 
                 is FirebaseTooManyRequestsException -> {
-                    authState.value = AuthUiState.Error(
+                    authState.value = AuthState.Error(
                         exception = Exception(context.getString(R.string.quota_exceeded))
                     )
                 }
 
                 else -> {
-                    authState.value = AuthUiState.Error(exception)
+                    authState.value = AuthState.Error(exception)
                 }
             }
         }
@@ -73,7 +73,7 @@ class FirebaseAuthRepository @Inject constructor(
             super.onCodeSent(code, token)
             verificationOtp = code
             resentToken = token
-            authState.value = AuthUiState.Loading(
+            authState.value = AuthState.Loading(
                 message = context.getString(R.string.code_sent)
             )
         }
@@ -90,19 +90,19 @@ class FirebaseAuthRepository @Inject constructor(
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.i(TAG, "signInWithAuthCredential:The sign in succeeded ")
-                    authState.value = AuthUiState.Success(
+                    authState.value = AuthState.Success(
                         message = context.getString(R.string.phone_auth_success)
                     )
                 } else {
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         Log.e(TAG, context.getString(R.string.invalid_code))
-                        authState.value = AuthUiState.Error(
+                        authState.value = AuthState.Error(
                             exception = Exception(context.getString(R.string.invalid_code))
                         )
 
                         return@addOnCompleteListener
                     } else {
-                        authState.value = AuthUiState.Error(task.exception)
+                        authState.value = AuthState.Error(task.exception)
                         Log.e(TAG, "signInWithAuthCredential: Error ${task.exception?.message}")
 
                     }
@@ -116,7 +116,7 @@ class FirebaseAuthRepository @Inject constructor(
 
     override fun authenticate(phone: String) {
         authState.value =
-            AuthUiState.Loading("${context.getString(R.string.code_will_be_sent)} $phone")
+            AuthState.Loading("${context.getString(R.string.code_will_be_sent)} $phone")
 
         val options = authBuilder
             .setPhoneNumber(phone)
@@ -146,12 +146,12 @@ class FirebaseAuthRepository @Inject constructor(
     }
 
     override suspend fun createAnonymousAccount() {
-        authState.value = AuthUiState.Loading(context.getString(R.string.creating_guest_mode))
+        authState.value = AuthState.Loading(context.getString(R.string.creating_guest_mode))
         try {
             auth.signInAnonymously().await()
-            authState.value = AuthUiState.Success(context.getString(R.string.guest_account_created))
+            authState.value = AuthState.Success(context.getString(R.string.guest_account_created))
         } catch (e: Exception) {
-            authState.value = AuthUiState.Error(e)
+            authState.value = AuthState.Error(e)
         }
     }
 

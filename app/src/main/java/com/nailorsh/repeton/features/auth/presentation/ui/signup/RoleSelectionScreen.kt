@@ -1,4 +1,4 @@
-package com.nailorsh.repeton.features.auth.presentation.ui
+package com.nailorsh.repeton.features.auth.presentation.ui.signup
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,8 +11,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -21,10 +23,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.nailorsh.repeton.R
+import com.nailorsh.repeton.features.auth.data.model.UserData
 
 @Composable
-fun RoleSelectionScreen() {
-    val selectedRole = remember { mutableStateOf<String?>(null) }
+fun RoleSelectionScreen(
+    newUserState: UserData,
+) {
+    var canBeTutor by remember { mutableStateOf(newUserState.canBeTutor) }
 
     Column(
         modifier = Modifier
@@ -42,7 +47,7 @@ fun RoleSelectionScreen() {
         Row {
             RoleButton(
                 role = stringResource(R.string.pupil),
-                onClick = { selectedRole.value = "student" },
+                onClick = { canBeTutor = false },
                 modifier = Modifier.weight(0.5f)
             )
 
@@ -50,7 +55,7 @@ fun RoleSelectionScreen() {
 
             RoleButton(
                 role = stringResource(R.string.tutor),
-                onClick = { selectedRole.value = "tutor" },
+                onClick = { canBeTutor = true },
                 modifier = Modifier.weight(0.5f)
             )
         }
@@ -79,5 +84,5 @@ fun RoleButton(
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    RoleSelectionScreen()
+    RoleSelectionScreen(UserData())
 }

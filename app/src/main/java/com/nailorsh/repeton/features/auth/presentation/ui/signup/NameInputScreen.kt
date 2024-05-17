@@ -1,4 +1,4 @@
-package com.nailorsh.repeton.features.auth.presentation.ui
+package com.nailorsh.repeton.features.auth.presentation.ui.signup
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,11 +24,18 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import com.nailorsh.repeton.R
+import com.nailorsh.repeton.features.auth.data.model.UserData
 
 @Composable
-fun NameInputScreen() {
-    var firstName by remember { mutableStateOf("") }
-    var lastName by remember { mutableStateOf("") }
+fun NameInputScreen(
+    newUserState: UserData,
+    onClick: () -> Unit = {}
+) {
+    var firstName by remember { mutableStateOf(newUserState.name) }
+    var lastName by remember { mutableStateOf(newUserState.surname) }
+    var isFirstNameError by remember { mutableStateOf(false) }
+    var isLastNameError by remember { mutableStateOf(false) }
+
 
     Surface {
         Column(
@@ -48,6 +55,7 @@ fun NameInputScreen() {
                 title = stringResource(R.string.name),
                 name = firstName,
                 onValueChanged = { firstName = it },
+                isError = isFirstNameError,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = dimensionResource(R.dimen.padding_medium)),
@@ -57,13 +65,21 @@ fun NameInputScreen() {
                 title = stringResource(R.string.surname),
                 name = lastName,
                 onValueChanged = { lastName = it },
+                isError = isLastNameError,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = dimensionResource(R.dimen.padding_large)),
             )
 
             Button(
-                onClick = { },
+                onClick = {
+                    isFirstNameError = firstName.isBlank()
+                    isLastNameError = lastName.isBlank()
+
+                    if (!isFirstNameError && !isLastNameError) {
+                        onClick()
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
@@ -81,6 +97,7 @@ fun NameTextField(
     title: String,
     name: String,
     onValueChanged: (String) -> Unit,
+    isError: Boolean,
     modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
@@ -95,12 +112,13 @@ fun NameTextField(
         keyboardOptions = KeyboardOptions.Default.copy(
             imeAction = ImeAction.Done,
             capitalization = KeyboardCapitalization.Words
-        )
+        ),
+        isError = isError
     )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreviewNameInputScreen() {
-    NameInputScreen()
+    NameInputScreen(UserData())
 }

@@ -5,7 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.nailorsh.repeton.features.auth.presentation.ui.PhoneLoginUI
+import com.nailorsh.repeton.features.auth.presentation.ui.signin.PhoneLoginUI
 import com.nailorsh.repeton.features.auth.presentation.viewmodel.AuthViewModel
 import com.nailorsh.repeton.features.navigation.routes.AuthScreen
 import com.nailorsh.repeton.features.navigation.routes.Graph

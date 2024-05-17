@@ -1,4 +1,4 @@
-package com.nailorsh.repeton.features.auth.presentation.ui
+package com.nailorsh.repeton.features.auth.presentation.ui.signin
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

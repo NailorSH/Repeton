@@ -133,5 +133,11 @@
     <string name="profile_screen_theme">Тема</string>
     <string name="profile_screen_tutor_status">Репетитор</string>
     <string name="profile_screen_student_status">Ученик</string>
+    <string name="pupil">Ученик</string>
+    <string name="registration_choose_role">Выберите свою роль</string>
+    <string name="continues">Продолжить</string>
+    <string name="surname">Фамилия</string>
+    <string name="name">Имя</string>
+    <string name="enter_name_surname">Введи свои имя и фамилию</string>
 
 </resources>

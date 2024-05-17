@@ -42,10 +42,9 @@ fun NavGraphBuilder.authNavGraph(
 
         composable(route = AuthScreen.RoleSelection.route) {
             val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
-            val newUserState by authViewModel.newUserUiState.collectAsState()
 
             RoleSelectionScreen(
-                newUserState = newUserState,
+                setCanBeTutor = authViewModel::updateCanBeTutor,
                 navigateNext = { navController.navigate(AuthScreen.SignUp.route) }
             )
         }
@@ -56,9 +55,9 @@ fun NavGraphBuilder.authNavGraph(
 
             NameInputScreen(
                 newUserState = newUserState,
-                onClick = {
-                    navController.popBackStack()
-                    navController.navigate(Graph.HOME.route)
+                setNameAndSurname = authViewModel::updateNameAndSurname,
+                onCompleted = {
+                    authViewModel.registerNewUser()
                 }
             )
         }

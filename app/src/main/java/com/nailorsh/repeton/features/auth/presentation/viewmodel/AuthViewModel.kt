@@ -74,6 +74,15 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun updateCanBeTutor(canBeTutor: Boolean) {
+        _newUserUIState.value = _newUserUIState.value.copy(canBeTutor = canBeTutor)
+    }
+
+    fun updateNameAndSurname(name: String, surname: String) {
+        _newUserUIState.value = _newUserUIState.value.copy(name = name)
+        _newUserUIState.value = _newUserUIState.value.copy(surname = surname)
+    }
+
     fun checkUserExists(onComplete: (Boolean) -> Unit) {
         viewModelScope.launch {
             authService.checkUserExists(onComplete)

@@ -156,27 +156,32 @@ class FirebaseAuthRepository @Inject constructor(
     }
 
     override fun checkUserExists(onComplete: (Boolean) -> Unit) {
-        // Пытаемся получить документ с данным UID
-        val uid = auth.currentUser?.uid
-        if (uid != null) {
-            val docRef = db.collection("users").document(uid)
-            docRef.get()
-                .addOnSuccessListener { document ->
-                    if (document.exists()) {
-                        // Пользователь с данным UID существует
-                        onComplete(true)
-                    } else {
-                        // Пользователь с данным UID не существует
+        val currentUser = auth.currentUser
+
+        if (currentUser?.isAnonymous == true) onComplete(true)
+        else {
+            // Пытаемся получить документ с данным UID
+            val uid = currentUser?.uid
+            if (uid != null) {
+                val docRef = db.collection("users").document(uid)
+                docRef.get()
+                    .addOnSuccessListener { document ->
+                        if (document.exists()) {
+                            // Пользователь с данным UID существует
+                            onComplete(true)
+                        } else {
+                            // Пользователь с данным UID не существует
+                            onComplete(false)
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        // Произошла ошибка при попытке получить документ
+                        Log.d("FIRESTORE", "Error checking user existence: $e")
                         onComplete(false)
                     }
-                }
-                .addOnFailureListener { e ->
-                    // Произошла ошибка при попытке получить документ
-                    Log.d("FIRESTORE", "Error checking user existence: $e")
-                    onComplete(false)
-                }
-        } else {
-            onComplete(false)
+            } else {
+                onComplete(false)
+            }
         }
     }
 

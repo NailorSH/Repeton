@@ -11,10 +11,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -23,15 +19,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.features.auth.data.model.UserData
 
 @Composable
 fun RoleSelectionScreen(
-    newUserState: UserData,
-    navigateNext: () -> Unit = {}
+    setCanBeTutor: (Boolean) -> Unit,
+    navigateNext: () -> Unit
 ) {
-    var canBeTutor by remember { mutableStateOf(newUserState.canBeTutor) }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -49,7 +42,7 @@ fun RoleSelectionScreen(
             RoleButton(
                 role = stringResource(R.string.pupil),
                 onClick = {
-                    canBeTutor = false
+                    setCanBeTutor(false)
                     navigateNext()
                 },
                 modifier = Modifier.weight(0.5f)
@@ -60,7 +53,7 @@ fun RoleSelectionScreen(
             RoleButton(
                 role = stringResource(R.string.tutor),
                 onClick = {
-                    canBeTutor = true
+                    setCanBeTutor(true)
                     navigateNext()
                 },
                 modifier = Modifier.weight(0.5f)
@@ -91,5 +84,5 @@ fun RoleButton(
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    RoleSelectionScreen(UserData())
+    RoleSelectionScreen({}, {})
 }

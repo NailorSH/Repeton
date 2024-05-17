@@ -1,5 +1,6 @@
 package com.nailorsh.repeton.features.auth.presentation.ui.signup
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,13 +30,14 @@ import com.nailorsh.repeton.features.auth.data.model.UserData
 @Composable
 fun NameInputScreen(
     newUserState: UserData,
-    onClick: () -> Unit = {}
+    setNameAndSurname: (String, String) -> Unit,
+    onCompleted: () -> Unit = {}
 ) {
-    var firstName by remember { mutableStateOf(newUserState.name) }
-    var lastName by remember { mutableStateOf(newUserState.surname) }
+    var firstName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
     var isFirstNameError by remember { mutableStateOf(false) }
     var isLastNameError by remember { mutableStateOf(false) }
-    val isTutor = newUserState.canBeTutor
+    val isTutor by remember { mutableStateOf(newUserState.canBeTutor) }
 
     Surface {
         Column(
@@ -74,11 +76,14 @@ fun NameInputScreen(
 
             Button(
                 onClick = {
+                    Log.d("FORM", "canBeTutor = $isTutor")
+
                     isFirstNameError = firstName.isBlank()
                     isLastNameError = lastName.isBlank()
 
                     if (!isFirstNameError && !isLastNameError) {
-                        onClick()
+                        setNameAndSurname(firstName, lastName)
+                        onCompleted()
                     }
                 },
                 modifier = Modifier
@@ -121,5 +126,5 @@ fun NameTextField(
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreviewNameInputScreen() {
-    NameInputScreen(UserData())
+    NameInputScreen(UserData(), { _, _ -> })
 }

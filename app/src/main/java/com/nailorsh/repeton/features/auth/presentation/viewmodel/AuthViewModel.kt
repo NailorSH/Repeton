@@ -1,26 +1,48 @@
 package com.nailorsh.repeton.features.auth.presentation.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nailorsh.repeton.features.auth.data.AuthRepository
+import com.nailorsh.repeton.features.auth.data.model.UserData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.net.HttpRetryException
 import javax.inject.Inject
 
-sealed class Response {
-    object NotInitialized : Response()
-    class Loading(val message: String?) : Response()
-    class Success(val message: String?) : Response()
-    class Error(val exception: Throwable?) : Response()
+sealed class AuthState {
+    object NotInitialized : AuthState()
+    class Loading(val message: String?) : AuthState()
+    class Success(val message: String?) : AuthState()
+    class Error(val exception: Throwable?) : AuthState()
+}
+
+sealed class RegistrationUiState {
+    object Loading : RegistrationUiState()
+    class Success(val message: String?) : RegistrationUiState()
+    object Error : RegistrationUiState()
+    object NotInitialized : RegistrationUiState()
 }
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authService: AuthRepository
 ) : ViewModel() {
-    val signUpState: MutableStateFlow<Response> = authService.signUpState
+    val authUiState: MutableStateFlow<AuthState> = authService.authState
+
+    private val _newUserUIState = MutableStateFlow(UserData())
+    val newUserUiState: StateFlow<UserData> = _newUserUIState.asStateFlow()
+
+    var registrationUiState: RegistrationUiState by mutableStateOf(RegistrationUiState.NotInitialized)
+        private set
 
     private val _number: MutableStateFlow<String> = MutableStateFlow("")
     val number: StateFlow<String> get() = _number
@@ -49,6 +71,41 @@ class AuthViewModel @Inject constructor(
     fun createAnonymousAccount() {
         viewModelScope.launch {
             authService.createAnonymousAccount()
+        }
+    }
+
+    fun updateCanBeTutor(canBeTutor: Boolean) {
+        _newUserUIState.value = _newUserUIState.value.copy(canBeTutor = canBeTutor)
+    }
+
+    fun updateNameAndSurname(name: String, surname: String) {
+        _newUserUIState.value = _newUserUIState.value.copy(name = name)
+        _newUserUIState.value = _newUserUIState.value.copy(surname = surname)
+    }
+
+    fun checkUserExists(onComplete: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            authService.checkUserExists(onComplete)
+        }
+    }
+
+    fun registerNewUser() {
+        viewModelScope.launch {
+            registrationUiState = RegistrationUiState.Loading
+            registrationUiState = try {
+                withContext(Dispatchers.IO) {
+                    authService.register(_newUserUIState.value)
+                    RegistrationUiState.Success("Пользователь зарегистрирован")
+                }
+            } catch (e: IOException) {
+                RegistrationUiState.Error
+            } catch (e: HttpRetryException) {
+                RegistrationUiState.Error
+            } catch (e: NoSuchElementException) {
+                RegistrationUiState.Error
+            } catch (e: Exception) {
+                RegistrationUiState.Error
+            }
         }
     }
 }

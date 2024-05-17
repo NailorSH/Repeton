@@ -9,9 +9,18 @@ import com.nailorsh.repeton.features.settings.UserSettingsRepository
 import com.nailorsh.repeton.features.userprofile.data.Options
 import com.nailorsh.repeton.features.userprofile.data.TrailingContentType
 import com.nailorsh.repeton.features.userprofile.data.UserProfileRepository
+import com.nailorsh.repeton.features.userprofile.data.models.ProfileUserData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.net.HttpRetryException
 import javax.inject.Inject
@@ -19,14 +28,19 @@ import javax.inject.Inject
 sealed interface ProfileScreenUiState {
 
     data class Success(
-        val profileOptions: List<Options>,
-        val settingsOptions: List<Options>,
+        val state: ProfileScreenState
     ) : ProfileScreenUiState
 
     object Loading : ProfileScreenUiState
     object Error : ProfileScreenUiState
 
 }
+
+data class ProfileScreenState(
+    val profileUserData: ProfileUserData,
+    val profileOptions: List<Options>,
+    val settingsOptions: List<Options>,
+)
 
 
 @HiltViewModel
@@ -42,23 +56,26 @@ class ProfileViewModel @Inject constructor(
     val sideEffect: SharedFlow<NavigationRoute> = _sideEffect.asSharedFlow()
 
 
-    fun getOptions() {
-        viewModelScope.launch {
-            _uiState.update { ProfileScreenUiState.Loading }
-            try {
-
-                val profileOptions = profileRepository.getTutorOptions()
-                val settingsOptions = profileRepository.getSettingsOptions()
-                _uiState.update {
-                    ProfileScreenUiState.Success(
-                        profileOptions, settingsOptions
+    suspend fun getOptions() = withContext(Dispatchers.IO) {
+        _uiState.update { ProfileScreenUiState.Loading }
+        try {
+            val profileOptions = profileRepository.getUserOptions()
+            val settingsOptions = profileRepository.getSettingsOptions()
+            val profileUserData = profileRepository.getUserData()
+            _uiState.update {
+                ProfileScreenUiState.Success(
+                    ProfileScreenState(
+                        profileUserData = profileUserData,
+                        profileOptions = profileOptions,
+                        settingsOptions = settingsOptions
                     )
-                }
-            } catch (e: IOException) {
-                _uiState.update { ProfileScreenUiState.Error }
-            } catch (e: HttpRetryException) {
-                _uiState.update { ProfileScreenUiState.Error }
+
+                )
             }
+        } catch (e: IOException) {
+            _uiState.update { ProfileScreenUiState.Error }
+        } catch (e: HttpRetryException) {
+            _uiState.update { ProfileScreenUiState.Error }
         }
     }
 
@@ -70,26 +87,32 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private suspend fun subscribeToTheme() {
+    private suspend fun subscribeToTheme() = withContext(Dispatchers.IO) {
         settingsRepository.getTheme().collect { isDark ->
             _uiState.update { state ->
                 when (state) {
                     ProfileScreenUiState.Error -> state
                     ProfileScreenUiState.Loading -> state
                     is ProfileScreenUiState.Success -> state.copy(
-                        settingsOptions = state.settingsOptions.map {
-                            if (it is Options.ThemeSwitch) {
-                                it.copy(
-                                    icon = if (!isDark) R.drawable.ic_dark_theme else R.drawable.ic_light_theme,
-                                    trailingItem = TrailingContentType.ThemeSwitcher(
-                                        isEnabled = isDark,
-                                        onSwitchCallback = this::onThemeUpdate
+                        state = state.state.copy(
+                            settingsOptions = state.state.settingsOptions.map { it ->
+                                if (it is Options.ThemeSwitch) {
+                                    it.copy(
+                                        icon = if (!isDark) R.drawable.ic_dark_theme else R.drawable.ic_light_theme,
+                                        trailingItem = TrailingContentType.ThemeSwitcher(
+                                            isEnabled = isDark,
+                                            onSwitchCallback = { isDarkTheme ->
+                                                onThemeUpdate(
+                                                    isDarkTheme
+                                                )
+                                            }
+                                        )
                                     )
-                                )
-                            } else {
-                                it
+                                } else {
+                                    it
+                                }
                             }
-                        }
+                        )
                     )
                 }
             }
@@ -97,7 +120,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun onThemeUpdate(isDarkThemeEnabled: Boolean) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             settingsRepository.updateTheme(isDarkThemeEnabled)
         }
     }

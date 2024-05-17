@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.common.data.models.user.User
+import com.nailorsh.repeton.core.ui.components.UserImage
 
 @Composable
 fun AddUserDialogue(
@@ -31,7 +32,7 @@ fun AddUserDialogue(
 
                     ListItem(
                         leadingContent = {
-                            UserListImage(photoSrc = user.photoSrc)
+                            UserImage(photoSrc = user.photoSrc, 48.dp)
                         },
                         headlineContent = {
                             Column() {

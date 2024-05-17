@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.common.data.models.user.User
+import com.nailorsh.repeton.core.ui.components.UserImage
 
 @Composable
 fun AddedStudents(
@@ -59,7 +60,7 @@ fun AddedStudents(
                         }
                     },
                     leadingContent = {
-                        UserListImage(photoSrc = user.photoSrc)
+                        UserImage(photoSrc = user.photoSrc, 48.dp)
                     },
                     trailingContent = {
                         IconButton(onClick = { onRemoveUser(user) }) {

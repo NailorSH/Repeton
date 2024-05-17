@@ -23,7 +23,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.common.data.models.lesson.Subject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,7 +31,7 @@ fun SubjectTextField(
     onSubjectChange: (String) -> Unit,
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
-    subjects: List<Subject>,
+    subjects: List<String>,
     onChangeError: () -> Unit,
     isError: Boolean,
 ) {
@@ -102,11 +101,11 @@ fun SubjectTextField(
                 onDismissRequest = { onExpandedChange(false) },
                 modifier = Modifier.heightIn(max = 250.dp)
             ) {
-                subjects.forEach {
+                subjects.forEach { subject ->
                     DropdownMenuItem(
-                        text = { Text(text = it.name["ru"] ?: "") },
+                        text = { Text(text = subject) },
                         onClick = {
-                            onSubjectChange(it.name["ru"] ?: "")
+                            onSubjectChange(subject)
                             onExpandedChange(false)
                             onChangeError()
                         }

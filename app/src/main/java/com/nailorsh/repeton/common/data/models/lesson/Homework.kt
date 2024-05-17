@@ -1,7 +1,13 @@
 package com.nailorsh.repeton.common.data.models.lesson
 
+
+import com.nailorsh.repeton.common.data.models.Id
+
+
 data class Homework(
     val text: String,
+    val authorID : Id,
+    val reviews : List<Review>? = null,
     val attachments: List<Attachment>? = null
 )
 

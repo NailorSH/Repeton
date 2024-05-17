@@ -27,7 +27,7 @@ object FakeLessonSource {
                 tutor = FakeTutorsSource.getTutorById(Id("0")),
                 startTime = startTime,
                 endTime = startTime.plusMinutes(90),
-                homework = Homework("http://homework.example.com/algebra"),
+                homework = Homework("http://homework.example.com/algebra", Id("0")),
                 additionalMaterials = "http://materials.example.com/algebra"
             )
         },
@@ -53,7 +53,7 @@ object FakeLessonSource {
                 tutor = FakeTutorsSource.getTutorById(Id("3")),
                 startTime = startTime.plusDays(1),
                 endTime = startTime.plusDays(1).plusMinutes(90),
-                homework = Homework("http://homework.example.com/french-revolution"),
+                homework = Homework("http://homework.example.com/french-revolution", Id("0")),
                 additionalMaterials = null
             )
         },
@@ -79,7 +79,7 @@ object FakeLessonSource {
                 tutor = FakeTutorsSource.getTutorById(Id("1")),
                 startTime = startTime.plusDays(2).plusMinutes(90),
                 endTime = startTime.plusDays(2).plusMinutes(180),
-                homework = Homework("http://homework.example.com/programming"),
+                homework = Homework("http://homework.example.com/programming", Id("0")),
                 additionalMaterials = null
             )
         },

@@ -140,5 +140,13 @@
     <string name="name">Имя</string>
     <string name="enter_name_surname_tutor">Как Вас зовут?</string>
     <string name="enter_name_surname_pupil">Как тебя зовут?</string>
-
+    <string name="new_lesson_screen_subject_error">Предмет не найден и/или Вы его не преподаёте</string>
+    <string name="new_lesson_screen_topic_error">Поле темы не может быть пустым</string>
+    <string name="new_lesson_screen_date_error">Некорректная дата</string>
+    <string name="new_lesson_screen_start_time_error">Некорректное время начала занятия</string>
+    <string name="new_lesson_screen_end_time_error">Некорректное время конца занятия</string>
+    <string name="new_lesson_screen_error_file_not_chosen">Файл не был выбран</string>
+    <string name="new_lesson_screen_error_no_camera_perm">Нет доступа к камере</string>
+    <string name="new_lesson_screen_error_no_students">Добавьте как минимум одного ученика</string>
+    <string name="new_lesson_screen_error_student_already_in_list">Ученик уже прикреплён к этому уроку</string>
 </resources>

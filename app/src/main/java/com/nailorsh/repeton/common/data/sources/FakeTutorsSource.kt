@@ -10,6 +10,7 @@ object FakeTutorsSource {
             name = "Александр ",
             surname = "Киселёв",
             middleName = "Витальевич",
+            photoSrc = "https://i.imgur.com/C25Otm8.jpeg",
             about = "Я являюсь техническим руководителем проекта «Учу на Профи.Ру» и активно " +
                     "использую современные технологии на своих занятиях.",
             subjects = listOf(

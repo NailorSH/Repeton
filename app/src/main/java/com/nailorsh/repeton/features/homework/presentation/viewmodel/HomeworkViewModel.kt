@@ -31,6 +31,7 @@ sealed interface HomeworkAction {
     data class UpdateAnswerText(val text: String) : HomeworkAction
     data class ShowImageDialogue(val image : Attachment.Image) : HomeworkAction
     object HideImageDialogue : HomeworkAction
+    object SendMessage : HomeworkAction
 }
 
 sealed interface HomeworkNavigationEvent {
@@ -81,6 +82,14 @@ class HomeworkViewModel @Inject constructor(
                     when (val state = _state.value) {
                         is HomeworkUiState.Success -> {
                             when (action) {
+                                is HomeworkAction.SendMessage -> _state.update {
+                                    state.copy(
+                                        state.state.copy(
+                                            answerText = ""
+                                        )
+                                    )
+                                }
+
                                 is HomeworkAction.UpdateAnswerText -> _state.update {
                                     state.copy(
                                         state.state.copy(

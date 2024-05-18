@@ -67,7 +67,8 @@ fun HomeworkScreenContent(
         bottomBar = {
             HomeworkBottomBar(
                 answerText = state.answerText,
-                onTextChange = { onAction(HomeworkAction.UpdateAnswerText(it)) }
+                onTextChange = { onAction(HomeworkAction.UpdateAnswerText(it)) },
+                onSendMessage = { onAction(HomeworkAction.SendMessage)}
             )
         },
         modifier = Modifier.imePadding()

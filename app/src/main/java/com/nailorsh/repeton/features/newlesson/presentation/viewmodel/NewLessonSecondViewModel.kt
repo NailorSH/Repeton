@@ -41,7 +41,7 @@ sealed interface NewLessonSecondNavigationEvent {
 sealed class NewLessonSecondUIEvent(@StringRes val msg: Int) {
 
     data class CameraFail(@StringRes val errorMsg: Int) : NewLessonSecondUIEvent(errorMsg)
-    data class CameraSuccess(@StringRes val successMsg: Int) : NewLessonSecondUIEvent(successMsg)
+    data class PhotoSuccess(@StringRes val successMsg: Int) : NewLessonSecondUIEvent(successMsg)
     data class AttachmentFail(@StringRes val errorMsg: Int) : NewLessonSecondUIEvent(errorMsg)
     data class AttachmentSuccess(@StringRes val successMsg: Int) :
         NewLessonSecondUIEvent(successMsg)
@@ -135,7 +135,7 @@ class NewLessonSecondViewModel @Inject constructor(
                                     /* TODO Обработать ошибку */
                                 } catch (e: HttpRetryException) {
                                     /* TODO Обработать ошибку */
-                                } catch (e : Exception) {
+                                } catch (e: Exception) {
                                     /* TODO Обработать ошибку */
                                 }
 
@@ -161,7 +161,23 @@ class NewLessonSecondViewModel @Inject constructor(
                 }
 
                 is NewLessonSecondAction.CameraRequestSuccess -> {
-                    /* TODO Обработка изображения с камеры */
+                    withContext(Dispatchers.IO) {
+                        try {
+                            val imageUrl = newLessonRepository.uploadImage(action.image)
+                            val imageAttachment = Attachment.Image(
+                                url = imageUrl,
+                                description = null
+                            )
+
+                            onAction(NewLessonSecondAction.AddHomeworkAttachment(imageAttachment))
+                        } catch (e: IOException) {
+                            _uiEventsChannel.emit(NewLessonSecondUIEvent.CameraFail(R.string.new_lesson_screen_error_io_upload_image))
+                        } catch (e: HttpRetryException) {
+                            _uiEventsChannel.emit(NewLessonSecondUIEvent.CameraFail(R.string.new_lesson_screen_error_io_upload_image))
+                        } catch (e: Exception) {
+                            _uiEventsChannel.emit(NewLessonSecondUIEvent.CameraFail(R.string.new_lesson_screen_error_io_upload_image))
+                        }
+                    }
                 }
 
                 is NewLessonSecondAction.AttachFileSuccess -> {
@@ -212,8 +228,11 @@ class NewLessonSecondViewModel @Inject constructor(
         state: NewLessonSecondUIState.Success,
         attachment: Attachment
     ): NewLessonSecondUIState {
-        /* TODO verify and adding attachment logic */
-        return state
+        return state.copy(
+            state = state.state.copy(
+                homeworkAttachments = (state.state.homeworkAttachments ?: emptyList()) + attachment
+            )
+        )
     }
 
     private fun removeHomeworkAttachment(
@@ -264,6 +283,4 @@ class NewLessonSecondViewModel @Inject constructor(
             )
         )
     }
-
 }
-

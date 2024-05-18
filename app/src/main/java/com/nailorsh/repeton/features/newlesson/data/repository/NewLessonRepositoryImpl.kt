@@ -1,5 +1,7 @@
 package com.nailorsh.repeton.features.newlesson.data.repository
 
+import android.graphics.Bitmap
+import android.net.Uri
 import com.nailorsh.repeton.common.data.sources.FakeSubjectsSource
 import com.nailorsh.repeton.common.firestore.FirestoreRepository
 import com.nailorsh.repeton.common.firestore.mappers.toDto
@@ -53,6 +55,14 @@ class NewLessonRepositoryImpl @Inject constructor(
 
     override suspend fun getStudents(): List<NewLessonUserItem> = withContext(Dispatchers.IO) {
         firestoreRepository.getStudents().map { it.toNewLessonUserItem() }
+    }
+
+    override suspend fun uploadImage(image: Bitmap): String {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun uploadFile(uri: Uri): String {
+        TODO("Not yet implemented")
     }
 
 }

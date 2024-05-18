@@ -147,6 +147,8 @@
     <string name="new_lesson_screen_end_time_error">Некорректное время конца занятия</string>
     <string name="new_lesson_screen_error_file_not_chosen">Файл не был выбран</string>
     <string name="new_lesson_screen_error_no_camera_perm">Нет доступа к камере</string>
+    <string name="new_lesson_screen_success_upload_image">Изображение загружено успешно</string>
+    <string name="new_lesson_screen_error_io_upload_image">Произошла ошибка при загрузке изображения</string>
     <string name="new_lesson_screen_error_no_students">Добавьте как минимум одного ученика</string>
     <string name="new_lesson_screen_error_student_already_in_list">Ученик уже прикреплён к этому уроку</string>
 </resources>

@@ -5,6 +5,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import com.nailorsh.repeton.MainActivity
 import dagger.Module
 import dagger.Provides
@@ -22,6 +24,12 @@ object AppModule {
     @Singleton
     @Provides
     fun provideFirestore(): FirebaseFirestore = Firebase.firestore
+
+    @Singleton
+    @Provides
+    fun provideFirebaseStorage(): FirebaseStorage =
+        Firebase.storage("gs://repeton-deb5b.appspot.com")
+
 
     @Singleton
     @Provides

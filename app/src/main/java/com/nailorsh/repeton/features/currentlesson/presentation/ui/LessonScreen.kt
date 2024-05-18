@@ -20,14 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.core.ui.theme.LineColor
-import com.nailorsh.repeton.core.ui.theme.RepetonTheme
 import com.nailorsh.repeton.features.currentlesson.presentation.ui.components.AdditionalMaterialsCard
 import com.nailorsh.repeton.features.currentlesson.presentation.ui.components.HomeworkCard
 import com.nailorsh.repeton.features.currentlesson.presentation.ui.components.LessonCard
@@ -38,8 +36,9 @@ import com.nailorsh.repeton.features.currentlesson.presentation.viewmodel.Curren
 @Composable
 fun LessonScreen(
     lessonId: Id,
-    modifier: Modifier = Modifier,
+    onNavigateHomework: () -> Unit,
     viewModel: CurrentLessonViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
 ) {
 
     LaunchedEffect(lessonId) {
@@ -59,7 +58,7 @@ fun LessonScreen(
         }
 
         is CurrentLessonUiState.Success -> {
-            LessonContent(lessonState.lesson)
+            LessonContent(lessonState.lesson, onNavigateHomework)
         }
 
         CurrentLessonUiState.Error -> {
@@ -76,7 +75,7 @@ fun LessonScreen(
 }
 
 @Composable
-fun LessonContent(lesson: Lesson, modifier: Modifier = Modifier) {
+fun LessonContent(lesson: Lesson, onNavigateHomework: () -> Unit, modifier: Modifier = Modifier) {
 
     Surface(
         color = MaterialTheme.colorScheme.background,
@@ -106,7 +105,7 @@ fun LessonContent(lesson: Lesson, modifier: Modifier = Modifier) {
                 modifier = Modifier.padding(start = 8.dp)
             )
             LessonCard(lesson, Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium)))
-            HomeworkCard(lesson.homework)
+            HomeworkCard(lesson.homework, onNavigateHomework)
             Spacer(modifier = Modifier.height(32.dp))
             AdditionalMaterialsCard(lesson.additionalMaterials)
         }
@@ -115,17 +114,13 @@ fun LessonContent(lesson: Lesson, modifier: Modifier = Modifier) {
 }
 
 
-
-
-
-
-@Preview(
-    showSystemUi = true,
-    showBackground = true
-)
-@Composable
-fun LessonScreenPreview() {
-    RepetonTheme {
-        LessonScreen(lessonId = Id("1"))
-    }
-}
+//@Preview(
+//    showSystemUi = true,
+//    showBackground = true
+//)
+//@Composable
+//fun LessonScreenPreview() {
+//    RepetonTheme {
+//        LessonScreen(lessonId = Id("1"))
+//    }
+//}

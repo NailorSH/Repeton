@@ -149,4 +149,5 @@
     <string name="new_lesson_screen_error_no_camera_perm">Нет доступа к камере</string>
     <string name="new_lesson_screen_error_no_students">Добавьте как минимум одного ученика</string>
     <string name="new_lesson_screen_error_student_already_in_list">Ученик уже прикреплён к этому уроку</string>
+    <string name="homework_screen_answer_placeholder">Ответ</string>
 </resources>

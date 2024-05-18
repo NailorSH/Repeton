@@ -31,13 +31,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.nailorsh.repeton.R
+import com.nailorsh.repeton.core.ui.components.LessonTopBar
 import com.nailorsh.repeton.core.util.CalendarDialog
-import com.nailorsh.repeton.features.newlesson.presentation.ui.components.NewLessonTopBar
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.AddUserDialogue
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.AddedStudents
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.DateTextField
@@ -107,10 +108,11 @@ fun NewLessonScreenContent(
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
-            NewLessonTopBar(
+            LessonTopBar(
                 onNavigateBack = {
                     onAction(NewLessonFirstAction.NavigateBack)
-                }
+                },
+                title = stringResource(id = R.string.new_lesson_screen_headline)
             )
         },
         floatingActionButton = {

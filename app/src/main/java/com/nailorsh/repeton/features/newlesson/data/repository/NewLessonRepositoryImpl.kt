@@ -24,7 +24,7 @@ class NewLessonRepositoryImpl @Inject constructor(
     private val firestoreRepository: FirestoreRepository
 ) : NewLessonRepository {
     override suspend fun getSubjects(filter: String): List<String> = withContext(Dispatchers.IO) {
-        FakeSubjectsSource.getSubjects().filter { subject ->
+        firestoreRepository.getSubjects().filter { subject ->
             subject.name.lowercase().startsWith(filter.lowercase())
         }.map { subject -> subject.name }
     }

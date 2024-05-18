@@ -35,7 +35,11 @@ fun NavGraphBuilder.authNavGraph(
                             navController.navigate(AuthScreen.RoleSelection.route)
                         }
                     }
-
+                },
+                onVKAuth = { token ->
+                    authViewModel.onVKAuth(token)
+                    navController.popBackStack()
+                    navController.navigate(Graph.HOME.route)
                 }
             )
         }

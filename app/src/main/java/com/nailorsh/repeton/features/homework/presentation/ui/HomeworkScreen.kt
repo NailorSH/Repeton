@@ -1,13 +1,14 @@
 package com.nailorsh.repeton.features.homework.presentation.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
@@ -80,8 +81,8 @@ fun HomeworkScreenContent(
                     },
                     contentDescription = null,
                     modifier = Modifier
-                        .fillMaxSize()
-                        .clickable { onAction(HomeworkAction.HideImageDialogue) }
+                        .heightIn(480.dp)
+                        .widthIn(280.dp)
                 )
 
             }

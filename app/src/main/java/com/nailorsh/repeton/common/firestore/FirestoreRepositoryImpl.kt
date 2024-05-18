@@ -5,10 +5,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.models.lesson.Subject
 import com.nailorsh.repeton.common.data.models.user.Tutor
 import com.nailorsh.repeton.common.firestore.mappers.toDomain
+import com.nailorsh.repeton.common.firestore.models.HomeworkDto
 import com.nailorsh.repeton.common.firestore.models.LessonDto
 import com.nailorsh.repeton.common.firestore.models.SubjectDto
 import com.nailorsh.repeton.common.firestore.models.UserDto
@@ -50,6 +52,25 @@ class FirestoreRepositoryImpl @Inject constructor(
             }
         }
         return subjects!!
+    }
+
+    override suspend fun getUser(userId: Id): UserDto {
+        val document = db.collection("users").document(userId.value).get().await()
+        if (document.exists()) {
+            val user = document.toObject(UserDto::class.java)!!
+            return user
+        } else {
+            throw (IOException("User not found"))
+        }
+    }
+
+    override suspend fun getHomework(lessonId: Id): Homework {
+        val document =
+            db.collection("lessons").document().collection("homework").document().get().await()
+        if (document.exists()) {
+            val homework = document.toObject(HomeworkDto::class.java)!!
+            return homework.toDomain()
+        } else throw (IOException("Homework not found"))
     }
 
     override suspend fun getSubject(id: Id): Subject {

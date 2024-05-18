@@ -12,6 +12,7 @@ import com.nailorsh.repeton.common.firestore.models.AttachmentDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
 import com.nailorsh.repeton.common.firestore.models.LessonDto
 import com.nailorsh.repeton.common.firestore.models.ReviewDto
+import com.nailorsh.repeton.common.firestore.models.SubjectDto
 import java.time.LocalDateTime
 import java.time.ZoneId
 
@@ -46,6 +47,13 @@ fun AttachmentDto.toDomain(): Attachment {
 
         else -> throw IllegalArgumentException("Invalid attachment data")
     }
+}
+
+fun SubjectDto.toDomain(id : String) : Subject {
+    return Subject(
+        id = Id(id),
+        name = name
+    )
 }
 
 fun LessonDto.toDomain(

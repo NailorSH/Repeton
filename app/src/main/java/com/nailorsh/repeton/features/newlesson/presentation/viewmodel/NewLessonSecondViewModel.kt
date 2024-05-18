@@ -6,13 +6,11 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.lesson.Attachment
-import com.nailorsh.repeton.common.data.models.lesson.Homework
-import com.nailorsh.repeton.common.data.models.lesson.Lesson
-import com.nailorsh.repeton.common.data.sources.FakeTutorsSource
 import com.nailorsh.repeton.features.auth.data.FirebaseAuthRepository
 import com.nailorsh.repeton.features.newlesson.data.models.NewLessonFirstScreenData
+import com.nailorsh.repeton.features.newlesson.data.models.NewLessonHomework
+import com.nailorsh.repeton.features.newlesson.data.models.NewLessonItem
 import com.nailorsh.repeton.features.newlesson.data.repository.NewLessonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -116,21 +114,18 @@ class NewLessonSecondViewModel @Inject constructor(
                     when (val state = _state.value) {
                         is NewLessonSecondUIState.Success -> {
                             /* TODO Сделать проверку времени */
-                            val newLesson = Lesson(
-                                id = Id("0"),
+                            val newLesson = NewLessonItem(
+                                students = firstScreenData.students,
                                 subject = firstScreenData.subject,
                                 topic = firstScreenData.topic,
                                 startTime = firstScreenData.startTime,
                                 endTime = firstScreenData.endTime,
-                                tutor = FakeTutorsSource.getTutorById(Id("1")),
                                 description = state.state.description,
-                                homework = Homework(
+                                homework = NewLessonHomework(
                                     text = state.state.homeworkText,
                                     attachments = state.state.homeworkAttachments,
-                                    reviews = null,
-                                    authorID = Id("1")
                                 ),
-                                additionalMaterials = state.state.additionalMaterials
+                                additionalMaterials = state.state.additionalMaterials,
                             )
                             withContext(Dispatchers.IO) {
                                 try {

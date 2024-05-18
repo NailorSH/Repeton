@@ -5,10 +5,11 @@ import com.nailorsh.repeton.common.data.models.location.Location
 
 data class Student(
     override val id: Id,
-    override var name: String = "",
-    override var surname: String = "",
-    override var middleName: String? = null,
-    override var about: String? = null,
-    override var photoSrc: String? = null,
-    override var location: Location? = null,
+    override val name: String = "",
+    override val surname: String = "",
+    override val middleName: String? = null,
+    override val about: String? = null,
+    override val photoSrc: String? = null,
+    override val location: Location? = null,
+    override val isTutor: Boolean = false,
 ) : User

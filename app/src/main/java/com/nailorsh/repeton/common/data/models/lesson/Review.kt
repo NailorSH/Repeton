@@ -5,5 +5,5 @@ import com.nailorsh.repeton.common.data.models.Id
 data class Review(
     val id : Id,
     val text : String,
-    val attachments : List<Attachment>
+    val attachments : List<Attachment>?
 )

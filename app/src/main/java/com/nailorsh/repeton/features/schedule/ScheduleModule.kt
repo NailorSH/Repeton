@@ -1,7 +1,7 @@
 package com.nailorsh.repeton.features.schedule
 
-import com.nailorsh.repeton.features.schedule.data.FakeScheduleRepository
 import com.nailorsh.repeton.features.schedule.data.ScheduleRepository
+import com.nailorsh.repeton.features.schedule.data.ScheduleRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -12,6 +12,6 @@ import dagger.hilt.components.SingletonComponent
 abstract class ScheduleModule {
     @Binds
     abstract fun bindScheduleRepository(
-        scheduleRepositoryImpl: FakeScheduleRepository
+        scheduleRepositoryImpl:ScheduleRepositoryImpl
     ): ScheduleRepository
 }

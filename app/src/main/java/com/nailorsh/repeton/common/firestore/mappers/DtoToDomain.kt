@@ -49,7 +49,7 @@ fun AttachmentDto.toDomain(): Attachment {
     }
 }
 
-fun SubjectDto.toDomain(id : String) : Subject {
+fun SubjectDto.toDomain(): Subject {
     return Subject(
         id = Id(id),
         name = name

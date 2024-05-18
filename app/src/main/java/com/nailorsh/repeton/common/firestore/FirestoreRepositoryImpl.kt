@@ -151,6 +151,6 @@ class FirestoreRepositoryImpl @Inject constructor(
         val userDto = userSnapshot.toObject(UserDto::class.java)
         return userDto?.let {
             Tutor(id = Id(id), name = it.name, surname = it.surname)
-        } ?: throw Exception("Tutor not found")
+        } ?: Tutor(id = Id("-1")) // TODO обработать более умно
     }
 }

@@ -20,8 +20,8 @@ class NewLessonRepositoryImpl @Inject constructor(
 ) : NewLessonRepository {
     override suspend fun getSubjects(filter: String): List<String> = withContext(Dispatchers.IO) {
         FakeSubjectsSource.getSubjects().filter { subject ->
-            subject.name["ru"]!!.lowercase().startsWith(filter.lowercase())
-        }.map { subject -> subject.name["ru"]!!.toString() }
+            subject.name.lowercase().startsWith(filter.lowercase())
+        }.map { subject -> subject.name }
     }
 
     override suspend fun saveNewLesson(lesson: NewLessonItem) = withContext(Dispatchers.IO) {

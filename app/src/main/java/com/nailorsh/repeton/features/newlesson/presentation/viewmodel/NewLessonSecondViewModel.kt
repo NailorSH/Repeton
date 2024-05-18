@@ -171,17 +171,36 @@ class NewLessonSecondViewModel @Inject constructor(
 
                             onAction(NewLessonSecondAction.AddHomeworkAttachment(imageAttachment))
                         } catch (e: IOException) {
-                            _uiEventsChannel.emit(NewLessonSecondUIEvent.CameraFail(R.string.new_lesson_screen_error_io_upload_image))
+                            _uiEventsChannel.emit(NewLessonSecondUIEvent.CameraFail(R.string.new_lesson_screen_error_upload_image))
                         } catch (e: HttpRetryException) {
-                            _uiEventsChannel.emit(NewLessonSecondUIEvent.CameraFail(R.string.new_lesson_screen_error_io_upload_image))
+                            _uiEventsChannel.emit(NewLessonSecondUIEvent.CameraFail(R.string.new_lesson_screen_error_upload_image))
                         } catch (e: Exception) {
-                            _uiEventsChannel.emit(NewLessonSecondUIEvent.CameraFail(R.string.new_lesson_screen_error_io_upload_image))
+                            _uiEventsChannel.emit(NewLessonSecondUIEvent.CameraFail(R.string.new_lesson_screen_error_upload_image))
                         }
                     }
                 }
 
                 is NewLessonSecondAction.AttachFileSuccess -> {
-                    /* TODO Обработка добавленного файла */
+                    withContext(Dispatchers.IO) {
+                        try {
+                            val fileUri = action.uri
+                            val fileUrl = newLessonRepository.uploadFile(fileUri)
+                            val fileName = getFilenameFromUri(fileUri) ?: "Неизвестный файл"
+
+                            val fileAttachment = Attachment.File(
+                                url = fileUrl,
+                                fileName = fileName
+                            )
+
+                            onAction(NewLessonSecondAction.AddHomeworkAttachment(fileAttachment))
+                        } catch (e: IOException) {
+                            _uiEventsChannel.emit(NewLessonSecondUIEvent.AttachmentFail(R.string.new_lesson_screen_error_upload_file))
+                        } catch (e: HttpRetryException) {
+                            _uiEventsChannel.emit(NewLessonSecondUIEvent.AttachmentFail(R.string.new_lesson_screen_error_upload_file))
+                        } catch (e: Exception) {
+                            _uiEventsChannel.emit(NewLessonSecondUIEvent.AttachmentFail(R.string.new_lesson_screen_error_upload_file))
+                        }
+                    }
                 }
 
                 else -> {
@@ -282,5 +301,11 @@ class NewLessonSecondViewModel @Inject constructor(
                 homeworkText = homeworkText
             )
         )
+    }
+
+    private fun getFilenameFromUri(uri: Uri): String? {
+        val path = uri.path
+        val cut = path?.lastIndexOf('/')
+        return if (cut != null && cut != -1) path.substring(cut + 1) else null
     }
 }

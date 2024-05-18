@@ -108,7 +108,8 @@ fun HomeworkImages(
                                 fraction = 1f - pageOffset.coerceIn(0f, 1f)
                             )
 
-                        }) {
+                        }
+                ) {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(imageList[page].url)

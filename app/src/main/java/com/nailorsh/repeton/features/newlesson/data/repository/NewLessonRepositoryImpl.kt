@@ -44,6 +44,7 @@ class NewLessonRepositoryImpl @Inject constructor(
             tutorId = tutorId,
             studentIds = studentsIds,
             topic = lesson.topic,
+            subjectId = lesson.subject.id.value,
             description = lesson.description ?: "",
             startTime = lesson.startTime.toTimestamp(),
             endTime = lesson.endTime.toTimestamp(),

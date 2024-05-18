@@ -3,6 +3,8 @@ package com.nailorsh.repeton.features.userprofile.data
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.nailorsh.repeton.R
+import com.nailorsh.repeton.common.firestore.FirestoreRepository
+import com.nailorsh.repeton.features.userprofile.data.models.ProfileUserData
 import javax.inject.Inject
 
 
@@ -13,7 +15,10 @@ enum class OptionType() {
 sealed interface TrailingContentType {
     object Empty : TrailingContentType
 
-    data class ThemeSwitcher(val isEnabled: Boolean = false, val onSwitchCallback: (Boolean) -> Unit = {}) :
+    data class ThemeSwitcher(
+        val isEnabled: Boolean = false,
+        val onSwitchCallback: (Boolean) -> Unit = {}
+    ) :
         TrailingContentType
 
     data class HomeworkBadge(val count: Int = 0) : TrailingContentType
@@ -102,7 +107,9 @@ sealed interface Options {
 
 }
 
-class ActualProfileRepository @Inject constructor() : UserProfileRepository {
+class ActualProfileRepository @Inject constructor(
+    private val firestoreRepository: FirestoreRepository
+) : UserProfileRepository {
 
     override suspend fun getSettingsOptions(): List<Options> =
         listOf(
@@ -114,7 +121,7 @@ class ActualProfileRepository @Inject constructor() : UserProfileRepository {
         )
 
 
-    override suspend fun getTutorOptions(): List<Options> =
+    override suspend fun getUserOptions(): List<Options> =
         listOf(
             Options.Lessons,
             Options.Students,
@@ -123,8 +130,14 @@ class ActualProfileRepository @Inject constructor() : UserProfileRepository {
             Options.About
         )
 
-
-    override suspend fun getStudentOptions(): List<Options> =
-        emptyList()
-
+    override suspend fun getUserData(): ProfileUserData {
+        val userDto = firestoreRepository.getUserDto()
+        return ProfileUserData(
+            name = userDto.name,
+            surname = userDto.surname,
+            phoneNumber = userDto.phoneNumber,
+            photoSrc = "https://i.imgur.com/C25Otm8.jpeg",
+            isTutor = userDto.canBeTutor
+        )
+    }
 }

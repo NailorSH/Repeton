@@ -7,22 +7,24 @@ import com.nailorsh.repeton.common.data.models.location.Location
 
 data class Tutor(
     override val id: Id,
-    override var name: String = "",
-    override var surname: String = "",
-    override var middleName: String? = null,
-    override var about: String? = null,
-    override var photoSrc: String? = null,
-    override var location: Location? = null,
-    var subjects: List<Subject>? = null,
-    var education: String? = null,
-    var subjectsPrices: Map<String, String>? = null,
-    var averagePrice: Int = 0,
-    var rating: Double = 0.0,
-    var reviewsNumber: Int = 0,
-    var taughtLessonNumber: Int = 0,
-    var experienceYears: Int = 0,
-    var languages: Map<String, String>? = null,
-) : User
+    override val name: String = "",
+    override val surname: String = "",
+    override val middleName: String? = null,
+    override val about: String? = null,
+    override val photoSrc: String? = null,
+    override val location: Location? = null,
+    override val isTutor: Boolean = true,
+    val subjects: List<Subject>? = null,
+    val education: String? = null,
+    val subjectsPrices: Map<String, String>? = null,
+    val averagePrice: Int = 0,
+    val rating: Double = 0.0,
+    val reviewsNumber: Int = 0,
+    val taughtLessonNumber: Int = 0,
+    val experienceYears: Int = 0,
+    val languages: Map<String, String>? = null,
+
+    ) : User
 
 fun DocumentSnapshot.toTutorWithId(): Tutor {
     val id = Id(id)  // Assuming 'id' comes from DocumentSnapshot's intrinsic property

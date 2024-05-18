@@ -16,12 +16,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.common.data.models.user.User
+import com.nailorsh.repeton.core.ui.components.UserImage
+import com.nailorsh.repeton.features.newlesson.data.models.NewLessonUserItem
 
 @Composable
 fun AddUserDialogue(
-    students: List<User>,
-    onAddUser: (User) -> Unit,
+    students: List<NewLessonUserItem>,
+    onAddUser: (NewLessonUserItem) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
@@ -31,7 +32,7 @@ fun AddUserDialogue(
 
                     ListItem(
                         leadingContent = {
-                            UserListImage(photoSrc = user.photoSrc)
+                            UserImage(photoSrc = user.photoSrc, 48.dp)
                         },
                         headlineContent = {
                             Column() {

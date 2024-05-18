@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.common.data.models.lesson.Subject
-import com.nailorsh.repeton.common.data.models.user.User
 import com.nailorsh.repeton.features.newlesson.data.models.NewLessonFirstScreenData
+import com.nailorsh.repeton.features.newlesson.data.models.NewLessonUserItem
 import com.nailorsh.repeton.features.newlesson.data.repository.NewLessonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -37,8 +37,8 @@ sealed interface NewLessonFirstAction {
 
     object NavigateBack : NewLessonFirstAction
     object SaveData : NewLessonFirstAction
-    data class AddUser(val user: User) : NewLessonFirstAction
-    data class RemoveUser(val user: User) : NewLessonFirstAction
+    data class AddUser(val user: NewLessonUserItem) : NewLessonFirstAction
+    data class RemoveUser(val user: NewLessonUserItem) : NewLessonFirstAction
     data class UpdateSubjectText(val subjectText: String) : NewLessonFirstAction
     data class UpdateTopicText(val topic: String) : NewLessonFirstAction
     data class UpdateDate(val date: LocalDate) : NewLessonFirstAction
@@ -101,8 +101,8 @@ data class NewLessonFirstState(
     val subjectText: String = "",
     val loadedSubjects: List<String> = emptyList(),
 
-    val allStudents: List<User> = emptyList(),
-    val pickedStudents: List<User> = emptyList(),
+    val allStudents: List<NewLessonUserItem> = emptyList(),
+    val pickedStudents: List<NewLessonUserItem> = emptyList(),
 
     val showDropdownMenu: Boolean = false,
     val showDatePicker: Boolean = false,
@@ -199,7 +199,7 @@ class NewLessonFirstViewModel @Inject constructor(
 
     }
 
-    private suspend fun checkStudents(students: List<User>) : Boolean {
+    private suspend fun checkStudents(students: List<NewLessonUserItem>) : Boolean {
         return if (students.isNotEmpty()) {
             true
         } else {
@@ -376,7 +376,7 @@ class NewLessonFirstViewModel @Inject constructor(
 
     private suspend fun addUser(
         state: NewLessonFirstUIState.Success,
-        user: User
+        user: NewLessonUserItem
     ): NewLessonFirstUIState {
         return if (user !in state.state.pickedStudents) {
             state.copy(
@@ -393,7 +393,7 @@ class NewLessonFirstViewModel @Inject constructor(
 
     private suspend fun removeUser(
         state: NewLessonFirstUIState.Success,
-        user: User
+        user: NewLessonUserItem
     ): NewLessonFirstUIState {
         return state.copy(
             state = state.state.copy(

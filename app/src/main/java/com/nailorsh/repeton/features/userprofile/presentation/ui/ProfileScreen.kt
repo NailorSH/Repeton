@@ -1,7 +1,10 @@
 package com.nailorsh.repeton.features.userprofile.presentation.ui
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -12,7 +15,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
@@ -22,6 +24,7 @@ import com.nailorsh.repeton.core.ui.components.LoadingScreen
 import com.nailorsh.repeton.features.userprofile.data.Options
 import com.nailorsh.repeton.features.userprofile.presentation.ui.components.ProfileHeader
 import com.nailorsh.repeton.features.userprofile.presentation.ui.components.ProfileOptions
+import com.nailorsh.repeton.features.userprofile.presentation.viewmodel.ProfileScreenState
 import com.nailorsh.repeton.features.userprofile.presentation.viewmodel.ProfileScreenUiState
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -48,8 +51,7 @@ fun ProfileScreen(
         ProfileScreenUiState.Error -> { }
         ProfileScreenUiState.Loading -> LoadingScreen(modifier = Modifier.fillMaxSize())
         is ProfileScreenUiState.Success -> ProfileScreenContent(
-            profileOptions = profileScreenUiState.profileOptions,
-            settingsOptions = profileScreenUiState.settingsOptions,
+            profileScreenState = profileScreenUiState.state,
             onOptionClicked = onOptionClicked,
         )
     }
@@ -60,8 +62,7 @@ fun ProfileScreen(
 
 @Composable
 fun ProfileScreenContent(
-    profileOptions: List<Options>,
-    settingsOptions: List<Options>,
+    profileScreenState: ProfileScreenState,
     onOptionClicked: (Options) -> Unit,
 ) {
     val scrollState = rememberScrollState()
@@ -72,7 +73,9 @@ fun ProfileScreenContent(
                 .verticalScroll(scrollState)
         ) {
             Spacer(modifier = Modifier.height(24.dp))
-            ProfileHeader()
+            ProfileHeader(
+                profileUserData = profileScreenState.profileUserData
+            )
             Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = stringResource(R.string.profile_screen_profile),
@@ -81,7 +84,7 @@ fun ProfileScreenContent(
             )
 
             ProfileOptions(
-                optionsList = profileOptions,
+                optionsList = profileScreenState.profileOptions,
                 onOptionClicked = onOptionClicked,
             )
             Spacer(modifier = Modifier.height(24.dp))
@@ -91,7 +94,7 @@ fun ProfileScreenContent(
                 modifier = Modifier.padding(start = 24.dp, bottom = 8.dp)
             )
             ProfileOptions(
-                optionsList = settingsOptions,
+                optionsList = profileScreenState.settingsOptions,
                 onOptionClicked = onOptionClicked,
             )
 
@@ -100,14 +103,14 @@ fun ProfileScreenContent(
 
 }
 
-@Preview(
-    showSystemUi = true,
-)
-@Composable
-fun ProfileScreenPreview() {
-    ProfileScreenContent(
-        profileOptions = listOf(),
-        settingsOptions = listOf(),
-        onOptionClicked = {},
-    )
-}
+//@Preview(
+//    showSystemUi = true,
+//)
+//@Composable
+//fun ProfileScreenPreview() {
+//    ProfileScreenContent(
+//        profileOptions = listOf(),
+//        settingsOptions = listOf(),
+//        onOptionClicked = {},
+//    )
+//}

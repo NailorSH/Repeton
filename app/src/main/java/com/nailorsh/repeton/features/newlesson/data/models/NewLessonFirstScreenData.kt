@@ -1,7 +1,6 @@
 package com.nailorsh.repeton.features.newlesson.data.models
 
 import com.nailorsh.repeton.common.data.models.lesson.Subject
-import com.nailorsh.repeton.common.data.models.user.User
 import java.time.LocalDateTime
 
 data class NewLessonFirstScreenData(
@@ -9,5 +8,5 @@ data class NewLessonFirstScreenData(
     val topic: String = "",
     val startTime: LocalDateTime = LocalDateTime.now(),
     val endTime: LocalDateTime = LocalDateTime.now().plusMinutes(30),
-    val students : List<User> = emptyList(),
+    val students : List<NewLessonUserItem> = emptyList(),
 )

@@ -1,4 +1,4 @@
-package com.nailorsh.repeton.features.newlesson.presentation.ui.components.first
+package com.nailorsh.repeton.core.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -12,12 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import coil.compose.SubcomposeAsyncImage
 import com.nailorsh.repeton.R
 
 @Composable
-fun UserListImage(photoSrc : String?) {
+fun UserImage(photoSrc : String?, size : Dp) {
     Box {
         val shape = remember {
             mutableIntStateOf(0)
@@ -39,7 +39,7 @@ fun UserListImage(photoSrc : String?) {
             model = photoSrc,
             contentDescription = null,
             modifier = Modifier
-                .size(48.dp)
+                .size(size)
                 .clip(RoundedCornerShape(percent = shape.intValue))
         )
     }

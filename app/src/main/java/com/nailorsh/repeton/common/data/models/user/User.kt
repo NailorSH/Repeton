@@ -3,13 +3,14 @@ package com.nailorsh.repeton.common.data.models.user
 import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.location.Location
 
-sealed interface User {
+interface User {
     val id: Id
-    var name: String
-    var surname: String
-    var middleName: String?
-    var about: String?
-    var photoSrc: String?
-    var location: Location?
+    val name: String
+    val surname: String
+    val middleName: String?
+    val about: String?
+    val photoSrc: String?
+    val location: Location?
+    val isTutor : Boolean
 }
 

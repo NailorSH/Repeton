@@ -35,6 +35,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.core.ui.theme.RepetonTheme
+import com.vk.id.AccessToken
+import com.vk.id.onetap.compose.onetap.OneTap
 
 @Composable
 fun EnterPhoneNumberUI(
@@ -43,6 +45,7 @@ fun EnterPhoneNumberUI(
     onPhoneChange: (String) -> Unit,
     onDone: (KeyboardActionScope.() -> Unit)?,
     onGuestModeButtonClicked: () -> Unit,
+    onVKAuth: (AccessToken) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isError by remember { mutableStateOf(false) }
@@ -88,6 +91,17 @@ fun EnterPhoneNumberUI(
             ) {
                 Text(text = stringResource(id = R.string.next))
             }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = "или",
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            OneTap(onAuth = onVKAuth)
         }
 
         OutlinedButton(onClick = onGuestModeButtonClicked) {
@@ -155,7 +169,8 @@ private fun EnterPhoneNumberUIPreview() {
             phone = "",
             onPhoneChange = {},
             onDone = {},
-            onGuestModeButtonClicked = {}
+            onGuestModeButtonClicked = {},
+            onVKAuth = {}
         )
     }
 }

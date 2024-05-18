@@ -14,6 +14,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -33,9 +34,12 @@ fun HomeworkScreen(
     uiState: HomeworkUiState,
     onAction: (HomeworkAction) -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxSize()
+    ) {
         when (uiState) {
-            HomeworkUiState.Error -> Text("ERRROR")
+            is HomeworkUiState.Error -> Text(uiState.errorMsg)
             HomeworkUiState.Loading -> CircularProgressIndicator()
             is HomeworkUiState.Success -> HomeworkScreenContent(
                 state = uiState.state,

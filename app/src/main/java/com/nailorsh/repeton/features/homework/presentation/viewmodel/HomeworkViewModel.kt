@@ -21,7 +21,7 @@ import javax.inject.Inject
 sealed interface HomeworkUiState {
     object Loading : HomeworkUiState
 
-    object Error : HomeworkUiState
+    data class Error(val errorMsg : String) : HomeworkUiState
 
     data class Success(val state: HomeworkState) : HomeworkUiState
 }
@@ -64,11 +64,11 @@ class HomeworkViewModel @Inject constructor(
                 val homework: HomeworkItem = homeworkRepository.getHomework(homeworkID)
                 _state.value = HomeworkUiState.Success(HomeworkState(homework))
             } catch (e: IOException) {
-                _state.value = HomeworkUiState.Error
+                _state.value = HomeworkUiState.Error(e.toString())
             } catch (e: HttpRetryException) {
-                _state.value = HomeworkUiState.Error
+                _state.value = HomeworkUiState.Error(e.toString())
             } catch (e: Exception) {
-                _state.value = HomeworkUiState.Error
+                _state.value = HomeworkUiState.Error(e.toString())
             }
         }
     }

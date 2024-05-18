@@ -1,8 +1,9 @@
 package com.nailorsh.repeton.common.firestore
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
+import com.google.firebase.firestore.toObjects
 import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.models.lesson.Subject
@@ -28,8 +29,7 @@ class FirestoreRepositoryImpl @Inject constructor(
             if (uid != null) {
                 val document = db.collection("users").document(uid).get().await()
                 if (document.exists()) {
-                    userDto =
-                        document.toObject(UserDto::class.java)?.copy(id = auth.currentUser!!.uid)
+                    userDto = document.toObject<UserDto>()
                 } else {
                     return UserDto.Anonymous
                 }
@@ -46,24 +46,19 @@ class FirestoreRepositoryImpl @Inject constructor(
             val querySnapshot = db.collection("subjects").get().await()
             subjects = querySnapshot.documents.map { document ->
                 val subject = document.toObject(SubjectDto::class.java)
-                subject?.toDomain(subject.id) ?: throw (IOException("Lesson not found"))
+                subject?.toDomain() ?: throw (IOException("Lesson not found"))
             }
         }
         return subjects!!
     }
 
     override suspend fun getSubject(id: Id): Subject {
-        println()
         val document = db.collection("subjects").document(id.value).get().await()
-        println()
+
         if (document.exists()) {
-            try {
-                document.toObject(SubjectDto::class.java)
-            } catch (e : Exception) {
-                Log.d("G", e.toString())
-            }
-            val subject = document.toObject(SubjectDto::class.java)
-            return subject?.toDomain(subject.id) ?: throw (IOException("Error parsing lesson"))
+            val subject = document.toObject<SubjectDto>()
+
+            return subject?.toDomain() ?: throw (IOException("Error parsing lesson"))
         } else throw (IOException("Lesson not found"))
     }
 
@@ -120,12 +115,9 @@ class FirestoreRepositoryImpl @Inject constructor(
 
     override suspend fun getLessons(): List<Lesson> {
         val querySnapshot = db.collection("lessons").get().await()
-        val lessonsDto = querySnapshot.documents.mapNotNull { document ->
-            document.toObject(LessonDto::class.java)?.apply { id = document.id }
-        }
+        val lessonsDto = querySnapshot.toObjects<LessonDto>()
 
         return lessonsDto.map {
-            println()
             val tutor = tutorProvider(it.tutorId)
             val subject = getSubject(Id(it.subjectId))
             it.toDomain(subject, tutor)
@@ -135,7 +127,8 @@ class FirestoreRepositoryImpl @Inject constructor(
     override suspend fun getLesson(id: Id): Lesson {
         val document = db.collection("lessons").document(id.value).get().await()
         if (document.exists()) {
-            val lesson = document.toObject(LessonDto::class.java)
+            val lesson = document.toObject<LessonDto>()
+
             return lesson?.toDomain(
                 subject = getSubject(Id(lesson.subjectId)),
                 tutor = tutorProvider(lesson.tutorId)
@@ -148,9 +141,9 @@ class FirestoreRepositoryImpl @Inject constructor(
         println()
         val userSnapshot = db.collection("users").document(id).get().await()
 
-        val userDto = userSnapshot.toObject(UserDto::class.java)
+        val userDto = userSnapshot.toObject<UserDto>()
         return userDto?.let {
             Tutor(id = Id(id), name = it.name, surname = it.surname)
-        } ?: throw Exception("Tutor not found")
+        } ?: Tutor(id = Id("-1")) // TODO обработать более умно
     }
 }

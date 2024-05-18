@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
 import com.google.firebase.storage.FirebaseStorage
-import com.nailorsh.repeton.common.data.sources.FakeSubjectsSource
 import com.nailorsh.repeton.common.firestore.FirestoreRepository
 import com.nailorsh.repeton.common.firestore.mappers.toDto
 import com.nailorsh.repeton.common.firestore.mappers.toTimestamp
@@ -55,7 +54,7 @@ class NewLessonRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getSubject(subjectName: String) = withContext(Dispatchers.IO) {
-        FakeSubjectsSource.getSubjectByName(subjectName)
+        firestoreRepository.getSubjects().first { it.name == subjectName }
     }
 
     override suspend fun getStudents(): List<NewLessonUserItem> = withContext(Dispatchers.IO) {

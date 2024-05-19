@@ -1,6 +1,5 @@
 package com.nailorsh.repeton.features.newlesson.presentation.viewmodel
 
-import android.graphics.Bitmap
 import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
@@ -62,7 +61,7 @@ sealed interface NewLessonSecondAction {
 
     object AttachFileFail : NewLessonSecondAction
 
-    data class CameraRequestSuccess(val image: Bitmap) : NewLessonSecondAction
+    data class CameraRequestSuccess(val uri: Uri) : NewLessonSecondAction
     data class AttachFileSuccess(val uri: Uri) : NewLessonSecondAction
 
     data class UpdateDescription(val description: String) : NewLessonSecondAction
@@ -163,7 +162,7 @@ class NewLessonSecondViewModel @Inject constructor(
                 is NewLessonSecondAction.CameraRequestSuccess -> {
                     withContext(Dispatchers.IO) {
                         try {
-                            val imageUrl = newLessonRepository.uploadImage(action.image)
+                            val imageUrl = newLessonRepository.uploadImage(action.uri)
                             val imageAttachment = Attachment.Image(
                                 url = imageUrl,
                                 description = null

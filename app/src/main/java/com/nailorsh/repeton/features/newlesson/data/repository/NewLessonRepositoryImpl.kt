@@ -1,8 +1,6 @@
 package com.nailorsh.repeton.features.newlesson.data.repository
 
-import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import com.google.firebase.storage.FirebaseStorage
 import com.nailorsh.repeton.common.data.sources.FakeSubjectsSource
 import com.nailorsh.repeton.common.firestore.FirestoreRepository
@@ -16,7 +14,6 @@ import com.nailorsh.repeton.features.newlesson.data.models.NewLessonUserItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 class NewLessonRepositoryImpl @Inject constructor(
@@ -62,23 +59,15 @@ class NewLessonRepositoryImpl @Inject constructor(
         firestoreRepository.getStudents().map { it.toNewLessonUserItem() }
     }
 
-    override suspend fun uploadImage(image: Bitmap): String {
+    override suspend fun uploadImage(uri: Uri): String {
         val storageRef = storage.reference
         val imagesRef = storageRef.child("images/${System.currentTimeMillis()}.jpg")
 
-        // Преобразование Bitmap в массив байтов
-        val baos = ByteArrayOutputStream()
-        image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        val data = baos.toByteArray()
-
         return try {
-            // Загрузка массива байтов в Firebase Storage
-            val uploadTask = imagesRef.putBytes(data).await()
-            // Получение URL загруженного изображения
+            imagesRef.putFile(uri).await()
             val downloadUrl = imagesRef.downloadUrl.await().toString()
             downloadUrl
         } catch (e: Exception) {
-            Log.e("Firebase", "Failed to upload image", e)
             throw e
         }
     }
@@ -86,5 +75,4 @@ class NewLessonRepositoryImpl @Inject constructor(
     override suspend fun uploadFile(uri: Uri): String {
         TODO("Not yet implemented")
     }
-
 }

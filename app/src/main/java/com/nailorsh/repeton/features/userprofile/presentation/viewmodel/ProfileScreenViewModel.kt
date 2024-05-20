@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.core.navigation.NavigationRoute
 import com.nailorsh.repeton.features.navigation.routes.BottomBarScreen
+import com.nailorsh.repeton.features.navigation.routes.LessonCreationScreen
 import com.nailorsh.repeton.features.settings.UserSettingsRepository
 import com.nailorsh.repeton.features.userprofile.data.Options
 import com.nailorsh.repeton.features.userprofile.data.TrailingContentType
@@ -128,7 +129,7 @@ class ProfileViewModel @Inject constructor(
     fun onOptionClicked(option: Options) { // Передаётся параметром в NavGraph'e
         viewModelScope.launch {
             when (option) {
-                is Options.Lessons -> _sideEffect.emit(BottomBarScreen.Home)
+                is Options.Lessons -> _sideEffect.emit(LessonCreationScreen.NewLesson)
                 is Options.Students -> _sideEffect.emit(BottomBarScreen.Home)
                 is Options.Statistics -> _sideEffect.emit(BottomBarScreen.Home)
                 is Options.About -> _sideEffect.emit(BottomBarScreen.Home)

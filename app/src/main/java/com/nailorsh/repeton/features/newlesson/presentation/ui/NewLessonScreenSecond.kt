@@ -27,13 +27,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.nailorsh.repeton.R
+import com.nailorsh.repeton.core.ui.components.LessonTopBar
 import com.nailorsh.repeton.core.util.cameraRequest
 import com.nailorsh.repeton.core.util.fileAttachmentRequest
-import com.nailorsh.repeton.features.newlesson.presentation.ui.components.NewLessonTopBar
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.second.AdditionalMaterialsTextField
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.second.DescriptionTextField
 import com.nailorsh.repeton.features.newlesson.presentation.ui.components.second.HomeworkTextField
@@ -101,7 +103,10 @@ fun NewLessonScreenSecondContent(
     )
     Scaffold(
         topBar = {
-            NewLessonTopBar(onNavigateBack = { onAction(NewLessonSecondAction.NavigateBack) })
+            LessonTopBar(
+                onNavigateBack = { onAction(NewLessonSecondAction.NavigateBack) },
+                title = stringResource(id = R.string.new_lesson_screen_headline)
+            )
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         floatingActionButton = {

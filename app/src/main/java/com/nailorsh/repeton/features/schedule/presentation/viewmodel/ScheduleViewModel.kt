@@ -39,22 +39,36 @@ class ScheduleViewModel @Inject constructor(
     fun getLessons() {
         viewModelScope.launch {
             scheduleUiState = ScheduleUiState.Loading
-            try {
-                lessonsCache.clear()
-                lessonsCache = mutableMapOf<LocalDate, MutableList<Lesson>>()
-                val lessons = scheduleRepository.getLessons()
-                lessons.forEach { lesson ->
-                    val day = LocalDate.from(lesson.startTime)
-                    lessonsCache[day] = (lessonsCache[day] ?: mutableListOf()).also {
-                        it.add(lesson)
-                    }
-                }
 
-                val todayLessons = lessonsCache ?: emptyMap<LocalDate, MutableList<Lesson>>()
-                scheduleUiState = ScheduleUiState.Success(todayLessons)
-            } catch (e: Exception) {
-                scheduleUiState = ScheduleUiState.Error
+            lessonsCache.clear()
+            lessonsCache = mutableMapOf<LocalDate, MutableList<Lesson>>()
+            val lessons = scheduleRepository.getLessons()
+            lessons.forEach { lesson ->
+                val day = LocalDate.from(lesson.startTime)
+                lessonsCache[day] = (lessonsCache[day] ?: mutableListOf()).also {
+                    it.add(lesson)
+                }
             }
+
+            val todayLessons = lessonsCache ?: emptyMap<LocalDate, MutableList<Lesson>>()
+            scheduleUiState = ScheduleUiState.Success(todayLessons)
+//            try {
+//                lessonsCache.clear()
+//                lessonsCache = mutableMapOf<LocalDate, MutableList<Lesson>>()
+//                val lessons = scheduleRepository.getLessons()
+//                lessons.forEach { lesson ->
+//                    val day = LocalDate.from(lesson.startTime)
+//                    lessonsCache[day] = (lessonsCache[day] ?: mutableListOf()).also {
+//                        it.add(lesson)
+//                    }
+//                }
+//
+//                val todayLessons = lessonsCache ?: emptyMap<LocalDate, MutableList<Lesson>>()
+//                scheduleUiState = ScheduleUiState.Success(todayLessons)
+//            } catch (e: Exception) {
+//                Log.e("SCHEDULE", "$e")
+//                scheduleUiState = ScheduleUiState.Error
+//            }
         }
     }
 

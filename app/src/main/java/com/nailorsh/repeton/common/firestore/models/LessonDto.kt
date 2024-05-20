@@ -1,14 +1,15 @@
 package com.nailorsh.repeton.common.firestore.models
 
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
 
 data class LessonDto(
-    @Exclude var id: String = "",
+    @DocumentId var id: String = "",
     @PropertyName("tutorId") val tutorId: String = "",
-    @PropertyName("students") val studentIds: List<String> = emptyList(),
-    @PropertyName("subject") val subjectId: String = "",
+    @PropertyName("studentIds") val studentIds: List<String> = emptyList(),
+    @PropertyName("subjectId") val subjectId: String = "",
     @PropertyName("topic") val topic: String = "",
     @PropertyName("description") val description : String = "",
     @PropertyName("startTime") val startTime: Timestamp = Timestamp.now(),

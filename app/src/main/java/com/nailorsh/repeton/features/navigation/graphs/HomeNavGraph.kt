@@ -68,7 +68,7 @@ fun HomeNavGraph(
 
         composable(route = BottomBarScreen.Chats.route) {
             val messengerViewModel = hiltViewModel<MessengerViewModel>()
-
+//            HomeworkScreen()
             ChatsScreen(
                 getChats = messengerViewModel::getChats,
                 chatsUiState = messengerViewModel.chatsUiState

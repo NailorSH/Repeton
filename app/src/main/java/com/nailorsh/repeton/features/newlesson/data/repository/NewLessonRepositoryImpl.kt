@@ -2,7 +2,6 @@ package com.nailorsh.repeton.features.newlesson.data.repository
 
 import android.net.Uri
 import com.google.firebase.storage.FirebaseStorage
-import com.nailorsh.repeton.common.data.sources.FakeSubjectsSource
 import com.nailorsh.repeton.common.firestore.FirestoreRepository
 import com.nailorsh.repeton.common.firestore.mappers.toDto
 import com.nailorsh.repeton.common.firestore.mappers.toTimestamp
@@ -21,7 +20,7 @@ class NewLessonRepositoryImpl @Inject constructor(
     private val firestoreRepository: FirestoreRepository
 ) : NewLessonRepository {
     override suspend fun getSubjects(filter: String): List<String> = withContext(Dispatchers.IO) {
-        FakeSubjectsSource.getSubjects().filter { subject ->
+        firestoreRepository.getSubjects().filter { subject ->
             subject.name.lowercase().startsWith(filter.lowercase())
         }.map { subject -> subject.name }
     }
@@ -42,6 +41,7 @@ class NewLessonRepositoryImpl @Inject constructor(
             tutorId = tutorId,
             studentIds = studentsIds,
             topic = lesson.topic,
+            subjectId = lesson.subject.id.value,
             description = lesson.description ?: "",
             startTime = lesson.startTime.toTimestamp(),
             endTime = lesson.endTime.toTimestamp(),
@@ -52,7 +52,7 @@ class NewLessonRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getSubject(subjectName: String) = withContext(Dispatchers.IO) {
-        FakeSubjectsSource.getSubjectByName(subjectName)
+        firestoreRepository.getSubjects().first { it.name == subjectName }
     }
 
     override suspend fun getStudents(): List<NewLessonUserItem> = withContext(Dispatchers.IO) {

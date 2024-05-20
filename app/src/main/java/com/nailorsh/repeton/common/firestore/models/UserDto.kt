@@ -9,7 +9,7 @@ data class UserDto(
     @PropertyName("surname") val surname: String = "",
     @PropertyName("canBeTutor") val canBeTutor: Boolean = false,
     @PropertyName("phoneNumber") val phoneNumber : String = ""
-) {
+)  {
     companion object {
         val Anonymous = UserDto(
             id = "-1",

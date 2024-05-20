@@ -152,5 +152,6 @@
     <string name="new_lesson_screen_error_upload_file">Произошла ошибка при загрузке файла</string>
     <string name="new_lesson_screen_error_no_students">Добавьте как минимум одного ученика</string>
     <string name="new_lesson_screen_error_student_already_in_list">Ученик уже прикреплён к этому уроку</string>
+    <string name="homework_screen_answer_placeholder">Ответ</string>
     <string name="unknown_file">Неизвестный файл</string>
 </resources>

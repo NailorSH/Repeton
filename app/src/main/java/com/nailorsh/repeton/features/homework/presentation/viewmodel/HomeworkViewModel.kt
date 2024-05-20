@@ -21,7 +21,7 @@ import javax.inject.Inject
 sealed interface HomeworkUiState {
     object Loading : HomeworkUiState
 
-    data class Error(val errorMsg : String) : HomeworkUiState
+    data class Error(val errorMsg: String) : HomeworkUiState
 
     data class Success(val state: HomeworkState) : HomeworkUiState
 }
@@ -29,7 +29,7 @@ sealed interface HomeworkUiState {
 sealed interface HomeworkAction {
     object NavigateBack : HomeworkAction
     data class UpdateAnswerText(val text: String) : HomeworkAction
-    data class ShowImageDialogue(val image : Attachment.Image) : HomeworkAction
+    data class ShowImageDialogue(val image: Attachment.Image) : HomeworkAction
     object HideImageDialogue : HomeworkAction
     object SendMessage : HomeworkAction
 }
@@ -44,7 +44,7 @@ data class HomeworkState(
     val answerText: String = "",
 
     val showImageDialogue: Boolean = false,
-    val imageToShowInDialogue : Attachment.Image? = null
+    val imageToShowInDialogue: Attachment.Image? = null
 )
 
 @HiltViewModel
@@ -58,7 +58,10 @@ class HomeworkViewModel @Inject constructor(
     private val _navigationEvent = MutableSharedFlow<HomeworkNavigationEvent>()
     val navigationEvent = _navigationEvent.asSharedFlow()
 
+    private lateinit var lessonId: String
+
     fun getHomework(homeworkID: Id) {
+        lessonId = homeworkID.value
         viewModelScope.launch(Dispatchers.IO) {
             _state.value = HomeworkUiState.Loading
             try {
@@ -83,6 +86,10 @@ class HomeworkViewModel @Inject constructor(
                         is HomeworkUiState.Success -> {
                             when (action) {
                                 is HomeworkAction.SendMessage -> _state.update {
+                                    homeworkRepository.sendHomeworkMessage(
+                                        lessonId = Id(lessonId),
+                                        message = state.state.answerText
+                                    )
                                     state.copy(
                                         state.state.copy(
                                             answerText = ""
@@ -97,6 +104,7 @@ class HomeworkViewModel @Inject constructor(
                                         )
                                     )
                                 }
+
                                 is HomeworkAction.ShowImageDialogue -> _state.update {
                                     state.copy(
                                         state.state.copy(
@@ -105,6 +113,7 @@ class HomeworkViewModel @Inject constructor(
                                         )
                                     )
                                 }
+
                                 HomeworkAction.HideImageDialogue -> _state.update {
                                     state.copy(
                                         state.state.copy(

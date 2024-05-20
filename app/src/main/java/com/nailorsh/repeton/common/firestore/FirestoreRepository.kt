@@ -19,4 +19,5 @@ interface FirestoreRepository {
     suspend fun getUser(userId : Id) : UserDto
     suspend fun getSubject(id : Id) : Subject
     suspend fun getHomework(lessonId : Id) : Homework
+    suspend fun sendHomeworkMessage(lessonId : Id, message : String)
 }

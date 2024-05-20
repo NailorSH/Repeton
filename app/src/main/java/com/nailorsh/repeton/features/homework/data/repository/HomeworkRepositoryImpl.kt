@@ -5,11 +5,17 @@ import com.nailorsh.repeton.common.data.models.lesson.Attachment
 import com.nailorsh.repeton.common.firestore.FirestoreRepository
 import com.nailorsh.repeton.features.homework.data.models.HomeworkItem
 import com.nailorsh.repeton.features.homework.data.models.HomeworkUser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class HomeworkRepositoryImpl @Inject constructor(
     private val firestoreRepository: FirestoreRepository
 ) : HomeworkRepository {
+
+    override suspend fun sendHomeworkMessage(lessonId: Id, message: String) = withContext(Dispatchers.IO) {
+        firestoreRepository.sendHomeworkMessage(lessonId, message)
+    }
     override suspend fun getHomework(id: Id): HomeworkItem {
         val lesson = firestoreRepository.getLesson(id)
 

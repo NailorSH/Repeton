@@ -2,6 +2,7 @@ package com.nailorsh.repeton.features.homework.presentation.ui.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Icon
@@ -24,6 +25,7 @@ fun HomeworkBottomBar(
     BottomAppBar(
         containerColor = Color.Transparent,
         contentPadding = BottomAppBarDefaults.ContentPadding,
+        modifier = Modifier.wrapContentSize()
     ) {
         OutlinedTextField(
             value = answerText,

@@ -8,5 +8,6 @@ interface HomeworkRepository {
 
     suspend fun getHomework(id : Id) : HomeworkItem
     suspend fun getUser(id : Id) : HomeworkUser
+    suspend fun sendHomeworkMessage(lessonId : Id, message : String)
 
 }

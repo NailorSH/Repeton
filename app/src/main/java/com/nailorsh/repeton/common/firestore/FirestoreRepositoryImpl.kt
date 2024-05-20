@@ -12,6 +12,7 @@ import com.nailorsh.repeton.common.data.models.user.Tutor
 import com.nailorsh.repeton.common.firestore.mappers.toDomain
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
 import com.nailorsh.repeton.common.firestore.models.LessonDto
+import com.nailorsh.repeton.common.firestore.models.ReviewDto
 import com.nailorsh.repeton.common.firestore.models.SubjectDto
 import com.nailorsh.repeton.common.firestore.models.UserDto
 import kotlinx.coroutines.tasks.await
@@ -25,6 +26,14 @@ class FirestoreRepositoryImpl @Inject constructor(
 
     private var userDto: UserDto? = null
     private var subjects: List<Subject>? = null
+
+    override suspend fun sendHomeworkMessage(lessonId: Id, message: String) {
+        db.collection("lessons").document(lessonId.value).collection("homework").document()
+            .collection("reviews").document().set(
+                ReviewDto(text = message)
+            )
+    }
+
     override suspend fun getUserDto(): UserDto {
         if (userDto == null) {
             val uid = auth.currentUser?.uid

@@ -86,8 +86,8 @@ fun HomeworkScreenContent(
                     },
                     contentDescription = null,
                     modifier = Modifier
-                        .heightIn(480.dp)
-                        .widthIn(280.dp)
+                        .heightIn(max = 480.dp)
+                        .widthIn(max = 280.dp)
                 )
 
             }

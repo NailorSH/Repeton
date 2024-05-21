@@ -1,5 +1,3 @@
-import java.util.Properties
-
 plugins {
     kotlin("kapt")
     id("com.android.application")
@@ -7,17 +5,6 @@ plugins {
     id("com.google.gms.google-services")
     id("com.google.dagger.hilt.android")
 }
-
-// Считывание значений из local.properties
-val secretsProperties = Properties().apply {
-    val secretsPropertiesFile = rootProject.file("secrets.properties")
-    if (secretsPropertiesFile.exists()) {
-        secretsPropertiesFile.inputStream().use { fis -> load(fis) }
-    }
-}
-
-val clientId: String = secretsProperties.getProperty("clientId", "")
-val clientSecret: String = secretsProperties.getProperty("clientSecret", "")
 
 android {
     namespace = "com.nailorsh.repeton"
@@ -34,18 +21,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-
-        // Добавление значений в Manifest Placeholders.
-        addManifestPlaceholders(
-            mapOf(
-                "VKIDRedirectHost" to "vk.com", // обычно vk.com
-                "VKIDRedirectScheme" to "vk$clientId", // обычно vk{ID приложения}
-                "VKIDClientID" to clientId,
-                "VKIDClientSecret" to clientSecret
-            )
-        )
     }
-
 
     buildTypes {
         release {
@@ -60,7 +36,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-        isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
         jvmTarget = "17"
@@ -70,7 +45,7 @@ android {
         viewBinding = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
+        kotlinCompilerExtensionVersion = "1.4.3"
     }
     packaging {
         resources {
@@ -80,13 +55,8 @@ android {
 }
 
 val daggerVersion = "2.51"
-val vkIdSdkVersion = "1.3.2"
 
 dependencies {
-    // For VK ID SDK
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
-    implementation("com.vk.id:onetap-compose:${vkIdSdkVersion}")
-
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:$daggerVersion")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")

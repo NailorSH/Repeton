@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nailorsh.repeton.features.auth.data.AuthRepository
 import com.nailorsh.repeton.features.auth.data.model.UserData
-import com.vk.id.AccessToken
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -107,12 +106,6 @@ class AuthViewModel @Inject constructor(
             } catch (e: Exception) {
                 RegistrationUiState.Error
             }
-        }
-    }
-
-    fun onVKAuth(token: AccessToken) {
-        viewModelScope.launch {
-            authService.onVKAuth(token)
         }
     }
 }

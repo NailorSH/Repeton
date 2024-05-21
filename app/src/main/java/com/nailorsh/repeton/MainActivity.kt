@@ -3,8 +3,7 @@ package com.nailorsh.repeton
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.nailorsh.repeton.core.ui.theme.RepetonTheme
-import com.nailorsh.repeton.features.navigation.ui.RepetonApp
+import com.nailorsh.repeton.features.navigation.presentation.ui.RepetonApp
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -17,11 +16,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         mainActivity = this
         super.onCreate(savedInstanceState)
-
         setContent {
-            RepetonTheme {
-                RepetonApp()
-            }
+            RepetonApp()
         }
     }
 

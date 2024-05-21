@@ -41,7 +41,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.common.data.models.Tutor
+import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.user.Tutor
 import com.nailorsh.repeton.common.data.sources.FakeTutorsSource
 import com.nailorsh.repeton.core.ui.components.ErrorScreen
 import com.nailorsh.repeton.core.ui.components.ExpandableText
@@ -66,7 +67,7 @@ fun SearchScreen(
     typingGetSearchResults: (String) -> Unit,
     getSearchResults: () -> Unit,
     searchUiState: SearchUiState,
-    onTutorCardClicked: (Int) -> Unit,
+    onTutorCardClicked: (Id) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var query by remember { mutableStateOf("") }
@@ -85,8 +86,8 @@ fun SearchScreen(
         ) {
             SearchBarWithFilter(
                 placeholder = R.string.search_placeholder,
-                leadingIcon = R.drawable.search_icon,
-                filterIcon = R.drawable.filter_icon,
+                leadingIcon = R.drawable.ic_search_icon,
+                filterIcon = R.drawable.ic_filter_icon,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Search
@@ -127,7 +128,7 @@ fun SearchScreen(
 @Composable
 fun TutorList(
     tutors: List<Tutor>,
-    onTutorCardClicked: (Int) -> Unit,
+    onTutorCardClicked: (Id) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -151,7 +152,7 @@ fun TutorCard(
     tutor: Tutor,
     onWriteButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    onCardClicked: (Int) -> Unit
+    onCardClicked: (Id) -> Unit
 ) {
     var isLiked by remember { mutableStateOf(false) }
 
@@ -193,7 +194,7 @@ fun TutorCard(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = tutor.name + "\n" + tutor.middleName,
+                            text = "${tutor.name}\n${tutor.middleName ?: ""}",
                             style = TextStyle(
                                 fontSize = 22.sp,
                                 lineHeight = 26.sp,
@@ -217,57 +218,65 @@ fun TutorCard(
                         verticalAlignment = Alignment.Top,
                     ) {
                         IconWithText(
-                            icon = R.drawable.star_icon,
+                            icon = R.drawable.ic_star_icon,
                             iconTint = StarColor,
                             text = tutor.rating.toString()
                         )
                         IconWithText(
-                            icon = R.drawable.comment_icon,
+                            icon = R.drawable.ic_comment_icon,
                             text = "${tutor.reviewsNumber} отзывов"
                         )
                     }
                 }
             }
 
-            ExpandableText(
-                modifier = modifier.fillMaxWidth(),
-                text = tutor.about,
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    lineHeight = 24.sp,
-                    fontWeight = FontWeight(400),
-                    color = BodyColor,
-                ),
-                textButtonStyle = TextStyle(
-                    fontSize = 14.sp,
-                    lineHeight = 24.sp,
-                    fontWeight = FontWeight(500),
-                    color = ShowMoreTextButtonColor,
+            tutor.about?.let {
+                ExpandableText(
+                    modifier = modifier.fillMaxWidth(),
+                    text = it,
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        lineHeight = 24.sp,
+                        fontWeight = FontWeight(400),
+                        color = BodyColor,
+                    ),
+                    textButtonStyle = TextStyle(
+                        fontSize = 14.sp,
+                        lineHeight = 24.sp,
+                        fontWeight = FontWeight(500),
+                        color = ShowMoreTextButtonColor,
+                    )
                 )
-            )
+            }
 
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top),
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                InfoSection(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = R.string.subjects_section,
-                    body = tutor.subjects.joinToString(separator = " • ")
-                )
+                tutor.subjects?.let {
+                    InfoSection(
+                        modifier = Modifier.fillMaxWidth(),
+                        title = R.string.subjects_section,
+                        body = it.joinToString(separator = " • ")
+                    )
+                }
 
-                InfoSection(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = R.string.education_section,
-                    body = tutor.education
-                )
+                tutor.education?.let {
+                    InfoSection(
+                        modifier = Modifier.fillMaxWidth(),
+                        title = R.string.education_section,
+                        body = it
+                    )
+                }
 
-                PriceSection(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = R.string.prices_section,
-                    subjectsPrices = tutor.subjectsPrices
-                )
+                tutor.subjectsPrices?.let {
+                    PriceSection(
+                        modifier = Modifier.fillMaxWidth(),
+                        title = R.string.prices_section,
+                        subjectsPrices = it
+                    )
+                }
             }
         }
         Button(
@@ -287,23 +296,6 @@ fun TutorCard(
                 ),
             )
         }
-
-//        RepetonButton(
-//            modifier = Modifier
-//                .fillMaxWidth(),
-//            buttonColor = WriteButtonBackgroundColor,
-//            onClick = onWriteButtonClicked
-//        ) {
-//            Text(
-//                text = stringResource(R.string.message_button),
-//                style = TextStyle(
-//                    fontSize = 14.sp,
-//                    lineHeight = 32.sp,
-//                    fontWeight = FontWeight(600),
-//                    color = WriteButtonTextColor
-//                ),
-//            )
-//        }
     }
 }
 
@@ -408,6 +400,22 @@ fun TutorCardPreview() {
             tutor = FakeTutorsSource.getTutorsList()[0],
             onWriteButtonClicked = {},
             onCardClicked = {}
+        )
+    }
+}
+
+
+@Preview(
+    showSystemUi = true
+)
+@Composable
+fun SearchScreenPreview() {
+    RepetonTheme {
+        SearchScreen(
+            typingGetSearchResults = { _ -> },
+            getSearchResults = { },
+            searchUiState = SearchUiState.None,
+            onTutorCardClicked = {}
         )
     }
 }

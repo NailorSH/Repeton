@@ -6,265 +6,269 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.common.data.models.Subject
-import com.nailorsh.repeton.features.newlesson.data.FakeNewLessonRepository
-import com.nailorsh.repeton.features.newlesson.presentation.ui.components.NewLessonTopBar
-import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.*
-import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonState
-import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonUiState
-import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonViewModel
-import java.time.*
-import java.util.*
+import com.nailorsh.repeton.core.ui.components.LessonTopBar
+import com.nailorsh.repeton.core.util.CalendarDialog
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.AddUserDialogue
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.AddedStudents
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.DateTextField
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.EndTimeTextField
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.LessonTimePicker
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.StartTimeTextField
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.SubjectTextField
+import com.nailorsh.repeton.features.newlesson.presentation.ui.components.first.TopicTextField
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonFirstAction
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonFirstState
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonFirstUIState
+import com.nailorsh.repeton.features.newlesson.presentation.viewmodel.NewLessonUIEvent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
+import java.time.Instant
+import java.time.ZoneId
+import java.util.Calendar
 
 const val TAG = "NEW_LESSON"
 
+
 @Composable
 fun NewLessonScreen(
-    lessonState: NewLessonState,
-    filteredSubjects: List<Subject>,
-    onFilterSubjects: (String) -> Unit,
-    onNavigateBack: () -> Unit,
-    onNavigateNext: () -> Unit,
-    onSaveRequiredFields: (String, String, LocalDateTime, LocalDateTime) -> Unit,
-    modifier: Modifier = Modifier
+    uiState: NewLessonFirstUIState,
+    onAction: (NewLessonFirstAction) -> Unit,
+    uiEventChannel: SharedFlow<NewLessonUIEvent>,
 ) {
-    var showDatePicker by remember { mutableStateOf(false) }
-    var showStartTimePicker by remember { mutableStateOf(false) }
-    var showEndTimePicker by remember { mutableStateOf(false) }
-    var showStartTimePickerTextField by remember { mutableStateOf(false) }
-    var showEndTimePickerTextField by remember { mutableStateOf(false) }
-
-    var localSubject by remember { mutableStateOf(lessonState.subject.subjectName) }
-    var localTopic by remember { mutableStateOf(lessonState.topic) }
-    var localStartTime by remember { mutableStateOf(lessonState.startTime) }
-    var localEndTime by remember { mutableStateOf(lessonState.endTime) }
-    var expanded by remember { mutableStateOf(false) }
-
-    LaunchedEffect(localSubject) {
-        onFilterSubjects(localSubject)
-    }
-
-    var subjectError by remember { mutableStateOf(false) }
-
-
-    LaunchedEffect(lessonState.uiState) {
-        when (lessonState.uiState) {
-            is NewLessonUiState.ErrorSaving -> {
-                subjectError = lessonState.uiState.error
-            }
-
-            NewLessonUiState.SuccessSaving -> onNavigateNext()
-            else -> {}
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+        when (uiState) {
+            NewLessonFirstUIState.Error -> {}
+            NewLessonFirstUIState.Loading -> CircularProgressIndicator()
+            is NewLessonFirstUIState.Success -> NewLessonScreenContent(
+                lessonState = uiState.state,
+                onAction = onAction,
+                uiEventChannel = uiEventChannel
+            )
         }
     }
+}
+
+@Composable
+fun NewLessonScreenContent(
+    lessonState: NewLessonFirstState,
+    onAction: (NewLessonFirstAction) -> Unit,
+    uiEventChannel: Flow<NewLessonUIEvent>,
+) {
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(lifecycleOwner.lifecycle) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            uiEventChannel.collect { uiEvent ->
+                snackbarHostState.showSnackbar(
+                    message = context.getString(uiEvent.errorMsg),
+                    withDismissAction = true
+                )
+            }
+        }
+    }
+
 
     val focusManager = LocalFocusManager.current
+    val scrollState = rememberScrollState()
 
 
-    val now = remember { LocalDateTime.now() }
-
-    val (dateError, startTimeError, endTimeError) = remember {
-        derivedStateOf {
-            val dateErrorValue = now.toLocalDate() > localStartTime.toLocalDate()
-            val startTimeErrorValue = if (now.toLocalDate() == localStartTime.toLocalDate()) {
-                now.toLocalTime() > localStartTime.toLocalTime()
-            } else {
-                false
-            }
-            val endTimeErrorValue = if (!startTimeErrorValue) {
-                localStartTime.toLocalTime() >= localEndTime.toLocalTime()
-            } else {
-                false
-            }
-            Triple(dateErrorValue, startTimeErrorValue, endTimeErrorValue)
-        }
-    }.value
-
-
-
-
-    if (showDatePicker) {
-
-
-        CalendarDialog(
-            date = localStartTime,
-            onDateChange = {
-                if (it != null) {
-                    localStartTime = localStartTime.with(
-                        Instant
-                            .ofEpochMilli(it)
-                            .atZone(ZoneId.systemDefault())
-                            .toLocalDate()
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        topBar = {
+            LessonTopBar(
+                onNavigateBack = {
+                    onAction(NewLessonFirstAction.NavigateBack)
+                },
+                title = stringResource(id = R.string.new_lesson_screen_headline)
+            )
+        },
+        floatingActionButton = {
+            AnimatedVisibility(visible = lessonState.showTimePickerStartTextField && lessonState.showTimePickerEndTextField) {
+                FloatingActionButton(onClick = { onAction(NewLessonFirstAction.SaveData) }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_right_alt),
+                        contentDescription = null
                     )
                 }
-                showDatePicker = false
-                showStartTimePickerTextField = true
-            },
-            onDismissRequest = { showDatePicker = false }
-        )
+            }
 
-    }
-
-    if (showStartTimePicker) {
-
-        LessonTimePicker(
-            onCancel = { showStartTimePicker = false },
-            onConfirm = {
-                localStartTime =
-                    localStartTime.withHour(it.get(Calendar.HOUR_OF_DAY)).withMinute(it.get(Calendar.MINUTE))
-                showStartTimePicker = false
-                showEndTimePickerTextField = true
-                localEndTime = localStartTime.plusMinutes(30)
-                showEndTimePicker = true
-
-            },
-            initialTime = localStartTime.toLocalTime()
-        )
-
-    }
-
-    if (showEndTimePicker) {
-
-        LessonTimePicker(
-            onCancel = { showEndTimePicker = false },
-            onConfirm = {
-                localEndTime = localEndTime.withHour(it.get(Calendar.HOUR_OF_DAY)).withMinute(it.get(Calendar.MINUTE))
-                showEndTimePicker = false
-            },
-            initialTime = localEndTime.toLocalTime(),
-            startTime = localStartTime.toLocalTime()
-        )
-    }
-
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.surfaceBright)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = {
-                    expanded = false
-                    focusManager.clearFocus()
-                }
+        }
+    ) { paddingValues ->
+        if (lessonState.showDatePicker) {
+            CalendarDialog(
+                date = lessonState.startTime,
+                onDateChange = {
+                    if (it != null) {
+                        onAction(
+                            NewLessonFirstAction.UpdateDate(
+                                Instant
+                                    .ofEpochMilli(it)
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate()
+                            )
+                        )
+                    }
+                },
+                onDismissRequest = { onAction(NewLessonFirstAction.UpdateShowDatePicker(false)) }
             )
-    ) {
 
-        NewLessonTopBar(
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
+        }
+
+        if (lessonState.showAddUserDialogue) {
+            AddUserDialogue(
+                students = lessonState.allStudents,
+                onAddUser = {
+                    onAction(NewLessonFirstAction.AddUser(it))
+                    onAction(NewLessonFirstAction.UpdateShowAddUserDialogue(false))
+                },
+                onDismissRequest = { onAction(NewLessonFirstAction.UpdateShowAddUserDialogue(false)) }
+            )
+        }
+
+        if (lessonState.showTimePickerStart) {
+            LessonTimePicker(
+                onCancel = { onAction(NewLessonFirstAction.UpdateShowTimePickerStart(false)) },
+                onConfirm = {
+                    onAction(
+                        NewLessonFirstAction.UpdateStartTime(
+                            lessonState.startTime.withHour(it.get(Calendar.HOUR_OF_DAY))
+                                .withMinute(it.get(Calendar.MINUTE))
+                        )
+                    )
+                },
+                initialTime = lessonState.startTime.toLocalTime()
+            )
+        }
+
+        if (lessonState.showTimePickerEnd) {
+
+            LessonTimePicker(
+                onCancel = { onAction(NewLessonFirstAction.UpdateShowTimePickerEnd(false)) },
+                onConfirm = {
+                    onAction(
+                        NewLessonFirstAction.UpdateEndTime(
+                            lessonState.endTime.withHour(it.get(Calendar.HOUR_OF_DAY))
+                                .withMinute(it.get(Calendar.MINUTE))
+                        )
+                    )
+                },
+                initialTime = lessonState.endTime.toLocalTime(),
+                startTime = lessonState.startTime.toLocalTime()
+            )
+        }
+
 
         Column(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(24.dp),
             modifier = Modifier
-                .padding(horizontal = 32.dp)
-                .fillMaxWidth()
+                .fillMaxSize()
+                .background(color = MaterialTheme.colorScheme.surfaceBright)
+                .padding(paddingValues)
+                .padding(horizontal = 32.dp, vertical = 16.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = {
+                        onAction(NewLessonFirstAction.UpdateShowDropDownMenu(false))
+                        focusManager.clearFocus()
+                    }
+                )
+                .verticalScroll(scrollState)
         ) {
-
+            Text("Ученики", style = MaterialTheme.typography.headlineMedium)
+            AddedStudents(
+                students = lessonState.pickedStudents,
+                onRemoveUser = { onAction(NewLessonFirstAction.RemoveUser(it)) },
+                onAddUserShowDialogue = { onAction(NewLessonFirstAction.UpdateShowAddUserDialogue(true)) }
+            )
+            HorizontalDivider()
+            Text("Информация", style = MaterialTheme.typography.headlineMedium)
             SubjectTextField(
-                subject = localSubject,
+                subject = lessonState.subjectText,
                 onSubjectChange = {
-                    localSubject = it
+                    onAction(NewLessonFirstAction.UpdateSubjectText(it))
                 },
-                subjects = filteredSubjects,
-                expanded = expanded,
-                onExpandedChange = { expanded = it },
-                onChangeError = { subjectError = false },
-                isError = subjectError
+                subjects = lessonState.loadedSubjects,
+                expanded = lessonState.showDropdownMenu,
+                onExpandedChange = { onAction(NewLessonFirstAction.UpdateShowDropDownMenu(it)) },
+                onChangeError = { },
+                isError = false
             )
 
             TopicTextField(
-                topic = localTopic,
-                onTopicChange = { localTopic = it }
+                topic = lessonState.topic,
+                onTopicChange = { onAction(NewLessonFirstAction.UpdateTopicText(it)) }
             )
 
             DateTextField(
-                date = localStartTime.toLocalDate(),
-                firstSet = !showStartTimePickerTextField,
+                date = lessonState.startTime.toLocalDate(),
+                firstSet = !lessonState.showTimePickerStartTextField,
                 onClick = {
-                    showDatePicker = true
+                    onAction(NewLessonFirstAction.UpdateShowDatePicker(true))
                 },
-                isError = dateError
+                isError = false
             )
             AnimatedVisibility(
-                visible = showStartTimePickerTextField,
+                visible = lessonState.showTimePickerStartTextField,
                 enter = slideInHorizontally() + fadeIn(initialAlpha = 0.3f)
             ) {
                 StartTimeTextField(
-                    time = localStartTime.toLocalTime(),
-                    firstSet = !showEndTimePickerTextField,
+                    time = lessonState.startTime.toLocalTime(),
+                    firstSet = !lessonState.showTimePickerStartTextField,
                     onClick = {
-                        showStartTimePicker = true
+                        onAction(NewLessonFirstAction.UpdateShowTimePickerStart(true))
                     },
-                    isError = startTimeError
+                    isError = false
                 )
             }
 
             AnimatedVisibility(
-                visible = showEndTimePickerTextField,
+                visible = lessonState.showTimePickerEndTextField,
                 enter = slideInHorizontally() + fadeIn(initialAlpha = 0.3f)
             ) {
                 EndTimeTextField(
-                    time = localEndTime.toLocalTime(),
-                    onClick = { showEndTimePicker = true },
-                    isError = endTimeError
+                    time = lessonState.endTime.toLocalTime(),
+                    onClick = { onAction(NewLessonFirstAction.UpdateShowTimePickerEnd(true)) },
+                    isError = false
                 )
             }
-
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Button(
-                    onClick = onNavigateBack,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.tertiary,
-                        contentColor = MaterialTheme.colorScheme.onTertiary
-                    )
-                ) {
-                    Text(
-                        text = stringResource(R.string.cancel),
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                }
-
-                Button(
-                    enabled = localSubject != "" && localTopic != ""
-                            && showEndTimePickerTextField &&
-                            !dateError && !startTimeError && !endTimeError,
-                    onClick = {
-                        // Fields validation
-                        onSaveRequiredFields(localSubject, localTopic, localStartTime, localEndTime)
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    )
-                ) {
-                    Text(
-                        text = stringResource(R.string.next),
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                }
-            }
         }
+
+
     }
 
 
@@ -275,13 +279,13 @@ fun NewLessonScreen(
 @Composable
 fun NewLessonScreenPreview() {
 
-    NewLessonScreen(
-        lessonState = NewLessonViewModel(FakeNewLessonRepository()).state.collectAsState().value,
-        onNavigateBack = {},
-        onSaveRequiredFields = { a, b, c, d -> },
-        onNavigateNext = {},
-        filteredSubjects = listOf(),
-        onFilterSubjects = {}
-    )
+//    NewLessonScreen(
+//        lessonState = NewLessonViewModel(FakeNewLessonRepository()).state.collectAsState().value,
+//        onNavigateBack = {},
+//        onSaveRequiredFields = { _, _, _, _ -> },
+//        onNavigateNext = {},
+//        filteredSubjects = listOf(),
+//        onFilterSubjects = {}
+//    )
 
 }

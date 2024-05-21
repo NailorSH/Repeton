@@ -16,26 +16,28 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.common.data.models.Homework
+import com.nailorsh.repeton.common.data.models.lesson.Homework
 
 
 @Composable
-fun HomeworkCard(homework: Homework?, modifier: Modifier = Modifier) {
+fun HomeworkCard(
+    homework: Homework?,
+    onNavigateHomework: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Box(modifier) {
         Column(modifier = Modifier.padding(8.dp)) {
             Text(
                 text = stringResource(R.string.homework),
                 style = MaterialTheme.typography.headlineSmall,
 
-            )
+                )
             Spacer(modifier = Modifier.height(12.dp))
             Button(
                 colors = ButtonDefaults.buttonColors(),
                 shape = MaterialTheme.shapes.small,
                 contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp),
-                onClick = {
-                    /* TODO Open Link */
-                }
+                onClick = onNavigateHomework
             ) {
                 Text(
                     text = stringResource(R.string.to_homework_button),

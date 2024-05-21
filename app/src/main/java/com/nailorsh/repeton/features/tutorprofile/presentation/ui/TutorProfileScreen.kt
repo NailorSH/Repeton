@@ -19,10 +19,10 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.common.data.models.Tutor
-import com.nailorsh.repeton.common.data.models.getFlagEmoji
+import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.user.Tutor
 import com.nailorsh.repeton.core.ui.components.ErrorScreen
 import com.nailorsh.repeton.core.ui.components.LoadingScreen
 import com.nailorsh.repeton.core.ui.components.TitleWithExpandableText
@@ -44,9 +44,9 @@ import com.nailorsh.repeton.features.tutorprofile.presentation.viewmodel.TutorPr
 
 @Composable
 fun TutorProfileScreen(
-    tutorId: Int,
+    tutorId: Id,
     onBackClicked: () -> Unit,
-    viewModel: TutorProfileViewModel = viewModel(),
+    viewModel: TutorProfileViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(tutorId) {
         viewModel.getTutorProfile(tutorId)
@@ -132,8 +132,7 @@ private fun TutorMainInfoBlock(
         ProfileInfoRow(
             profileImageId = R.drawable.man_photo,
             name = "${tutor.name} ${tutor.surname.first()}.",
-            country = tutor.country,
-            flagEmoji = tutor.getFlagEmoji()
+            country = tutor.location?.country
         )
 
         HorizontalDivider(
@@ -174,10 +173,12 @@ private fun TutorAdditionalInfoBlock(
             horizontal = dimensionResource(R.dimen.padding_medium)
         )
     ) {
-        TitleWithExpandableText(
-            title = stringResource(R.string.about_me),
-            text = tutor.about
-        )
+        tutor.about?.let {
+            TitleWithExpandableText(
+                title = stringResource(R.string.about_me),
+                text = it
+            )
+        }
 
         HorizontalDivider(
             modifier = Modifier.padding(
@@ -185,7 +186,7 @@ private fun TutorAdditionalInfoBlock(
             )
         )
 
-        LanguageSkills(tutor.languages)
+        tutor.languages?.let { LanguageSkills(it) }
     }
 }
 
@@ -195,6 +196,6 @@ private fun TutorAdditionalInfoBlock(
 @Composable
 private fun TutorProfileCardPreview() {
     RepetonTheme {
-        TutorProfileScreen(2, {})
+        TutorProfileScreen(Id("2"), {})
     }
 }

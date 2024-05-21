@@ -5,7 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nailorsh.repeton.common.data.models.Tutor
+import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.user.Tutor
 import com.nailorsh.repeton.features.tutorprofile.data.TutorProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -29,17 +30,21 @@ class TutorProfileViewModel @Inject constructor(
     var tutorProfileUiState: TutorProfileUiState by mutableStateOf(TutorProfileUiState.Loading)
         private set
 
-    fun getTutorProfile(lessonId: Int) {
+    fun getTutorProfile(tutorId: Id) {
         viewModelScope.launch {
             tutorProfileUiState = TutorProfileUiState.Loading
             tutorProfileUiState = try {
                 val tutor = withContext(Dispatchers.IO) {
-                    tutorProfileRepository.getLesson(lessonId)
+                    tutorProfileRepository.getTutorProfile(tutorId)
                 }
                 TutorProfileUiState.Success(tutor)
             } catch (e: IOException) {
                 TutorProfileUiState.Error
             } catch (e: HttpRetryException) {
+                TutorProfileUiState.Error
+            } catch (e: NoSuchElementException) {
+                TutorProfileUiState.Error
+            } catch (e: Exception) {
                 TutorProfileUiState.Error
             }
         }

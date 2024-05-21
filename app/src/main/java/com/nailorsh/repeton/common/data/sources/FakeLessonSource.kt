@@ -1,8 +1,9 @@
 package com.nailorsh.repeton.common.data.sources
 
 import android.util.Log
-import com.nailorsh.repeton.common.data.models.Homework
-import com.nailorsh.repeton.common.data.models.Lesson
+import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.lesson.Homework
+import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import java.time.LocalDateTime
 import kotlin.random.Random
 
@@ -19,22 +20,24 @@ object FakeLessonSource {
     private var _lessons = mutableListOf(
         getRandomStartDateTime().let { startTime ->
             Lesson(
-                subject = FakeSubjectsSource.getSubjects(1),
+                id = Id("1"),
+                subject = FakeSubjectsSource.getSubject(0),
                 topic = "Algebra Basics",
                 description = "Introduction to algebraic concepts.",
-                teacherName = "Alex Johnson",
+                tutor = FakeTutorsSource.getTutorById(Id("0")),
                 startTime = startTime,
                 endTime = startTime.plusMinutes(90),
-                homework = Homework("http://homework.example.com/algebra"),
+                homework = Homework("http://homework.example.com/algebra", Id("0")),
                 additionalMaterials = "http://materials.example.com/algebra"
             )
         },
         getRandomStartDateTime().let { startTime ->
             Lesson(
-                subject = FakeSubjectsSource.getSubjects(3),
+                id = Id("2"),
+                subject = FakeSubjectsSource.getSubject(2),
                 topic = "Kinematics",
                 description = "Study of motion.",
-                teacherName = "Marie Curie",
+                tutor = FakeTutorsSource.getTutorById(Id("2")),
                 startTime = startTime.plusMinutes(90),
                 endTime = startTime.plusMinutes(180),
                 homework = null,
@@ -43,22 +46,24 @@ object FakeLessonSource {
         },
         getRandomStartDateTime().let { startTime ->
             Lesson(
-                subject = FakeSubjectsSource.getSubjects(5),
+                id = Id("3"),
+                subject = FakeSubjectsSource.getSubject(2),
                 topic = "The French Revolution",
                 description = "A deep dive into the causes of the French Revolution.",
-                teacherName = "Jean Valjean",
+                tutor = FakeTutorsSource.getTutorById(Id("3")),
                 startTime = startTime.plusDays(1),
                 endTime = startTime.plusDays(1).plusMinutes(90),
-                homework = Homework("http://homework.example.com/french-revolution"),
+                homework = Homework("http://homework.example.com/french-revolution", Id("0")),
                 additionalMaterials = null
             )
         },
         getRandomStartDateTime().let { startTime ->
             Lesson(
-                subject = FakeSubjectsSource.getSubjects(7),
+                id = Id("3"),
+                subject = FakeSubjectsSource.getSubject(7),
                 topic = "Shakespeare's Plays",
                 description = "Exploring the major plays of William Shakespeare.",
-                teacherName = "Elizabeth Bennett",
+                tutor = FakeTutorsSource.getTutorById(Id("1")),
                 startTime = startTime.plusDays(2),
                 endTime = startTime.plusDays(2).plusMinutes(90),
                 homework = null,
@@ -67,22 +72,24 @@ object FakeLessonSource {
         },
         getRandomStartDateTime().let { startTime ->
             Lesson(
-                subject = FakeSubjectsSource.getSubjects(4),
+                id = Id("4"),
+                subject = FakeSubjectsSource.getSubject(1),
                 topic = "Introduction to Programming",
                 description = null,
-                teacherName = "Alan Turing",
+                tutor = FakeTutorsSource.getTutorById(Id("1")),
                 startTime = startTime.plusDays(2).plusMinutes(90),
                 endTime = startTime.plusDays(2).plusMinutes(180),
-                homework = Homework("http://homework.example.com/programming"),
+                homework = Homework("http://homework.example.com/programming", Id("0")),
                 additionalMaterials = null
             )
         },
         getRandomStartDateTime().let { startTime ->
             Lesson(
-                subject = FakeSubjectsSource.getSubjects(8),
+                id = Id("5"),
+                subject = FakeSubjectsSource.getSubject(4),
                 topic = "Impressionism",
                 description = "Understanding the Impressionist art movement.",
-                teacherName = "Claude Monet",
+                tutor = FakeTutorsSource.getTutorById(Id("1")),
                 startTime = startTime.minusDays(1),
                 endTime = startTime.minusDays(1).plusMinutes(90),
                 homework = null,
@@ -102,4 +109,9 @@ object FakeLessonSource {
         Log.d("FAKE_LESSON", _lessons.toString())
     }
 
+    fun getLesson(id: Id): Lesson {
+        return _lessons.first {
+            it.id == id
+        }
+    }
 }

@@ -1,6 +1,6 @@
 package com.nailorsh.repeton.features.tutorsearch
 
-import com.nailorsh.repeton.features.tutorsearch.data.FakeTutorSearchRepository
+import com.nailorsh.repeton.features.tutorsearch.data.FirestoreTutorSearchRepository
 import com.nailorsh.repeton.features.tutorsearch.data.TutorSearchRepository
 import dagger.Binds
 import dagger.Module
@@ -12,6 +12,6 @@ import dagger.hilt.components.SingletonComponent
 abstract class TutorSearchModule {
     @Binds
     abstract fun bindTutorSearchRepository(
-        tutorSearchRepositoryImpl: FakeTutorSearchRepository
+        tutorSearchRepositoryImpl: FirestoreTutorSearchRepository
     ): TutorSearchRepository
 }

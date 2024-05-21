@@ -18,13 +18,13 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
+import com.nailorsh.repeton.common.data.models.location.Country
 
 @Composable
 fun ProfileInfoRow(
     @DrawableRes profileImageId: Int,
     name: String,
-    country: String,
-    flagEmoji: String,
+    country: Country?,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -49,17 +49,20 @@ fun ProfileInfoRow(
                 text = name,
                 style = MaterialTheme.typography.headlineMedium
             )
-            Row {
-                Text(
-                    text = country,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Text(
-                    text = flagEmoji,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .padding(start = dimensionResource(R.dimen.padding_extra_small))
-                )
+
+            country?.let {
+                Row {
+                    Text(
+                        text = it.name?.get("ru") ?: "",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Text(
+                        text = it.getFlagEmoji(),
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier
+                            .padding(start = dimensionResource(R.dimen.padding_extra_small))
+                    )
+                }
             }
         }
     }

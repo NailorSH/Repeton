@@ -5,12 +5,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nailorsh.repeton.common.data.models.Tutor
+import com.nailorsh.repeton.common.data.models.user.Tutor
 import com.nailorsh.repeton.features.tutorsearch.data.TutorSearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.net.HttpRetryException
 import javax.inject.Inject
@@ -41,10 +43,16 @@ class TutorSearchViewModel @Inject constructor(
                         searchUiState = SearchUiState.Loading
                         delay(2000)
                         searchUiState = try {
-                            SearchUiState.Success(tutorSearchRepository.getTutors())
+                            withContext(Dispatchers.IO) {
+                                SearchUiState.Success(tutorSearchRepository.getTutors())
+                            }
                         } catch (e: IOException) {
                             SearchUiState.Error
                         } catch (e: HttpRetryException) {
+                            SearchUiState.Error
+                        } catch (e: NoSuchElementException) {
+                            SearchUiState.Error
+                        } catch (e: Exception) {
                             SearchUiState.Error
                         }
                     }
@@ -56,12 +64,17 @@ class TutorSearchViewModel @Inject constructor(
     fun getTutors() {
         viewModelScope.launch {
             searchUiState = SearchUiState.Loading
-            delay(2000)
             searchUiState = try {
-                SearchUiState.Success(tutorSearchRepository.getTutors())
+                withContext(Dispatchers.IO) {
+                    SearchUiState.Success(tutorSearchRepository.getTutors())
+                }
             } catch (e: IOException) {
                 SearchUiState.Error
             } catch (e: HttpRetryException) {
+                SearchUiState.Error
+            } catch (e: NoSuchElementException) {
+                SearchUiState.Error
+            } catch (e: Exception) {
                 SearchUiState.Error
             }
         }

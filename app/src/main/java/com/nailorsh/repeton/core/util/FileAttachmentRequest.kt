@@ -13,7 +13,6 @@ fun fileAttachmentRequest(
 ): () -> Unit {
     val context = LocalContext.current
 
-
     val pickFileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
@@ -24,7 +23,6 @@ fun fileAttachmentRequest(
             }
         }
     )
-
 
     return {
         pickFileLauncher.launch("*/*")

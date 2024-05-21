@@ -1,7 +1,15 @@
 package com.nailorsh.repeton.features.schedule.presentation.ui.components
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -16,7 +24,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.common.data.models.Lesson
+import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
@@ -27,9 +35,7 @@ fun LessonCard(lesson: Lesson, onClick: (Lesson) -> Unit, modifier: Modifier = M
         elevation = CardDefaults.cardElevation(
             defaultElevation = 4.dp
         ),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-        ),
+        colors = CardDefaults.elevatedCardColors(),
         modifier = Modifier
             .padding(top = 10.dp, bottom = 10.dp)
             .width(dimensionResource(R.dimen.schedule_screen_button_width))
@@ -52,8 +58,7 @@ fun LessonCard(lesson: Lesson, onClick: (Lesson) -> Unit, modifier: Modifier = M
             )
             {
                 Text(
-                    text = lesson.subject.subjectName,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    text = lesson.subject.name,
                     style = MaterialTheme.typography.headlineSmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -81,7 +86,7 @@ fun LessonCard(lesson: Lesson, onClick: (Lesson) -> Unit, modifier: Modifier = M
                 )
             }
             Text(
-                text = lesson.teacherName,
+                text = lesson.tutor.name,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 style = MaterialTheme.typography.bodyMedium,
                 letterSpacing = 0.25.sp,

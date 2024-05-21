@@ -21,12 +21,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.features.auth.presentation.viewmodel.AuthState
 import com.nailorsh.repeton.features.auth.presentation.viewmodel.AuthViewModel
-import com.vk.id.AccessToken
 
 @Composable
 fun PhoneLoginUI(
     navigateNext: () -> Unit,
-    onVKAuth: (AccessToken) -> Unit,
     viewModel: AuthViewModel = viewModel(),
     restartLogin: () -> Unit = { viewModel.authUiState.value = AuthState.NotInitialized }
 ) {
@@ -62,8 +60,7 @@ fun PhoneLoginUI(
                 },
                 onGuestModeButtonClicked = {
                     viewModel.createAnonymousAccount()
-                },
-                onVKAuth = onVKAuth
+                }
             )
         }
 

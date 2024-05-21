@@ -13,7 +13,6 @@ import com.nailorsh.repeton.MainActivity
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.features.auth.data.model.UserData
 import com.nailorsh.repeton.features.auth.presentation.viewmodel.AuthState
-import com.vk.id.AccessToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.tasks.await
@@ -189,24 +188,12 @@ class FirebaseAuthRepository @Inject constructor(
     override suspend fun register(user: UserData) = withContext(Dispatchers.IO) {
         val currentUid = auth.currentUser?.uid
         val tmpUserData = user.copy(
-            phone = auth.currentUser?.phoneNumber ?: "No number found"
+            phoneNumber = auth.currentUser?.phoneNumber ?: "No number found"
         )
         if (currentUid != null) {
             val newUserRef = db.collection("users").document(currentUid)
             newUserRef.set(tmpUserData)
         }
         // TODO добавить обработку ошибок
-    }
-
-    override suspend fun onVKAuth(token: AccessToken) {
-        val userData = token.userData
-        val user = UserData(
-            name = userData.firstName,
-            surname = userData.lastName,
-            phone = userData.phone ?: "Phone number not found",
-            vkIdToken = token.token
-        )
-        val newUserRef = db.collection("users").document(token.userID.toString())
-        newUserRef.set(user)
     }
 }

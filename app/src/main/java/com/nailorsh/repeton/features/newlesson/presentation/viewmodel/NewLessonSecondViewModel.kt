@@ -91,14 +91,20 @@ sealed interface NewLessonSecondAction {
 data class NewLessonSecondState(
     val description: String = "",
     val homeworkText: String = "",
-    val imageAttachments: MutableList<Attachment.Image> = mutableListOf(),
+    val imageAttachments: MutableList<Attachment.Image> = mutableListOf(
+        Attachment.Image(
+            url = ""
+        )
+    ),
     val fileAttachments: List<Attachment.File> = emptyList(),
     val additionalMaterials: String = "",
     val showImageTypeDialogue: Boolean = false,
     val showImageDialogue: Boolean = false,
+    val showImageSlider: Boolean = false,
 
-    val showLoadingDialogue : Boolean = false,
-    )
+
+    val showLoadingDialogue: Boolean = false,
+)
 
 
 @HiltViewModel
@@ -129,9 +135,11 @@ class NewLessonSecondViewModel @Inject constructor(
                 is NewLessonSecondAction.NavigateBack -> {
                     _navigationEventsChannel.emit(NewLessonSecondNavigationEvent.NavigateBack)
                 }
+
                 is NewLessonSecondAction.TooMuchImages -> {
                     _uiEventsChannel.emit(NewLessonSecondUIEvent.AttachmentFail(R.string.new_lesson_screen_too_much_images_error))
                 }
+
                 is NewLessonSecondAction.AttachFileFail -> {
                     _uiEventsChannel.emit(NewLessonSecondUIEvent.AttachmentFail(R.string.new_lesson_screen_error_file_not_chosen))
                 }
@@ -164,7 +172,13 @@ class NewLessonSecondViewModel @Inject constructor(
                         if (state is NewLessonSecondUIState.Success) {
                             when (action) {
                                 is NewLessonSecondAction.SaveLesson -> {
-                                    _state.update { state.copy(state = state.state.copy(showLoadingDialogue = true)) }
+                                    _state.update {
+                                        state.copy(
+                                            state = state.state.copy(
+                                                showLoadingDialogue = true
+                                            )
+                                        )
+                                    }
                                     saveLesson()
                                     state.copy(state = state.state.copy(showLoadingDialogue = false))
                                 }
@@ -246,7 +260,7 @@ class NewLessonSecondViewModel @Inject constructor(
                     _uiEventsChannel.emit(NewLessonSecondUIEvent.AttachmentFail(R.string.new_lesson_screen_error_upload_file))
                     return@withContext
                 }
-
+                val imageAttachments = if (state.state.showImageSlider) state.state.imageAttachments else null
                 val newLesson = NewLessonItem(
                     students = firstScreenData.students,
                     subject = firstScreenData.subject,
@@ -256,7 +270,7 @@ class NewLessonSecondViewModel @Inject constructor(
                     description = state.state.description,
                     homework = NewLessonHomework(
                         text = state.state.homeworkText,
-                        attachments = state.state.imageAttachments.mapIndexed { index, image ->
+                        attachments = imageAttachments?.mapIndexed { index, image ->
                             image.copy(url = imageURLsList[index])
                         },
                     ),
@@ -295,15 +309,26 @@ class NewLessonSecondViewModel @Inject constructor(
         state: NewLessonSecondUIState.Success,
         attachment: Uri
     ): NewLessonSecondUIState {
+        val newImage = Attachment.Image(
+            url = attachment.toString()
+        )
         return if (state.state.imageAttachments.size == 10) {
             _uiEventsChannel.emit(NewLessonSecondUIEvent.AttachmentFail(R.string.new_lesson_screen_too_much_images_error))
             state
-        } else {
-            val newList = state.state.imageAttachments.toMutableList()
-            newList.add(Attachment.Image(url = attachment.toString()))
+        } else if (!state.state.showImageSlider) {
             state.copy(
                 state = state.state.copy(
-                    imageAttachments = newList
+                    imageAttachments = mutableListOf(newImage),
+                    showImageSlider = true
+                )
+            )
+        } else {
+            val newList = state.state.imageAttachments.toMutableList()
+            newList.add(newImage)
+            state.copy(
+                state = state.state.copy(
+                    imageAttachments = newList,
+                    showImageSlider = true,
                 ),
             )
         }
@@ -326,8 +351,11 @@ class NewLessonSecondViewModel @Inject constructor(
         attachment: Attachment.Image
     ): NewLessonSecondUIState {
         return if (state.state.imageAttachments.size <= 1) {
-            _uiEventsChannel.emit(NewLessonSecondUIEvent.AttachmentFail(R.string.new_lesson_screen_last_image_delete_error))
-            state
+            state.copy(
+                state = state.state.copy(
+                    showImageSlider = false
+                )
+            )
         } else {
             val newList = state.state.imageAttachments.toMutableList()
             newList.remove(attachment)

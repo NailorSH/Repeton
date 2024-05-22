@@ -270,7 +270,7 @@ fun NewLessonScreenSecondContent(
                     }
                 )
             }
-            if (images.value.isNotEmpty()) {
+            if (state.showImageSlider) {
                 item {
                     NewLessonImageSlider(
                         imageList = images.value,

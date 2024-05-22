@@ -43,7 +43,11 @@ fun NavGraphBuilder.lessonCreationNavGraph(
                 lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     navigationChannel.collect { navigationEvent ->
                         when (navigationEvent) {
-                            NewLessonFirstNavigationEvent.NavigateBack -> navController.popBackStack()
+                            NewLessonFirstNavigationEvent.NavigateBack -> navController.popBackStack(
+                                route = BottomBarScreen.Home.route,
+                                inclusive = false
+                            )
+
                             is NewLessonFirstNavigationEvent.NavigateToNext -> {
                                 sharedViewModel.updateState(navigationEvent.firstScreenData)
                                 navController.navigate(LessonCreationScreen.NewLessonSecond.route)
@@ -79,7 +83,7 @@ fun NavGraphBuilder.lessonCreationNavGraph(
                 lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     navigationChannel.collect { navigationEvent ->
                         when (navigationEvent) {
-                            NewLessonSecondNavigationEvent.NavigateBack -> navController.popBackStack()
+                            NewLessonSecondNavigationEvent.NavigateBack -> navController.navigateUp()
                             NewLessonSecondNavigationEvent.SaveLesson -> navController.popBackStack(
                                 route = BottomBarScreen.Home.route,
                                 inclusive = false

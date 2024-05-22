@@ -1,7 +1,9 @@
 package com.nailorsh.repeton.features.newlesson.data.repository
 
 import android.net.Uri
+import androidx.core.net.toUri
 import com.google.firebase.storage.FirebaseStorage
+import com.nailorsh.repeton.common.data.models.lesson.Attachment
 import com.nailorsh.repeton.common.firestore.FirestoreRepository
 import com.nailorsh.repeton.common.firestore.mappers.toDto
 import com.nailorsh.repeton.common.firestore.mappers.toTimestamp
@@ -59,20 +61,26 @@ class NewLessonRepositoryImpl @Inject constructor(
         firestoreRepository.getStudents().map { it.toNewLessonUserItem() }
     }
 
-    override suspend fun uploadImage(uri: Uri): String {
-        val storageRef = storage.reference
-        val imagesRef = storageRef.child("images/${System.currentTimeMillis()}.jpg")
+    override suspend fun uploadImages(images: List<Attachment.Image>): List<String> {
 
-        return try {
-            imagesRef.putFile(uri).await()
-            val downloadUrl = imagesRef.downloadUrl.await().toString()
-            downloadUrl
-        } catch (e: Exception) {
-            throw e
+        val storageRef = storage.reference
+
+        val imageListURLs = mutableListOf<String>()
+        images.forEach { image ->
+            try {
+                val imagesRef = storageRef.child("images/${System.currentTimeMillis()}.jpg")
+                imagesRef.putFile(image.url.toUri()).await()
+                val downloadUrl = imagesRef.downloadUrl.await().toString()
+                imageListURLs.add(downloadUrl)
+            } catch (e: Exception) {
+                throw e
+            }
         }
+        return imageListURLs
     }
 
     override suspend fun uploadFile(uri: Uri): String {
-        TODO("Not yet implemented")
+        /* TODO("Not yet implemented") */
+        return ""
     }
 }

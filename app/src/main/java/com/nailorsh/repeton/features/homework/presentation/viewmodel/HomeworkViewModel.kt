@@ -44,7 +44,6 @@ data class HomeworkState(
     val answerText: String = "",
 
     val showImageDialogue: Boolean = false,
-    val imageToShowInDialogue: Attachment.Image? = null
 )
 
 @HiltViewModel
@@ -108,7 +107,6 @@ class HomeworkViewModel @Inject constructor(
                                 is HomeworkAction.ShowImageDialogue -> _state.update {
                                     state.copy(
                                         state.state.copy(
-                                            imageToShowInDialogue = action.image,
                                             showImageDialogue = true
                                         )
                                     )
@@ -117,7 +115,6 @@ class HomeworkViewModel @Inject constructor(
                                 HomeworkAction.HideImageDialogue -> _state.update {
                                     state.copy(
                                         state.state.copy(
-                                            imageToShowInDialogue = null,
                                             showImageDialogue = false
                                         )
                                     )

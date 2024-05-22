@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -119,7 +118,7 @@ fun ImageSlider(
                             actionIcon()
                         }
                     },
-                    loading = { CircularProgressIndicator(modifier = Modifier.fillMaxSize().align(Alignment.Center)) },
+                    loading = { CircularProgressIndicator(modifier = Modifier.align(Alignment.Center)) },
                     error = {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_error),

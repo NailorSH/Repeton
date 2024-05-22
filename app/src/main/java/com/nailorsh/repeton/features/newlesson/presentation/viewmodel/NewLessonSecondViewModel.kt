@@ -97,6 +97,7 @@ data class NewLessonSecondState(
     val showImageTypeDialogue: Boolean = false,
     val showImageDialogue: Boolean = false,
 
+    val showLoadingDialogue : Boolean = false,
     )
 
 
@@ -124,9 +125,6 @@ class NewLessonSecondViewModel @Inject constructor(
     fun onAction(action: NewLessonSecondAction) {
         viewModelScope.launch {
             when (action) {
-                is NewLessonSecondAction.SaveLesson -> {
-                    saveLesson()
-                }
 
                 is NewLessonSecondAction.NavigateBack -> {
                     _navigationEventsChannel.emit(NewLessonSecondNavigationEvent.NavigateBack)
@@ -165,6 +163,12 @@ class NewLessonSecondViewModel @Inject constructor(
                     _state.update { state ->
                         if (state is NewLessonSecondUIState.Success) {
                             when (action) {
+                                is NewLessonSecondAction.SaveLesson -> {
+                                    _state.update { state.copy(state = state.state.copy(showLoadingDialogue = true)) }
+                                    saveLesson()
+                                    state.copy(state = state.state.copy(showLoadingDialogue = false))
+                                }
+
                                 is NewLessonSecondAction.UpdateImageText -> updateImageText(
                                     state,
                                     action.imageText,
@@ -225,7 +229,6 @@ class NewLessonSecondViewModel @Inject constructor(
     private suspend fun saveLesson() = withContext(Dispatchers.IO) {
         when (val state = _state.value) {
             is NewLessonSecondUIState.Success -> {
-                /* TODO Сделать проверку времени */
                 if (!checkStartTime(firstScreenData.startTime)) {
                     return@withContext
                 }

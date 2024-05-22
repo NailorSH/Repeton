@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -38,6 +39,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.nailorsh.repeton.R
@@ -159,6 +161,15 @@ fun NewLessonScreenSecondContent(
         },
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
+        if (state.showLoadingDialogue) {
+            Dialog(onDismissRequest = {  }) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(modifier = Modifier.size(48.dp))
+                }
+            }
+        }
+
+
         if (state.showImageTypeDialogue) {
             NewLessonBottomSheet(
                 cameraRequest = {

@@ -156,4 +156,6 @@
     <string name="unknown_file">Неизвестный файл</string>
     <string name="new_lesson_screen_image_description_label">Описание изображения</string>
     <string name="new_lesson_screen_image_description_placeholder">Добавьте описание для выбранного изображения...</string>
+    <string name="new_lesson_screen_last_image_delete_error">Должно остаться хотя бы одно изображение</string>
+    <string name="new_lesson_screen_too_much_images_error">Нельзя добавить больше 10 изображений к одному уроку</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.nailorsh.repeton.features.newlesson.presentation.ui
 
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -97,6 +98,8 @@ fun NewLessonScreenSecondContent(
     val dialogueSlidePagerState = rememberPagerState {
         images.value.size
     }
+
+
     val coroutineScope = rememberCoroutineScope()
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
@@ -108,6 +111,7 @@ fun NewLessonScreenSecondContent(
             )
         }
     }
+    Log.d("NEW", dialogueSlidePagerState.currentPage.toString())
 
 
     val cameraRequest = cameraRequest(
@@ -157,10 +161,32 @@ fun NewLessonScreenSecondContent(
     ) { paddingValues ->
         if (state.showImageTypeDialogue) {
             NewLessonBottomSheet(
-                cameraRequest = cameraRequest,
+                cameraRequest = {
+                    if (state.imageAttachments.size < 10) {
+                        cameraRequest()
+                    } else {
+                        onAction(NewLessonSecondAction.TooMuchImages)
+                    }
+
+                    onAction(
+                        NewLessonSecondAction.UpdateShowImageTypeDialogue(
+                            false
+                        )
+                    )
+                },
                 photoPickerRequest = {
-                    photoPickerLauncher.launch(
-                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    if (state.imageAttachments.size < 10) {
+                        photoPickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    } else {
+                        onAction(NewLessonSecondAction.TooMuchImages)
+                    }
+
+                    onAction(
+                        NewLessonSecondAction.UpdateShowImageTypeDialogue(
+                            false
+                        )
                     )
                 },
                 sheetState = sheetState,
@@ -228,10 +254,12 @@ fun NewLessonScreenSecondContent(
                             )
                         )
                     },
-                    onClickAttachFile = { onClickAttachFile() }
+                    onClickAttachFile = {
+                        onClickAttachFile()
+                    }
                 )
             }
-            if (state.imageAttachments.isNotEmpty()) {
+            if (images.value.isNotEmpty()) {
                 item {
                     NewLessonImageSlider(
                         imageList = images.value,
@@ -243,7 +271,24 @@ fun NewLessonScreenSecondContent(
                                 dialogueSlidePagerState.scrollToPage(imageSliderPagerState.currentPage)
                             }
                         },
-                        onDeleteImage = { onAction(NewLessonSecondAction.RemoveImageAttachment(it)) },
+                        onDeleteImage = {
+
+                            coroutineScope.launch {
+                                val currentPage = imageSliderPagerState.currentPage
+                                val newSize = images.value.size - 1
+                                if (currentPage >= newSize) {
+                                    imageSliderPagerState.scrollToPage(maxOf(0, newSize - 1))
+                                    dialogueSlidePagerState.scrollToPage(
+                                        maxOf(
+                                            0,
+                                            newSize - 1
+                                        )
+                                    )
+                                }
+                            }.let { _ -> onAction(NewLessonSecondAction.RemoveImageAttachment(it)) }
+
+
+                        },
                         updateImageDescription = { text, index ->
                             onAction(NewLessonSecondAction.UpdateImageText(text, index))
                         }

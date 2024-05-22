@@ -24,7 +24,7 @@ fun NewLessonImageSlider(
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
     onImageClick: (Attachment.Image) -> Unit,
-    onDeleteImage: (Int) -> Unit,
+    onDeleteImage: (Attachment.Image) -> Unit,
     updateImageDescription: (String, Int) -> Unit
 ) {
     ImageSlider(
@@ -33,7 +33,7 @@ fun NewLessonImageSlider(
         coroutineScope = coroutineScope,
         onImageClick = onImageClick,
     ) {
-        IconButton(onClick = { onDeleteImage(pagerState.currentPage) }) {
+        IconButton(onClick = { onDeleteImage(imageList[pagerState.currentPage]) }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_cancel_w400),
                 contentDescription = null,

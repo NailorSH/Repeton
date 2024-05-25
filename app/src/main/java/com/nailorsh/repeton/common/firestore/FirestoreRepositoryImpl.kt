@@ -86,7 +86,7 @@ class FirestoreRepositoryImpl @Inject constructor(
     override suspend fun getUser(userId: Id): UserDto {
         val document = db.collection("users").document(userId.value).get().await()
         if (document.exists()) {
-            val user = document.toObject(UserDto::class.java)!!
+            val user = document.toObject<UserDto>()!!
             return user
         } else {
             throw (IOException("User not found"))
@@ -97,7 +97,7 @@ class FirestoreRepositoryImpl @Inject constructor(
         val document =
             db.collection("lessons").document().collection("homework").document().get().await()
         if (document.exists()) {
-            val homework = document.toObject(HomeworkDto::class.java)!!
+            val homework = document.toObject<HomeworkDto>()!!
             return homework.toDomain()
         } else throw (IOException("Homework not found"))
     }
@@ -125,7 +125,7 @@ class FirestoreRepositoryImpl @Inject constructor(
         if (!querySnapshot.isEmpty) {
             val students = mutableListOf<UserDto>()
             querySnapshot.documents.forEach { document ->
-                val user = document.toObject(UserDto::class.java)
+                val user = document.toObject<UserDto>()
                 if (user != null) {
                     students.add(
                         user.copy(id = document.id)

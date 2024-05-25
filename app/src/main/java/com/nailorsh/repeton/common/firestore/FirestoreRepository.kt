@@ -4,7 +4,9 @@ import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.models.lesson.Subject
+import com.nailorsh.repeton.common.firestore.models.LanguageWithLevelDto
 import com.nailorsh.repeton.common.firestore.models.LessonDto
+import com.nailorsh.repeton.common.firestore.models.SubjectWithPriceDto
 import com.nailorsh.repeton.common.firestore.models.UserDto
 
 interface FirestoreRepository {
@@ -14,6 +16,10 @@ interface FirestoreRepository {
     suspend fun getUserSurname(): String
     suspend fun getUserPhotoSrc(): String?
     suspend fun getUserAbout(): String?
+    suspend fun getUserStudents(): List<UserDto>?
+    suspend fun getUserTutors(): List<UserDto>?
+    suspend fun getUserSubjectsWithPrices(): List<SubjectWithPriceDto>?
+    suspend fun getUserLanguagesWithLevels(): List<LanguageWithLevelDto>?
     suspend fun getUserDto(): UserDto
     suspend fun getStudents(): List<UserDto>
     suspend fun addLesson(newLesson: LessonDto)
@@ -28,5 +34,4 @@ interface FirestoreRepository {
     suspend fun updateUserSurname(surname: String)
     suspend fun updatePhotoSrc(url: String)
     suspend fun updateUserAbout(about: String)
-
 }

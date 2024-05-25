@@ -11,9 +11,9 @@ data class UserDto(
     @PropertyName("phoneNumber") val phoneNumber: String = "",
     @PropertyName("about") val about: String? = null,
     @PropertyName("photoSrc") val photoSrc: String? = null,
-    @PropertyName("languages") val languages: Map<String, String>? = null,
+    @PropertyName("languages") val languages: List<LanguageWithLevelDto>? = null,
     @PropertyName("educationId") val educationId: String? = null,
-    @PropertyName("subjects") val subjects: Map<String, Int>? = null,
+    @PropertyName("subjects") val subjects: List<SubjectWithPriceDto>? = null,
     @PropertyName("students") val students: List<String>? = null,
     @PropertyName("tutors") val tutors: List<String>? = null,
     @PropertyName("specialization") val specialization: String? = null

@@ -11,11 +11,17 @@ import com.nailorsh.repeton.common.data.models.lesson.Subject
 import com.nailorsh.repeton.common.data.models.user.Tutor
 import com.nailorsh.repeton.common.firestore.mappers.toDomain
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
+import com.nailorsh.repeton.common.firestore.models.LanguageWithLevelDto
 import com.nailorsh.repeton.common.firestore.models.LessonDto
 import com.nailorsh.repeton.common.firestore.models.ReviewDto
 import com.nailorsh.repeton.common.firestore.models.SubjectDto
+import com.nailorsh.repeton.common.firestore.models.SubjectWithPriceDto
 import com.nailorsh.repeton.common.firestore.models.UserDto
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import javax.inject.Inject
 
@@ -134,6 +140,46 @@ class FirestoreRepositoryImpl @Inject constructor(
 
     override suspend fun getUserAbout(): String? {
         return getUserDto().about
+    }
+
+    override suspend fun getUserStudents(): List<UserDto>? = withContext(Dispatchers.IO) {
+        val studentsIds = getUserDto().students
+
+        if (studentsIds.isNullOrEmpty()) {
+            return@withContext null  // Возвращаем null если нет списка студентов
+        }
+
+        val studentTasks = studentsIds.map { studentId ->
+            async {
+                db.collection("users").document(studentId).get().await().toObject<UserDto>()
+            }
+        }
+        studentTasks.awaitAll().filterNotNull()
+            .takeIf { it.isNotEmpty() }  // Возвращаем null если список пуст.
+    }
+
+    override suspend fun getUserTutors(): List<UserDto>? = withContext(Dispatchers.IO) {
+        val tutorsIds = getUserDto().students
+
+        if (tutorsIds.isNullOrEmpty()) {
+            return@withContext null  // Возвращаем null если нет списка студентов
+        }
+
+        val tutorTasks = tutorsIds.map { tutorId ->
+            async {
+                db.collection("users").document(tutorId).get().await().toObject<UserDto>()
+            }
+        }
+        tutorTasks.awaitAll().filterNotNull()
+            .takeIf { it.isNotEmpty() }  // Возвращаем null если список пуст.
+    }
+
+    override suspend fun getUserSubjectsWithPrices(): List<SubjectWithPriceDto>? {
+        return getUserDto().subjects
+    }
+
+    override suspend fun getUserLanguagesWithLevels(): List<LanguageWithLevelDto>? {
+        return getUserDto().languages
     }
 
     override suspend fun getStudents(): List<UserDto> {

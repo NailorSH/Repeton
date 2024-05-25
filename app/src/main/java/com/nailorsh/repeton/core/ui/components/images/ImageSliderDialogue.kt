@@ -3,7 +3,7 @@ package com.nailorsh.repeton.core.ui.components.images
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.CircularProgressIndicator
@@ -30,7 +30,7 @@ fun ImageSliderDialogue(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(480.dp)
+                    .heightIn(max = 480.dp)
             ) {
                 SubcomposeAsyncImage(
                     model = images[page].url,

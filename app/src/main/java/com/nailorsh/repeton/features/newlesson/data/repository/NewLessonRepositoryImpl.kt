@@ -61,7 +61,7 @@ class NewLessonRepositoryImpl @Inject constructor(
         firestoreRepository.getStudents().map { it.toNewLessonUserItem() }
     }
 
-    override suspend fun uploadImages(images: List<Attachment.Image>): List<String> {
+    override suspend fun uploadImages(images: List<Attachment.Image>): List<String> = withContext(Dispatchers.IO) {
 
         val storageRef = storage.reference
 
@@ -76,9 +76,12 @@ class NewLessonRepositoryImpl @Inject constructor(
                 throw e
             }
         }
-        return imageListURLs
+        imageListURLs
     }
 
+    override suspend fun getUserType(): Boolean = withContext(Dispatchers.IO) {
+        firestoreRepository.getUserType()
+    }
     override suspend fun uploadFile(uri: Uri): String {
         /* TODO("Not yet implemented") */
         return ""

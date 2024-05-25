@@ -303,9 +303,7 @@ fun ScheduleScreenContent(
 
 
         if (pullToRefreshState.isRefreshing) {
-            LaunchedEffect(true) {
-                onAction(ScheduleAction.Refresh)
-            }
+            onAction(ScheduleAction.Refresh)
         }
         LaunchedEffect(key1 = scheduleState.isRefreshing) {
             if (scheduleState.isRefreshing) {

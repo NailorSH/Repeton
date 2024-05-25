@@ -65,8 +65,13 @@ fun HomeNavGraph(
                 lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     navigationEvents.collect { navigationEvent ->
                         when (navigationEvent) {
-                            is ScheduleNavigationEvent.NavigateToLesson -> navController.navigate(LessonViewScreen.Lesson.createLessonRoute(navigationEvent.lesson.id))
-                            ScheduleNavigationEvent.NavigateToNewLesson -> navController.navigate(Graph.LESSON_CREATION.route)
+                            is ScheduleNavigationEvent.NavigateToLesson -> navController.navigate(
+                                LessonViewScreen.Lesson.createLessonRoute(navigationEvent.lesson.id)
+                            )
+
+                            ScheduleNavigationEvent.NavigateToNewLesson -> navController.navigate(
+                                Graph.LESSON_CREATION.route
+                            )
                         }
                     }
                 }
@@ -117,7 +122,11 @@ fun HomeNavGraph(
                     }
                 }
             }
-            AboutScreen(aboutState = aboutViewModel.state.collectAsState().value, onAction = aboutViewModel::onAction)
+            AboutScreen(
+                state = aboutViewModel.state.collectAsState().value,
+                onAction = aboutViewModel::onAction,
+                uiEvents = uiEvents
+            )
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.nailorsh.repeton.features.about.data
 
 import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.education.Education
 import com.nailorsh.repeton.common.data.models.language.Language
 import com.nailorsh.repeton.common.data.models.language.LanguageLevel
 import com.nailorsh.repeton.common.firestore.FirestoreRepository
@@ -12,7 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class AboutRepositoryImpl @Inject constructor(
+class FakeAboutRepository @Inject constructor(
     private val firestoreRepository: FirestoreRepository
 ) : AboutRepository {
     override suspend fun getUserData() = withContext(Dispatchers.IO) {
@@ -33,20 +34,25 @@ class AboutRepositoryImpl @Inject constructor(
                     level = LanguageLevel.OTHER
                 )
             ),
+            education = Education(
+                id = Id("0"),
+                name = "Бакалавриат",
+                specialization = "Клоун с ИУ9"
+            ),
+            about = "Lorem Ipsum"
         )
     }
 
     override suspend fun updateAboutData(data: AboutUpdatedData) {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
     }
 
-
     override suspend fun getLanguages(): List<LanguageItem> {
-        TODO("Not yet implemented")
+        return listOf(LanguageItem(Id("0"), "Английский"), LanguageItem(Id("1"), "Русский"))
     }
 
     override suspend fun getEducation(): List<EducationItem> {
-        TODO("Not yet implemented")
+        return listOf(EducationItem(Id("0"), "Бакалавриат"), EducationItem(Id("1"), "Среднее общее"))
     }
 
 }

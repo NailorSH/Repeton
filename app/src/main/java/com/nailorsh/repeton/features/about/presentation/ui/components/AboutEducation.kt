@@ -54,7 +54,13 @@ fun AboutEducation(
                 modifier = Modifier.weight(1f)
             )
         }
-        ExposedDropdownMenuBox(expanded = isExpanded, onExpandedChange = onExpandedChange) {
+        ExposedDropdownMenuBox(
+            expanded = isExpanded,
+            onExpandedChange = onExpandedChange,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp)
+        ) {
             OutlinedTextField(
                 value = education ?: "",
                 onValueChange = { },
@@ -93,12 +99,12 @@ fun AboutEducation(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 4.dp)
                     .menuAnchor()
             )
             ExposedDropdownMenu(
                 expanded = isExpanded,
-                onDismissRequest = { onExpandedChange(false) }) {
+                onDismissRequest = { onExpandedChange(false) },
+                modifier = Modifier.fillMaxWidth()) {
                 educationsList.forEach {
                     DropdownMenuItem(text = { it.name }, onClick = { onEducationChange(it) })
                 }
@@ -119,7 +125,9 @@ fun AboutEducation(
                         )
                     }
                 },
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 4.dp)
             )
         }
     }

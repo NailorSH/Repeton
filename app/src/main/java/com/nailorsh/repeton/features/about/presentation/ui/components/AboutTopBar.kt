@@ -1,6 +1,7 @@
 package com.nailorsh.repeton.features.about.presentation.ui.components
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -18,9 +19,13 @@ fun AboutTopBar(
     showChangeOptions: (Boolean) -> Unit,
     onNavigateBack: () -> Unit,
     onChangePhoto: () -> Unit,
-    onChangeAbout: () -> Unit
+    onChangeAbout: () -> Unit,
+    onSaveChanges : () -> Unit,
 ) {
     LessonTopBar(onNavigateBack = onNavigateBack, title = "О себе") {
+        IconButton(onClick = { onSaveChanges() }) {
+            Icon(imageVector = Icons.Default.Done, contentDescription = null)
+        }
         IconButton(onClick = { showChangeOptions(true) }) {
             Icon(imageVector = Icons.Default.MoreVert, contentDescription = null)
         }

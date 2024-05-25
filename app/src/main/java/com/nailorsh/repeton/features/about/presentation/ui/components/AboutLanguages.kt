@@ -1,13 +1,34 @@
 package com.nailorsh.repeton.features.about.presentation.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DockedSearchBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,19 +41,31 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
+import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.language.Language
+import com.nailorsh.repeton.common.data.models.language.LanguageLevel
+import com.nailorsh.repeton.core.util.getDisabledInteractiveOutlinedTextFieldColors
+import com.nailorsh.repeton.features.about.data.model.LanguageItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutLanguages(
-    searchQuery : String,
-    onQueryChange : (String) -> Unit,
-    onSearch : (String) -> Unit,
-    searchIsActive : Boolean,
+    searchQuery: String,
+    languages: List<LanguageItem>,
+    addedLanguages: List<Language>?,
+    languageLevels: List<LanguageLevel>,
+    onQueryChange: (String) -> Unit,
+    onSearch: (String) -> Unit,
+    onAddLanguage: (LanguageItem) -> Unit,
+    onRemoveLanguage: (Language) -> Unit,
+    updateLanguageLevel: (Language, LanguageLevel) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var active by rememberSaveable {
         mutableStateOf(false)
     }
+
+
     Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = modifier) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -50,10 +83,127 @@ fun AboutLanguages(
             onQueryChange = onQueryChange,
             onSearch = onSearch,
             active = active,
-            onActiveChange = { active = !it }
+            onActiveChange = { active = it },
+            modifier = Modifier.imePadding(),
+            trailingIcon = {
+                if (active) {
+                    IconButton(onClick = { onQueryChange("") }) {
+                        Icon(imageVector = Icons.Default.Clear, contentDescription = null)
+                    }
+                }
+            },
+            leadingIcon = {
+                if (active) IconButton(onClick = { active = false }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null
+                    )
+                } else Icon(imageVector = Icons.Default.Search, contentDescription = null)
+            },
+            placeholder = { Text("Поиск языка") }
         ) {
-            
+            LazyColumn {
+                items(languages) { language ->
+                    ListItem(headlineContent = {
+                        Text(
+                            text = language.name,
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                    }, modifier = Modifier.clickable { onAddLanguage(language) })
+                }
+
+            }
         }
+        if (addedLanguages != null)
+            Column {
+                addedLanguages.forEach { language ->
+                    var languageDropDownMenu by rememberSaveable {
+                        mutableStateOf(false)
+                    }
+                    ListItem(
+                        headlineContent = { Text(language.name) },
+                        leadingContent = {
+                            IconButton(onClick = { onRemoveLanguage(language) }) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_delete),
+                                    contentDescription = null
+                                )
+                            }
+                        },
+                        supportingContent = {
+                            Text("Уровень владения")
+                        },
+                        trailingContent = {
+                            ExposedDropdownMenuBox(
+                                expanded = languageDropDownMenu,
+                                onExpandedChange = { languageDropDownMenu = it },
+                                modifier = Modifier
+                                    .widthIn(min = 96.dp, max = 120.dp)
+                                    .height(48.dp)
+                            ) {
+                                TextField(
+                                    enabled = true,
+                                    readOnly = true,
+                                    value = "",
+                                    prefix = {
+                                        Text(text = if (language.level == LanguageLevel.OTHER) "" else language.level.toString())
+                                    },
+                                    textStyle = MaterialTheme.typography.labelMedium,
+                                    onValueChange = {},
+                                    colors = getDisabledInteractiveOutlinedTextFieldColors(error = false),
+                                    trailingIcon = {
+                                        AnimatedVisibility(
+                                            visible = !languageDropDownMenu,
+                                            enter = expandHorizontally(),
+                                            exit = shrinkHorizontally()
+                                        ) {
+                                            IconButton(
+                                                onClick = { languageDropDownMenu = true }
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.KeyboardArrowDown,
+                                                    contentDescription = stringResource(R.string.new_lesson_screen_show_subject_list)
+                                                )
+                                            }
+                                        }
+                                        AnimatedVisibility(
+                                            visible = languageDropDownMenu,
+                                            enter = expandHorizontally(),
+                                            exit = shrinkHorizontally()
+                                        ) {
+                                            IconButton(
+                                                onClick = { languageDropDownMenu = false }
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.KeyboardArrowUp,
+                                                    contentDescription = stringResource(R.string.new_lesson_screen_hide_subject_list)
+                                                )
+                                            }
+                                        }
+
+                                    },
+                                    modifier = Modifier.menuAnchor()
+                                )
+                                DropdownMenu(
+                                    expanded = languageDropDownMenu,
+                                    onDismissRequest = { languageDropDownMenu = false }) {
+                                    languageLevels.forEach { languageLevel ->
+                                        DropdownMenuItem(
+                                            text = { Text(text = languageLevel.toString()) },
+                                            onClick = {
+                                                updateLanguageLevel(
+                                                    language,
+                                                    languageLevel
+                                                )
+                                            })
+                                    }
+                                }
+                            }
+
+                        }
+                    )
+                }
+            }
     }
 }
 
@@ -63,8 +213,13 @@ fun AboutLanguages(
 fun AboutLanguagesPreview() {
     AboutLanguages(
         searchQuery = "",
+        languages = emptyList(),
+        addedLanguages = listOf(Language(Id(""), name = "Английский", level = LanguageLevel.B2)),
+        languageLevels = emptyList(),
         onQueryChange = {},
         onSearch = {},
-        searchIsActive = true,
+        onAddLanguage = {},
+        onRemoveLanguage = {},
+        updateLanguageLevel = { _, _ -> }
     )
 }

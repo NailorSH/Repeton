@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -191,7 +192,7 @@ fun ScheduleScreenContent(
             .fillMaxSize()
             .nestedScroll(pullToRefreshState.nestedScrollConnection)
     ) {
-
+        Spacer(modifier = Modifier.height(24.dp))
 
         Column(
             modifier = Modifier
@@ -303,7 +304,9 @@ fun ScheduleScreenContent(
 
 
         if (pullToRefreshState.isRefreshing) {
-            onAction(ScheduleAction.Refresh)
+            LaunchedEffect(key1 = true) {
+                onAction(ScheduleAction.Refresh)
+            }
         }
         LaunchedEffect(key1 = scheduleState.isRefreshing) {
             if (scheduleState.isRefreshing) {

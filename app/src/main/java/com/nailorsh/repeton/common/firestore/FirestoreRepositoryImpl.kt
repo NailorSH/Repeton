@@ -112,12 +112,28 @@ class FirestoreRepositoryImpl @Inject constructor(
         } else throw (IOException("Lesson not found"))
     }
 
+    override suspend fun getUserId(): String {
+        return getUserDto().id
+    }
+
     override suspend fun getUserType(): Boolean {
         return getUserDto().canBeTutor
     }
 
-    override suspend fun getUserId(): String {
-        return getUserDto().id
+    override suspend fun getUserName(): String {
+        return getUserDto().name
+    }
+
+    override suspend fun getUserSurname(): String {
+        return getUserDto().surname
+    }
+
+    override suspend fun getUserPhotoSrc(): String? {
+        return getUserDto().photoSrc
+    }
+
+    override suspend fun getUserAbout(): String? {
+        return getUserDto().about
     }
 
     override suspend fun getStudents(): List<UserDto> {

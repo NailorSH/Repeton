@@ -6,6 +6,7 @@ import com.nailorsh.repeton.R
 import com.nailorsh.repeton.core.navigation.NavigationRoute
 import com.nailorsh.repeton.features.navigation.routes.BottomBarScreen
 import com.nailorsh.repeton.features.navigation.routes.LessonCreationScreen
+import com.nailorsh.repeton.features.navigation.routes.ProfileScreen
 import com.nailorsh.repeton.features.settings.UserSettingsRepository
 import com.nailorsh.repeton.features.userprofile.data.Options
 import com.nailorsh.repeton.features.userprofile.data.TrailingContentType
@@ -132,7 +133,7 @@ class ProfileViewModel @Inject constructor(
                 is Options.Lessons -> _sideEffect.emit(LessonCreationScreen.NewLesson)
                 is Options.Students -> _sideEffect.emit(BottomBarScreen.Home)
                 is Options.Statistics -> _sideEffect.emit(BottomBarScreen.Home)
-                is Options.About -> _sideEffect.emit(BottomBarScreen.Home)
+                is Options.About -> _sideEffect.emit(ProfileScreen.ABOUT)
                 is Options.Security -> _sideEffect.emit(BottomBarScreen.Home)
                 is Options.Notifications -> _sideEffect.emit(BottomBarScreen.Home)
                 is Options.Language -> _sideEffect.emit(BottomBarScreen.Home)

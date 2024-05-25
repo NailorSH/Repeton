@@ -1,6 +1,7 @@
 package com.nailorsh.repeton.common.firestore
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
@@ -58,6 +59,11 @@ class FirestoreRepositoryImpl @Inject constructor(
     override suspend fun updateUserAbout(about: String) {
         val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
         db.collection("users").document(userId).update("about", about).await()
+    }
+
+    override suspend fun updateUserSpecialization(specialization: String) {
+        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+        db.collection("users").document(userId).update("specialization", specialization).await()
     }
 
     override suspend fun getUserDto(): UserDto {
@@ -142,6 +148,10 @@ class FirestoreRepositoryImpl @Inject constructor(
         return getUserDto().about
     }
 
+    override suspend fun getUserSpecialization(): String? {
+        return getUserDto().specialization
+    }
+
     override suspend fun getUserStudents(): List<UserDto>? = withContext(Dispatchers.IO) {
         val studentsIds = getUserDto().students
 
@@ -156,6 +166,44 @@ class FirestoreRepositoryImpl @Inject constructor(
         }
         studentTasks.awaitAll().filterNotNull()
             .takeIf { it.isNotEmpty() }  // Возвращаем null если список пуст.
+    }
+
+    override suspend fun addUserStudent(studentId: String) {
+        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+        val userDocRef = db.collection("users").document(userId)
+
+        db.runTransaction { transaction ->
+            val snapshot = transaction.get(userDocRef)
+
+            // Проверяем, есть ли уже такой studentId в массиве
+            if (snapshot.exists()) {
+                val students = snapshot.get("students") as? List<String> ?: listOf()
+                if (!students.contains(studentId)) {
+                    transaction.update(userDocRef, "students", FieldValue.arrayUnion(studentId))
+                }
+            }
+            // Возвращаем результат для дальнейшего использования, если необходимо
+            snapshot
+        }.await()
+    }
+
+    override suspend fun removeUserStudent(studentId: String) {
+        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+        val userDocRef = db.collection("users").document(userId)
+
+        db.runTransaction { transaction ->
+            val snapshot = transaction.get(userDocRef)
+
+            // Проверяем, есть ли уже такой studentId в массиве
+            if (snapshot.exists()) {
+                val students = snapshot.get("students") as? List<String> ?: listOf()
+                if (!students.contains(studentId)) {
+                    transaction.update(userDocRef, "students", FieldValue.arrayRemove(studentId))
+                }
+            }
+            // Возвращаем результат для дальнейшего использования, если необходимо
+            snapshot
+        }.await()
     }
 
     override suspend fun getUserTutors(): List<UserDto>? = withContext(Dispatchers.IO) {

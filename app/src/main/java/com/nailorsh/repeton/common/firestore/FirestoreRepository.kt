@@ -16,7 +16,10 @@ interface FirestoreRepository {
     suspend fun getUserSurname(): String
     suspend fun getUserPhotoSrc(): String?
     suspend fun getUserAbout(): String?
+    suspend fun getUserSpecialization(): String?
     suspend fun getUserStudents(): List<UserDto>?
+    suspend fun addUserStudent(studentId: String)
+    suspend fun removeUserStudent(studentId: String)
     suspend fun getUserTutors(): List<UserDto>?
     suspend fun getUserSubjectsWithPrices(): List<SubjectWithPriceDto>?
     suspend fun getUserLanguagesWithLevels(): List<LanguageWithLevelDto>?
@@ -34,4 +37,5 @@ interface FirestoreRepository {
     suspend fun updateUserSurname(surname: String)
     suspend fun updatePhotoSrc(url: String)
     suspend fun updateUserAbout(about: String)
+    suspend fun updateUserSpecialization(specialization: String)
 }

@@ -14,4 +14,5 @@ interface NewLessonRepository {
     suspend fun getStudents(): List<NewLessonUserItem>
     suspend fun uploadImages(images: List<Attachment.Image>): List<String>
     suspend fun uploadFile(uri: Uri): String
+    suspend fun getUserType() : Boolean
 }

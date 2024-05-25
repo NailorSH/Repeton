@@ -158,4 +158,8 @@
     <string name="new_lesson_screen_image_description_placeholder">Добавьте описание для выбранного изображения...</string>
     <string name="new_lesson_screen_last_image_delete_error">Должно остаться хотя бы одно изображение</string>
     <string name="new_lesson_screen_too_much_images_error">Нельзя добавить больше 10 изображений к одному уроку</string>
+    <string name="new_lesson_screen_error_not_tutor">Вы не репетитор</string>
+    <string name="new_lesson_error_cant_get_user_status">Не удалось получить статус пользователя</string>
+    <string name="schedule_screen_refresh_fail_msg">Не удалось обновить список занятий</string>
+    <string name="new_lesson_screen_error_lesson_save">Произошла ошибка при сохранении урока</string>
 </resources>

@@ -40,7 +40,7 @@ sealed interface NewLessonSecondNavigationEvent {
 sealed class NewLessonSecondUIEvent(@StringRes val msg: Int) {
 
     data class CameraFail(@StringRes val errorMsg: Int) : NewLessonSecondUIEvent(errorMsg)
-    data class PhotoSuccess(@StringRes val successMsg: Int) : NewLessonSecondUIEvent(successMsg)
+    data class LessonSaveFail(@StringRes val successMsg: Int) : NewLessonSecondUIEvent(successMsg)
     data class AttachmentFail(@StringRes val errorMsg: Int) : NewLessonSecondUIEvent(errorMsg)
     data class AttachmentSuccess(@StringRes val successMsg: Int) :
         NewLessonSecondUIEvent(successMsg)
@@ -85,6 +85,7 @@ sealed interface NewLessonSecondAction {
 
     data class UpdateShowImageDialogue(val enableDialogue: Boolean) : NewLessonSecondAction
 
+    data class UpdateShowLoadingDialogue(val enableDialogue: Boolean) : NewLessonSecondAction
 }
 
 
@@ -132,6 +133,16 @@ class NewLessonSecondViewModel @Inject constructor(
         viewModelScope.launch {
             when (action) {
 
+                is NewLessonSecondAction.SaveLesson -> {
+                    if (_state.value is NewLessonSecondUIState.Success &&
+                        !(_state.value as NewLessonSecondUIState.Success).state.showLoadingDialogue) {
+                        onAction(NewLessonSecondAction.UpdateShowLoadingDialogue(true))
+                        saveLesson()
+                        onAction(NewLessonSecondAction.UpdateShowLoadingDialogue(false))
+                    }
+                }
+
+
                 is NewLessonSecondAction.NavigateBack -> {
                     _navigationEventsChannel.emit(NewLessonSecondNavigationEvent.NavigateBack)
                 }
@@ -171,17 +182,6 @@ class NewLessonSecondViewModel @Inject constructor(
                     _state.update { state ->
                         if (state is NewLessonSecondUIState.Success) {
                             when (action) {
-                                is NewLessonSecondAction.SaveLesson -> {
-                                    _state.update {
-                                        state.copy(
-                                            state = state.state.copy(
-                                                showLoadingDialogue = true
-                                            )
-                                        )
-                                    }
-                                    saveLesson()
-                                    state.copy(state = state.state.copy(showLoadingDialogue = false))
-                                }
 
                                 is NewLessonSecondAction.UpdateImageText -> updateImageText(
                                     state,
@@ -229,6 +229,11 @@ class NewLessonSecondViewModel @Inject constructor(
                                     action.enableDialogue
                                 )
 
+                                is NewLessonSecondAction.UpdateShowLoadingDialogue -> updateShowLoadingDialogue(
+                                    state,
+                                    action.enableDialogue
+                                )
+
                                 else -> state
                             }
                         } else {
@@ -240,27 +245,41 @@ class NewLessonSecondViewModel @Inject constructor(
         }
     }
 
-    private suspend fun saveLesson() = withContext(Dispatchers.IO) {
+    private suspend fun saveLesson() {
         when (val state = _state.value) {
             is NewLessonSecondUIState.Success -> {
-                if (!checkStartTime(firstScreenData.startTime)) {
-                    return@withContext
-                }
-                val imageURLsList: List<String>
-                try {
-                    imageURLsList =
-                        newLessonRepository.uploadImages(state.state.imageAttachments)
-                } catch (e: IOException) {
-                    _uiEventsChannel.emit(NewLessonSecondUIEvent.AttachmentFail(R.string.new_lesson_screen_error_upload_file))
-                    return@withContext
-                } catch (e: HttpRetryException) {
-                    _uiEventsChannel.emit(NewLessonSecondUIEvent.AttachmentFail(R.string.new_lesson_screen_error_upload_file))
-                    return@withContext
+                val isTutor: Boolean = try {
+                    newLessonRepository.getUserType()
                 } catch (e: Exception) {
-                    _uiEventsChannel.emit(NewLessonSecondUIEvent.AttachmentFail(R.string.new_lesson_screen_error_upload_file))
-                    return@withContext
+                    _uiEventsChannel.emit(NewLessonSecondUIEvent.LessonSaveFail(R.string.new_lesson_error_cant_get_user_status))
+                    return
                 }
-                val imageAttachments = if (state.state.showImageSlider) state.state.imageAttachments else null
+                if (!isTutor) {
+                    _uiEventsChannel.emit(NewLessonSecondUIEvent.AttachmentFail(R.string.new_lesson_screen_error_not_tutor))
+                    return
+                }
+                if (!checkStartTime(firstScreenData.startTime)) {
+                    return
+                }
+                var imageURLsList: List<String> = listOf()
+                if (state.state.showImageSlider) {
+                    try {
+                        imageURLsList =
+                            newLessonRepository.uploadImages(state.state.imageAttachments)
+                    } catch (e: IOException) {
+                        _uiEventsChannel.emit(NewLessonSecondUIEvent.AttachmentFail(R.string.new_lesson_screen_error_upload_file))
+                        return
+                    } catch (e: HttpRetryException) {
+                        _uiEventsChannel.emit(NewLessonSecondUIEvent.AttachmentFail(R.string.new_lesson_screen_error_upload_file))
+                        return
+                    } catch (e: Exception) {
+                        _uiEventsChannel.emit(NewLessonSecondUIEvent.AttachmentFail(R.string.new_lesson_screen_error_upload_file))
+                        return
+                    }
+                }
+
+                val imageAttachments =
+                    if (state.state.showImageSlider) state.state.imageAttachments else null
                 val newLesson = NewLessonItem(
                     students = firstScreenData.students,
                     subject = firstScreenData.subject,
@@ -281,14 +300,12 @@ class NewLessonSecondViewModel @Inject constructor(
                     newLessonRepository.saveNewLesson(newLesson)
                     _navigationEventsChannel.emit(NewLessonSecondNavigationEvent.SaveLesson)
                 } catch (e: IOException) {
-                    /* TODO Обработать ошибку */
+                    _uiEventsChannel.emit(NewLessonSecondUIEvent.LessonSaveFail(R.string.new_lesson_screen_error_lesson_save))
                 } catch (e: HttpRetryException) {
-                    /* TODO Обработать ошибку */
+                    _uiEventsChannel.emit(NewLessonSecondUIEvent.LessonSaveFail(R.string.new_lesson_screen_error_lesson_save))
                 } catch (e: Exception) {
-                    /* TODO Обработать ошибку */
+                    _uiEventsChannel.emit(NewLessonSecondUIEvent.LessonSaveFail(R.string.new_lesson_screen_error_lesson_save))
                 }
-
-
             }
 
             else -> {}
@@ -437,6 +454,17 @@ class NewLessonSecondViewModel @Inject constructor(
         return state.copy(
             state = state.state.copy(
                 showImageDialogue = dialogueEnabled
+            )
+        )
+    }
+
+    private fun updateShowLoadingDialogue(
+        state: NewLessonSecondUIState.Success,
+        dialogueEnabled: Boolean
+    ): NewLessonSecondUIState {
+        return state.copy(
+            state = state.state.copy(
+                showLoadingDialogue = dialogueEnabled
             )
         )
     }

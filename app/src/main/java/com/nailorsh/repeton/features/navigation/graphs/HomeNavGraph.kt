@@ -1,9 +1,13 @@
 package com.nailorsh.repeton.features.navigation.graphs
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,6 +18,7 @@ import com.nailorsh.repeton.features.navigation.routes.Graph
 import com.nailorsh.repeton.features.navigation.routes.LessonViewScreen
 import com.nailorsh.repeton.features.navigation.routes.TutorViewScreen
 import com.nailorsh.repeton.features.schedule.presentation.ui.ScheduleScreen
+import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleNavigationEvent
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleViewModel
 import com.nailorsh.repeton.features.tutorsearch.presentation.ui.SearchScreen
 import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.TutorSearchViewModel
@@ -49,16 +54,24 @@ fun HomeNavGraph(
         composable(route = BottomBarScreen.Home.route) {
             val scheduleViewModel = hiltViewModel<ScheduleViewModel>()
 
-            ScheduleScreen(
-                scheduleUiState = scheduleViewModel.scheduleUiState,
-                // Вызов getLessons по указанной дате
-                getLessons = { scheduleViewModel.getLessons() },
-                onLessonClicked = { lesson ->
-                    navController.navigate(LessonViewScreen.Lesson.createLessonRoute(lesson.id))
-                },
-                onNewLessonClicked = {
-                    navController.navigate(Graph.LESSON_CREATION.route)
+            val lifecycleOwner = LocalLifecycleOwner.current
+            val navigationEvents = scheduleViewModel.navigationEvents
+            val uiEvents = scheduleViewModel.uiEvents
+            LaunchedEffect(lifecycleOwner.lifecycle) {
+                lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    navigationEvents.collect { navigationEvent ->
+                        when (navigationEvent) {
+                            is ScheduleNavigationEvent.NavigateToLesson -> navController.navigate(LessonViewScreen.Lesson.createLessonRoute(navigationEvent.lesson.id))
+                            ScheduleNavigationEvent.NavigateToNewLesson -> navController.navigate(Graph.LESSON_CREATION.route)
+                        }
+                    }
                 }
+            }
+
+            ScheduleScreen(
+                scheduleUiState = scheduleViewModel.state.collectAsState().value,
+                uiEvents = uiEvents,
+                onAction = scheduleViewModel::onAction
             )
         }
 

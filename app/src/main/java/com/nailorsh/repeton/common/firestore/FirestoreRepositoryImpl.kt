@@ -1,5 +1,6 @@
 package com.nailorsh.repeton.common.firestore
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
@@ -35,19 +36,51 @@ class FirestoreRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateUserName(name: String) {
-        TODO("Not yet implemented")
+        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+        db.collection("users").document(userId)
+            .update("name", name)
+            .addOnSuccessListener {
+                Log.d("FirestoreRepository", "User name updated successfully")
+            }
+            .addOnFailureListener { e ->
+                Log.w("FirestoreRepository", "Error updating user name", e)
+            }
     }
 
     override suspend fun updateUserSurname(surname: String) {
-        TODO("Not yet implemented")
+        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+        db.collection("users").document(userId)
+            .update("surname", surname)
+            .addOnSuccessListener {
+                Log.d("FirestoreRepository", "User surname updated successfully")
+            }
+            .addOnFailureListener { e ->
+                Log.w("FirestoreRepository", "Error updating user surname", e)
+            }
     }
 
     override suspend fun updatePhotoSrc(url: String) {
-        TODO("Not yet implemented")
+        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+        db.collection("users").document(userId)
+            .update("photoSrc", url)
+            .addOnSuccessListener {
+                Log.d("FirestoreRepository", "Photo source updated successfully")
+            }
+            .addOnFailureListener { e ->
+                Log.w("FirestoreRepository", "Error updating photo source", e)
+            }
     }
 
     override suspend fun updateUserAbout(about: String) {
-        TODO("Not yet implemented")
+        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+        db.collection("users").document(userId)
+            .update("about", about)
+            .addOnSuccessListener {
+                Log.d("FirestoreRepository", "User about updated successfully")
+            }
+            .addOnFailureListener { e ->
+                Log.w("FirestoreRepository", "Error updating user about", e)
+            }
     }
 
     override suspend fun getUserDto(): UserDto {

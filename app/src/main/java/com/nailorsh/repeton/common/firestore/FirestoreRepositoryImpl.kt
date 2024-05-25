@@ -34,6 +34,22 @@ class FirestoreRepositoryImpl @Inject constructor(
             )
     }
 
+    override suspend fun updateUserName(name: String) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateUserSurname(surname: String) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updatePhotoSrc(url: String) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateUserAbout(about: String) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getUserDto(): UserDto {
         if (userDto == null) {
             val uid = auth.currentUser?.uid

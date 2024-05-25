@@ -20,4 +20,9 @@ interface FirestoreRepository {
     suspend fun getSubject(id : Id) : Subject
     suspend fun getHomework(lessonId : Id) : Homework
     suspend fun sendHomeworkMessage(lessonId : Id, message : String)
+    suspend fun updateUserName(name: String)
+    suspend fun updateUserSurname(surname: String)
+    suspend fun updatePhotoSrc(url: String)
+    suspend fun updateUserAbout(about: String)
+
 }

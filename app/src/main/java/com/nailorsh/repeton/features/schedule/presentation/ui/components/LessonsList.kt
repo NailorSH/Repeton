@@ -31,29 +31,30 @@ fun LessonsList(
     Column(
         modifier = modifier
     ) {
+        LazyColumn(
+            modifier = Modifier
+                .padding(top = 6.dp)
+        ) {
         if (lessons.isEmpty()) {
-            ElevatedCard(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .width(dimensionResource(R.dimen.schedule_screen_button_width))
-                    .height(dimensionResource(R.dimen.schedule_screen_lesson_size))
-            ) {
-                Text(
-                    text = stringResource(R.string.lessons_not_found),
-                    style = MaterialTheme.typography.headlineSmall,
+            item {
+                ElevatedCard(
                     modifier = Modifier
-                        .padding(horizontal = 13.dp, vertical = 16.dp)
-                )
+                        .padding(top = 10.dp)
+                        .width(dimensionResource(R.dimen.schedule_screen_button_width))
+                        .height(dimensionResource(R.dimen.schedule_screen_lesson_size))
+                ) {
+                    Text(
+                        text = stringResource(R.string.lessons_not_found),
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier
+                            .padding(horizontal = 13.dp, vertical = 16.dp)
+                    )
+                }
             }
         } else {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(top = 6.dp)
-            ) {
                 items(items = lessons) { lesson ->
                     LessonCard(lesson = lesson, onClick = onLessonClicked)
                 }
-
             }
         }
 

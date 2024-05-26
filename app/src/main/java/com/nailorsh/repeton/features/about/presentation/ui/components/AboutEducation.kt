@@ -106,7 +106,7 @@ fun AboutEducation(
                 onDismissRequest = { onExpandedChange(false) },
                 modifier = Modifier.fillMaxWidth()) {
                 educationsList.forEach {
-                    DropdownMenuItem(text = { it.name }, onClick = { onEducationChange(it) })
+                    DropdownMenuItem(text = { Text(it.name) }, onClick = { onEducationChange(it) })
                 }
             }
         }

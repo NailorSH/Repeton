@@ -51,8 +51,8 @@ data class AboutState(
     val changeOptionsIsExpanded: Boolean = false,
     val educationListIsExpanded: Boolean = false,
     val aboutIsChanging: Boolean? = null,
-    val dataChanged : Boolean = false,
-    val showSavingDialogue : Boolean = false,
+    val dataChanged: Boolean = false,
+    val showSavingDialogue: Boolean = false,
 )
 
 sealed interface AboutAction {
@@ -65,7 +65,8 @@ sealed interface AboutAction {
     data class RemoveLanguage(val language: Language) : AboutAction
     data class UpdateLanguageLevel(val language: Language, val languageLvl: LanguageLevel) :
         AboutAction
-    data class UpdateImage(val image : Uri) : AboutAction
+
+    data class UpdateImage(val image: Uri) : AboutAction
     object SaveChanges : AboutAction
     object UpdateLanguagesList : AboutAction
     object DismissAbout : AboutAction
@@ -83,8 +84,10 @@ sealed interface AboutAction {
 
 sealed class AboutUiEvent(@StringRes val msg: Int) {
     object TooMuchLessons : AboutUiEvent(R.string.about_screen_too_much_lessons)
-
+    object LanguageAlreadyAdded : AboutUiEvent(R.string.about_screen_language_already_added)
     object SaveError : AboutUiEvent(R.string.about_screen_couldnt_update_data)
+
+    object TooMuchSymbolsInBio : AboutUiEvent(R.string.about_screen_too_much_symbols_in_bio)
 }
 
 sealed interface AboutNavigationEvent {
@@ -163,7 +166,7 @@ class AboutViewModel @Inject constructor(
                     languages = if (_state.value.languages != startData.languages) _state.value.languages else null
                 )
             )
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             _uiEvents.emit(AboutUiEvent.SaveError)
         }
     }
@@ -182,12 +185,16 @@ class AboutViewModel @Inject constructor(
                 }
 
                 is AboutAction.SaveAbout -> {
-                    _state.update { state -> state.copy(about = action.about) }
+                    if (action.about.length > 200) {
+                        _uiEvents.emit(AboutUiEvent.TooMuchSymbolsInBio)
+                    } else
+                    _state.update { state -> state.copy(about = action.about, aboutIsChanging = false) }
                 }
 
                 is AboutAction.ChangeEducation -> {
                     _state.update { state -> state.copy(education = action.education.toDomain()) }
                 }
+
                 is AboutAction.UpdateImage -> {
                     _state.update { state -> state.copy(photoSrc = action.image.toString()) }
                 }
@@ -205,6 +212,10 @@ class AboutViewModel @Inject constructor(
                 is AboutAction.AddLanguage -> {
                     if (_state.value.languages != null && _state.value.languages!!.size == 5) {
                         _uiEvents.emit(AboutUiEvent.TooMuchLessons)
+                    } else if (_state.value.languages != null && _state.value.languages!!.filter { language ->
+                            language.id == action.languageItem.id
+                        }.isEmpty()) {
+                        _uiEvents.emit(AboutUiEvent.LanguageAlreadyAdded)
                     } else
                         _state.update { state ->
                             state.copy(
@@ -245,6 +256,7 @@ class AboutViewModel @Inject constructor(
                             languageSearchQuery = action.searchQuery
                         )
                     }
+                    onAction(AboutAction.UpdateLanguagesList)
                 }
 
                 is AboutAction.UpdateLanguageLevel -> {
@@ -258,6 +270,7 @@ class AboutViewModel @Inject constructor(
                         })
                     }
                 }
+
                 AboutAction.NavigateBack -> {
                     _navigationEvents.emit(AboutNavigationEvent.NavigateBack)
                 }
@@ -266,16 +279,18 @@ class AboutViewModel @Inject constructor(
                     _state.update { state ->
                         state.copy(
                             languagesList = languagesList.filter {
-                                it.name.lowercase(Locale.getDefault()).startsWith(prefix = state.languageSearchQuery.lowercase(
-                                    Locale.getDefault()
-                                ))
+                                it.name.lowercase(Locale.getDefault()).startsWith(
+                                    prefix = state.languageSearchQuery.lowercase(
+                                        Locale.getDefault()
+                                    )
+                                )
                             }
                         )
                     }
                 }
 
                 AboutAction.RetryAction -> getData()
-                AboutAction.DismissAbout -> _state.update {state ->
+                AboutAction.DismissAbout -> _state.update { state ->
                     state.copy(aboutIsChanging = false)
                 }
             }

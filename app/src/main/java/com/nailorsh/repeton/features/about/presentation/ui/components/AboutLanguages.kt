@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
@@ -121,17 +122,17 @@ fun AboutLanguages(
                         mutableStateOf(false)
                     }
                     ListItem(
-                        headlineContent = { Text(language.name) },
+                        headlineContent = { Text(text = language.name, overflow = TextOverflow.Ellipsis, maxLines = 1) },
                         leadingContent = {
                             IconButton(onClick = { onRemoveLanguage(language) }) {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.ic_delete),
+                                    painter = painterResource(id = R.drawable.ic_remove),
                                     contentDescription = null
                                 )
                             }
                         },
                         supportingContent = {
-                            Text("Уровень владения")
+                            Text(stringResource(R.string.about_screen_skill_level), overflow = TextOverflow.Ellipsis, maxLines = 1)
                         },
                         trailingContent = {
                             ExposedDropdownMenuBox(
@@ -195,6 +196,7 @@ fun AboutLanguages(
                                                     language,
                                                     languageLevel
                                                 )
+                                                languageDropDownMenu = false
                                             })
                                     }
                                 }

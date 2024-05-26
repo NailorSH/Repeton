@@ -4,8 +4,11 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.nailorsh.repeton.common.data.models.Id
@@ -99,6 +103,14 @@ fun AboutScreen(
         }
     }
 
+    if (state.showSavingDialogue) {
+        Dialog(onDismissRequest = {  }) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(modifier = Modifier.size(48.dp))
+            }
+        }
+    }
+
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
         sheetContent = {
@@ -153,26 +165,6 @@ fun AboutScreen(
                     )
                 }
                 item {
-                    AboutEducation(
-                        education = state.education?.name,
-                        specialization = state.education?.specialization,
-                        educationsList = state.educationList,
-                        onEducationChange = { onAction(AboutAction.ChangeEducation(it)) },
-                        onSpecializationChange = { onAction(AboutAction.ChangeSpecialization(it)) },
-                        isExpanded = state.educationListIsExpanded,
-                        onExpandedChange = { onAction(AboutAction.UpdateShowEducationList(it)) },
-                        modifier = Modifier.padding(horizontal = 24.dp)
-                    )
-                }
-                item {
-                    HorizontalDivider(
-                        modifier = Modifier.padding(
-                            top = 24.dp, bottom = 18.dp, start = 48.dp, end = 48.dp
-                        )
-                    )
-                }
-
-                item {
                     AboutLanguages(
                         searchQuery = state.languageSearchQuery,
                         languages = state.languagesList,
@@ -192,6 +184,30 @@ fun AboutScreen(
                         },
                         modifier = Modifier.padding(horizontal = 24.dp)
                     )
+                }
+
+                item {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(
+                            top = 24.dp, bottom = 18.dp, start = 48.dp, end = 48.dp
+                        )
+                    )
+                }
+
+                item {
+                    AboutEducation(
+                        education = state.education?.name,
+                        specialization = state.education?.specialization,
+                        educationsList = state.educationList,
+                        onEducationChange = { onAction(AboutAction.ChangeEducation(it)) },
+                        onSpecializationChange = { onAction(AboutAction.ChangeSpecialization(it)) },
+                        isExpanded = state.educationListIsExpanded,
+                        onExpandedChange = { onAction(AboutAction.UpdateShowEducationList(it)) },
+                        modifier = Modifier.padding(horizontal = 24.dp)
+                    )
+                }
+                item {
+                    Spacer(Modifier.height(16.dp))
                 }
             }
     }

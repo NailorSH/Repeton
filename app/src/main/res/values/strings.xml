@@ -170,4 +170,7 @@
     <string name="about_screen_too_much_lessons">Нельзя добавить больше 5 языков</string>
     <string name="about_screen_bio_placeholder">Расскажите о себе…</string>
     <string name="about_screen_couldnt_update_data">Не удалось обновить данные</string>
+    <string name="about_screen_language_already_added">Язык уже добавлен</string>
+    <string name="about_screen_too_much_symbols_in_bio">Укажите менее 200 символов</string>
+    <string name="about_screen_skill_level">Уровень владения</string>
 </resources>

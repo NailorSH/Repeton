@@ -1,6 +1,7 @@
 package com.nailorsh.repeton.common.firestore
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
@@ -322,13 +323,13 @@ class FirestoreRepositoryImpl @Inject constructor(
         }
     }
 
-
     override suspend fun addLesson(newLesson: LessonDto) {
         // Convert Lesson to LessonDto
         val lessonDto = newLesson
 
         // Add lesson to "lessons" collection
         val lessonRef = db.collection("lessons").document()
+        val lessonId = lessonRef.id
 //        lessonDto.id = lessonRef.id // Set the generated ID to lessonDto
         lessonRef.set(lessonDto).await()
 
@@ -343,7 +344,14 @@ class FirestoreRepositoryImpl @Inject constructor(
 //                attachmentDto.id = attachmentRef.id // Set the generated ID to attachmentDto
                 attachmentRef.set(attachment).await()
             }
+        }
 
+        // Добавляем lessonId репетитору
+        addLessonIdToUser(newLesson.tutorId, lessonId)
+
+        // Добавляем lessonId всем ученикам
+        newLesson.studentIds.forEach { studentId ->
+            addLessonIdToUser(studentId, lessonId)
         }
     }
 
@@ -372,12 +380,21 @@ class FirestoreRepositoryImpl @Inject constructor(
 
 
     private suspend fun tutorProvider(id: String): Tutor {
-        println()
         val userSnapshot = db.collection("users").document(id).get().await()
 
         val userDto = userSnapshot.toObject<UserDto>()
         return userDto?.let {
             Tutor(id = Id(id), name = it.name, surname = it.surname)
         } ?: Tutor(id = Id("-1")) // TODO обработать более умно
+    }
+
+    override suspend fun addLessonIdToUser(userId: String, lessonId: String) {
+        val userRef = db.collection("users").document(userId)
+        db.runTransaction { transaction ->
+            val snapshot = transaction.get(userRef)
+            val lessonIds = snapshot.get("lessons") as? List<String> ?: emptyList()
+            val updatedLessonIds = lessonIds + lessonId
+            transaction.update(userRef, "lessons", updatedLessonIds)
+        }.await()
     }
 }

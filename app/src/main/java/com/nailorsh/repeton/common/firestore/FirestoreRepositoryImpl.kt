@@ -355,11 +355,21 @@ class FirestoreRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getLessons(): List<Lesson> {
-        val querySnapshot = db.collection("lessons").get().await()
-        val lessonsDto = querySnapshot.toObjects<LessonDto>()
+    override suspend fun getLessons(): List<Lesson> = withContext(Dispatchers.IO) {
+        val userLessons = getUserDto().lessons ?: return@withContext emptyList<Lesson>()
 
-        return lessonsDto.map {
+        if (userLessons.isEmpty()) {
+            return@withContext emptyList<Lesson>()
+        }
+
+        // Запрашиваем документы уроков, идентификаторы которых содержатся в списке userLessons
+        val lessonsDto = db.collection("lessons")
+            .whereIn(FieldPath.documentId(), userLessons)
+            .get()
+            .await()
+            .toObjects<LessonDto>()
+
+        lessonsDto.map {
             val tutor = tutorProvider(it.tutorId)
             val subject = getSubject(Id(it.subjectId))
             it.toDomain(subject, tutor)

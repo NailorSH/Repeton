@@ -3,6 +3,7 @@ package com.nailorsh.repeton.features.about.presentation.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -47,10 +48,11 @@ fun AboutBioCard(
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            ),
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = biography,
+                text = if (biography.isNotBlank()) biography else stringResource(id = R.string.about_screen_bio_placeholder),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(horizontal = 18.dp, vertical = 18.dp)
             )

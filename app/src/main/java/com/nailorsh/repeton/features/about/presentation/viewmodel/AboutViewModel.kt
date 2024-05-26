@@ -92,6 +92,8 @@ sealed class AboutUiEvent(@StringRes val msg: Int) {
 
 sealed interface AboutNavigationEvent {
     object NavigateBack : AboutNavigationEvent
+
+    object ChangedSuccessful : AboutNavigationEvent
 }
 
 @HiltViewModel
@@ -168,7 +170,9 @@ class AboutViewModel @Inject constructor(
             )
         } catch (e: Exception) {
             _uiEvents.emit(AboutUiEvent.SaveError)
+            return@withContext
         }
+        _navigationEvents.emit(AboutNavigationEvent.ChangedSuccessful)
     }
 
     fun onAction(action: AboutAction) {

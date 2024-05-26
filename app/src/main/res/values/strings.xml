@@ -173,4 +173,13 @@
     <string name="about_screen_language_already_added">Язык уже добавлен</string>
     <string name="about_screen_too_much_symbols_in_bio">Укажите менее 200 символов</string>
     <string name="about_screen_skill_level">Уровень владения</string>
+    <string name="profile_screen_subjects">Предметы</string>
+    <string name="subject_screen_loading_error">Не удалось обновить список всех предметов.</string>
+    <string name="subjects_screen_too_much_subjects">Нельзя добавить более 5 предметов</string>
+    <string name="subjects_screen_subject_already_added">Вы уже добавили этот предмет</string>
+    <string name="subject_screen_lesson_price">Цена за занятие (руб.)</string>
+    <string name="subject_screen_search_placeholder">Поиск предемета...</string>
+    <string name="subject_screen_title">Предеметы</string>
+    <string name="profile_screen_tutors">Преподаватели</string>
+    <string name="subject_screen_price_supporting_text">"Чтобы сохранить цену нажмите на "</string>
 </resources>

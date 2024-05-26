@@ -1,5 +1,6 @@
 package com.nailorsh.repeton.features.schedule.presentation.viewmodel
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -43,6 +44,7 @@ sealed class ScheduleUIEvent(@StringRes val msg: Int) {
 
     object RefreshFail : ScheduleUIEvent(R.string.schedule_screen_refresh_fail_msg)
 
+
 }
 
 data class ScheduleState(
@@ -51,6 +53,7 @@ data class ScheduleState(
     val isRefreshing: Boolean = false,
 )
 
+private const val TAG = "SCHEDULE"
 
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(
@@ -97,11 +100,14 @@ class ScheduleViewModel @Inject constructor(
                             )
                         )
                 } catch (e: IOException) {
+                    Log.d(TAG, e.toString())
                     _state.value = ScheduleUiState.Error
                 } catch (e: HttpRetryException) {
                     _state.value = ScheduleUiState.Error
+                    Log.d(TAG, e.toString())
                 } catch (e: Exception) {
                     _state.value = ScheduleUiState.Error
+                    Log.d(TAG, e.toString())
                 }
             }
         }

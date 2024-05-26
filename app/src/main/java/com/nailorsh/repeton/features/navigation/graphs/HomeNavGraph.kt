@@ -24,6 +24,9 @@ import com.nailorsh.repeton.features.navigation.routes.TutorViewScreen
 import com.nailorsh.repeton.features.schedule.presentation.ui.ScheduleScreen
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleNavigationEvent
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleViewModel
+import com.nailorsh.repeton.features.subjects.presentation.ui.SubjectsScreen
+import com.nailorsh.repeton.features.subjects.presentation.viewmodel.SubjectViewModel
+import com.nailorsh.repeton.features.subjects.presentation.viewmodel.SubjectsNavigationEvent
 import com.nailorsh.repeton.features.tutorsearch.presentation.ui.SearchScreen
 import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.TutorSearchViewModel
 import com.nailorsh.repeton.features.userprofile.presentation.ui.ProfileScreen
@@ -118,6 +121,13 @@ fun HomeNavGraph(
                     navigationEvents.collect { navigationEvent ->
                         when (navigationEvent) {
                             AboutNavigationEvent.NavigateBack -> navController.popBackStack()
+                            AboutNavigationEvent.ChangedSuccessful -> {
+                                navController.popBackStack(
+                                    BottomBarScreen.Profile.route,
+                                    true
+                                )
+                                navController.navigate(BottomBarScreen.Profile.route)
+                            }
                         }
                     }
                 }
@@ -126,6 +136,29 @@ fun HomeNavGraph(
                 state = aboutViewModel.state.collectAsState().value,
                 onAction = aboutViewModel::onAction,
                 uiEvents = uiEvents
+            )
+        }
+
+        composable(route = ProfileScreen.SUBJECTS.route) {
+            val subjectsViewModel = hiltViewModel<SubjectViewModel>()
+
+            val lifecycleOwner = LocalLifecycleOwner.current
+            val navigationEvents = subjectsViewModel.navigationEvents
+            val uiEvents = subjectsViewModel.uiEvents
+            LaunchedEffect(lifecycleOwner.lifecycle) {
+                lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    navigationEvents.collect { navigationEvent ->
+                        when (navigationEvent) {
+                            SubjectsNavigationEvent.NavigateBack -> navController.popBackStack()
+                        }
+                    }
+                }
+            }
+
+            SubjectsScreen(
+                state = subjectsViewModel.state.collectAsState().value,
+                uiEvents = uiEvents,
+                onAction = subjectsViewModel::onAction
             )
         }
     }

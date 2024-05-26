@@ -222,6 +222,44 @@ class FirestoreRepositoryImpl @Inject constructor(
             .takeIf { it.isNotEmpty() }  // Возвращаем null если список пуст.
     }
 
+    override suspend fun addUserTutor(tutorId: String) {
+        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+        val userDocRef = db.collection("users").document(userId)
+
+        db.runTransaction { transaction ->
+            val snapshot = transaction.get(userDocRef)
+
+            // Проверяем, есть ли уже такой tutorId в массиве
+            if (snapshot.exists()) {
+                val tutors = snapshot.get("tutors") as? List<String> ?: listOf()
+                if (!tutors.contains(tutorId)) {
+                    transaction.update(userDocRef, "tutors", FieldValue.arrayUnion(tutorId))
+                }
+            }
+            // Возвращаем результат для дальнейшего использования, если необходимо
+            snapshot
+        }.await()
+    }
+
+    override suspend fun removeUserTutor(tutorId: String) {
+        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+        val userDocRef = db.collection("users").document(userId)
+
+        db.runTransaction { transaction ->
+            val snapshot = transaction.get(userDocRef)
+
+            // Проверяем, есть ли уже такой tutorId в массиве
+            if (snapshot.exists()) {
+                val tutors = snapshot.get("tutors") as? List<String> ?: listOf()
+                if (!tutors.contains(tutorId)) {
+                    transaction.update(userDocRef, "tutors", FieldValue.arrayRemove(tutorId))
+                }
+            }
+            // Возвращаем результат для дальнейшего использования, если необходимо
+            snapshot
+        }.await()
+    }
+
     override suspend fun getUserSubjectsWithPrices(): List<SubjectWithPriceDto>? {
         return getUserDto().subjects
     }

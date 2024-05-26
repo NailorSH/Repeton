@@ -21,6 +21,8 @@ interface FirestoreRepository {
     suspend fun addUserStudent(studentId: String)
     suspend fun removeUserStudent(studentId: String)
     suspend fun getUserTutors(): List<UserDto>?
+    suspend fun addUserTutor(tutorId: String)
+    suspend fun removeUserTutor(tutorId: String)
     suspend fun getUserSubjectsWithPrices(): List<SubjectWithPriceDto>?
     suspend fun getUserLanguagesWithLevels(): List<LanguageWithLevelDto>?
     suspend fun getUserDto(): UserDto

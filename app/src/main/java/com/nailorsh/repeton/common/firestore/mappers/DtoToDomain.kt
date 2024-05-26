@@ -2,17 +2,26 @@ package com.nailorsh.repeton.common.firestore.mappers
 
 import com.google.firebase.Timestamp
 import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.education.Education
+import com.nailorsh.repeton.common.data.models.language.Language
+import com.nailorsh.repeton.common.data.models.language.LanguageLevel
 import com.nailorsh.repeton.common.data.models.lesson.Attachment
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.models.lesson.Review
 import com.nailorsh.repeton.common.data.models.lesson.Subject
+import com.nailorsh.repeton.common.data.models.lesson.SubjectWithPrice
+import com.nailorsh.repeton.common.data.models.user.Student
 import com.nailorsh.repeton.common.data.models.user.Tutor
+import com.nailorsh.repeton.common.data.models.user.User
 import com.nailorsh.repeton.common.firestore.models.AttachmentDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
+import com.nailorsh.repeton.common.firestore.models.LanguageWithLevelDto
 import com.nailorsh.repeton.common.firestore.models.LessonDto
 import com.nailorsh.repeton.common.firestore.models.ReviewDto
 import com.nailorsh.repeton.common.firestore.models.SubjectDto
+import com.nailorsh.repeton.common.firestore.models.SubjectWithPriceDto
+import com.nailorsh.repeton.common.firestore.models.UserDto
 import java.time.LocalDateTime
 import java.time.ZoneId
 
@@ -57,8 +66,8 @@ fun SubjectDto.toDomain(): Subject {
 }
 
 fun LessonDto.toDomain(
-    subject : Subject,
-    tutor : Tutor
+    subject: Subject,
+    tutor: Tutor
 ): Lesson {
     return Lesson(
         id = Id(this.id),
@@ -76,4 +85,80 @@ fun LessonDto.toDomain(
 fun Timestamp.toLocalDateTime(): LocalDateTime {
     val instant = this.toDate().toInstant()
     return LocalDateTime.ofInstant(instant, ZoneId.of("UTC"))
+}
+
+fun SubjectWithPriceDto.toDomain(
+    subject: Subject
+): SubjectWithPrice {
+    return SubjectWithPrice(
+        subject = subject,
+        price = this.price
+    )
+}
+
+fun UserDto.toDomain(
+    subjectsPrices: List<SubjectWithPrice>? = null,
+    languages: List<Language>? = null,
+    education: Education? = null
+): User {
+    return if (this.canBeTutor) {
+        this.toDomainTutor(
+            subjectsPrices = subjectsPrices,
+            languages = languages,
+            education = education?.name
+        )
+    } else {
+        this.toDomainStudent()
+    }
+}
+
+fun UserDto.toDomainStudent(): Student {
+    return Student(
+        id = Id(this.id),
+        name = this.name,
+        surname = this.surname,
+        middleName = this.middleName,
+        about = this.about,
+        photoSrc = this.photoSrc,
+        location = null,
+        isTutor = false,
+    )
+}
+
+fun UserDto.toDomainTutor(
+    subjectsPrices: List<SubjectWithPrice>? = null,
+    languages: List<Language>? = null,
+    education: String? = null
+): Tutor {
+    val subjects = subjectsPrices?.map { it.subject }
+
+    return Tutor(
+        id = Id(this.id),
+        name = this.name,
+        surname = this.surname,
+        middleName = this.middleName,
+        about = this.about,
+        photoSrc = this.photoSrc,
+        location = null,
+        isTutor = true,
+        subjects = subjects,
+        education = education,
+        subjectsPrices = subjectsPrices,
+        averagePrice = this.averagePrice,
+        rating = this.averageRating,
+        reviewsNumber = this.reviewsNumber,
+        taughtLessonNumber = this.taughtLessonNumber,
+        experienceYears = this.experienceYears,
+        languages = languages,
+    )
+}
+
+fun LanguageWithLevelDto.toDomain(
+    language: String
+): Language {
+    return Language(
+        id = Id(this.languageId),
+        name = language,
+        level = LanguageLevel.getLevelByString(this.level)
+    )
 }

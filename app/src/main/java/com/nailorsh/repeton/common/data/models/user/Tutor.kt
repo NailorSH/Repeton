@@ -2,7 +2,9 @@ package com.nailorsh.repeton.common.data.models.user
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.language.Language
 import com.nailorsh.repeton.common.data.models.lesson.Subject
+import com.nailorsh.repeton.common.data.models.lesson.SubjectWithPrice
 import com.nailorsh.repeton.common.data.models.location.Location
 
 data class Tutor(
@@ -16,16 +18,16 @@ data class Tutor(
     override val isTutor: Boolean = true,
     val subjects: List<Subject>? = null,
     val education: String? = null,
-    val subjectsPrices: Map<String, String>? = null,
+    val subjectsPrices: List<SubjectWithPrice>? = null,
     val averagePrice: Int = 0,
     val rating: Double = 0.0,
     val reviewsNumber: Int = 0,
     val taughtLessonNumber: Int = 0,
     val experienceYears: Int = 0,
-    val languages: Map<String, String>? = null,
+    val languages: List<Language>? = null,
+) : User
 
-    ) : User
-
+// TODO убрать этот метод
 fun DocumentSnapshot.toTutorWithId(): Tutor {
     val id = Id(id)  // Assuming 'id' comes from DocumentSnapshot's intrinsic property
     val name = getString("name") ?: ""
@@ -63,12 +65,12 @@ fun DocumentSnapshot.toTutorWithId(): Tutor {
         about = about,
         photoSrc = photoSrc,
         education = education,
-        subjectsPrices = subjectsPrices,
+        subjectsPrices = null,
         averagePrice = averagePrice,
         rating = rating,
         reviewsNumber = reviewsNumber,
         taughtLessonNumber = taughtLessonNumber,
         experienceYears = experienceYears,
-        languages = languages
+        languages = null
     )
 }

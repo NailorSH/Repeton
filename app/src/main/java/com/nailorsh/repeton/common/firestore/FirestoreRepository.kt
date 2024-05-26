@@ -1,12 +1,14 @@
 package com.nailorsh.repeton.common.firestore
 
 import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.language.Language
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.models.lesson.Subject
-import com.nailorsh.repeton.common.firestore.models.LanguageWithLevelDto
+import com.nailorsh.repeton.common.data.models.lesson.SubjectWithPrice
+import com.nailorsh.repeton.common.data.models.user.Student
+import com.nailorsh.repeton.common.data.models.user.Tutor
 import com.nailorsh.repeton.common.firestore.models.LessonDto
-import com.nailorsh.repeton.common.firestore.models.SubjectWithPriceDto
 import com.nailorsh.repeton.common.firestore.models.UserDto
 
 interface FirestoreRepository {
@@ -17,14 +19,15 @@ interface FirestoreRepository {
     suspend fun getUserPhotoSrc(): String?
     suspend fun getUserAbout(): String?
     suspend fun getUserSpecialization(): String?
-    suspend fun getUserStudents(): List<UserDto>?
+    suspend fun getUserStudents(): List<Student>?
     suspend fun addUserStudent(studentId: String)
     suspend fun removeUserStudent(studentId: String)
-    suspend fun getUserTutors(): List<UserDto>?
+    suspend fun getUserTutors(): List<Tutor>?
     suspend fun addUserTutor(tutorId: String)
     suspend fun removeUserTutor(tutorId: String)
-    suspend fun getUserSubjectsWithPrices(): List<SubjectWithPriceDto>?
-    suspend fun getUserLanguagesWithLevels(): List<LanguageWithLevelDto>?
+    suspend fun getUserSubjectsWithPrices(): List<SubjectWithPrice>?
+    suspend fun getUserLanguagesWithLevels(): List<Language>?
+    suspend fun getUserEducation(): String?
     suspend fun getUserDto(): UserDto
     suspend fun getStudents(): List<UserDto>
     suspend fun addLesson(newLesson: LessonDto)

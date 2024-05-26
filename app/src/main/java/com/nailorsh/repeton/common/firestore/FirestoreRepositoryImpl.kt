@@ -6,17 +6,22 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.language.Language
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.models.lesson.Subject
+import com.nailorsh.repeton.common.data.models.lesson.SubjectWithPrice
+import com.nailorsh.repeton.common.data.models.user.Student
 import com.nailorsh.repeton.common.data.models.user.Tutor
 import com.nailorsh.repeton.common.firestore.mappers.toDomain
+import com.nailorsh.repeton.common.firestore.mappers.toDomainStudent
+import com.nailorsh.repeton.common.firestore.mappers.toDomainTutor
+import com.nailorsh.repeton.common.firestore.models.EducationDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
-import com.nailorsh.repeton.common.firestore.models.LanguageWithLevelDto
+import com.nailorsh.repeton.common.firestore.models.LanguageDto
 import com.nailorsh.repeton.common.firestore.models.LessonDto
 import com.nailorsh.repeton.common.firestore.models.ReviewDto
 import com.nailorsh.repeton.common.firestore.models.SubjectDto
-import com.nailorsh.repeton.common.firestore.models.SubjectWithPriceDto
 import com.nailorsh.repeton.common.firestore.models.UserDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -152,20 +157,18 @@ class FirestoreRepositoryImpl @Inject constructor(
         return getUserDto().specialization
     }
 
-    override suspend fun getUserStudents(): List<UserDto>? = withContext(Dispatchers.IO) {
-        val studentsIds = getUserDto().students
-
-        if (studentsIds.isNullOrEmpty()) {
-            return@withContext null  // Возвращаем null если нет списка студентов
-        }
+    override suspend fun getUserStudents(): List<Student>? = withContext(Dispatchers.IO) {
+        val studentsIds = getUserDto().students ?: return@withContext null
 
         val studentTasks = studentsIds.map { studentId ->
             async {
-                db.collection("users").document(studentId).get().await().toObject<UserDto>()
+                db.collection("users").document(studentId).get().await()
+                    .toObject<UserDto>()
+                    ?.toDomainStudent()
             }
         }
-        studentTasks.awaitAll().filterNotNull()
-            .takeIf { it.isNotEmpty() }  // Возвращаем null если список пуст.
+
+        studentTasks.awaitAll().filterNotNull().takeIf { it.isNotEmpty() }
     }
 
     override suspend fun addUserStudent(studentId: String) {
@@ -206,20 +209,23 @@ class FirestoreRepositoryImpl @Inject constructor(
         }.await()
     }
 
-    override suspend fun getUserTutors(): List<UserDto>? = withContext(Dispatchers.IO) {
-        val tutorsIds = getUserDto().students
-
-        if (tutorsIds.isNullOrEmpty()) {
-            return@withContext null  // Возвращаем null если нет списка студентов
-        }
+    override suspend fun getUserTutors(): List<Tutor>? = withContext(Dispatchers.IO) {
+        val tutorsIds = getUserDto().tutors ?: return@withContext null
 
         val tutorTasks = tutorsIds.map { tutorId ->
             async {
-                db.collection("users").document(tutorId).get().await().toObject<UserDto>()
+                db.collection("users").document(tutorId).get()
+                    .await()
+                    .toObject<UserDto>()
+                    ?.toDomainTutor(
+                        subjectsPrices = getUserSubjectsWithPrices(),
+                        languages = getUserLanguagesWithLevels(),
+                        education = getUserEducation()
+                    )
             }
         }
-        tutorTasks.awaitAll().filterNotNull()
-            .takeIf { it.isNotEmpty() }  // Возвращаем null если список пуст.
+
+        tutorTasks.awaitAll().filterNotNull().takeIf { it.isNotEmpty() }
     }
 
     override suspend fun addUserTutor(tutorId: String) {
@@ -260,12 +266,42 @@ class FirestoreRepositoryImpl @Inject constructor(
         }.await()
     }
 
-    override suspend fun getUserSubjectsWithPrices(): List<SubjectWithPriceDto>? {
-        return getUserDto().subjects
-    }
+    override suspend fun getUserSubjectsWithPrices(): List<SubjectWithPrice>? =
+        withContext(Dispatchers.IO) {
+            val subjectsWithPrices = getUserDto().subjects ?: return@withContext null
 
-    override suspend fun getUserLanguagesWithLevels(): List<LanguageWithLevelDto>? {
-        return getUserDto().languages
+            val subjectsTasks = subjectsWithPrices.map { subjectWithPrice ->
+                async {
+                    db.collection("subjects").document(subjectWithPrice.subjectId).get().await()
+                        .toObject<SubjectDto>()
+                        ?.let { subjectWithPrice.toDomain(it.toDomain()) }
+                }
+            }
+
+            subjectsTasks.awaitAll().filterNotNull().takeIf { it.isNotEmpty() }
+        }
+
+    override suspend fun getUserLanguagesWithLevels(): List<Language>? =
+        withContext(Dispatchers.IO) {
+            val languagesWithLevels = getUserDto().languages ?: return@withContext null
+
+            val languagesTasks = languagesWithLevels.map { languageWithLevel ->
+                async {
+                    db.collection("languages").document(languageWithLevel.languageId).get()
+                        .await()
+                        .toObject<LanguageDto>()
+                        ?.let { languageWithLevel.toDomain(it.name) }
+                }
+            }
+
+            languagesTasks.awaitAll().filterNotNull().takeIf { it.isNotEmpty() }
+        }
+
+    override suspend fun getUserEducation(): String? = withContext(Dispatchers.IO) {
+        val educationId = getUserDto().educationId ?: return@withContext null
+
+        db.collection("education").document(educationId).get().await()
+            .toObject<EducationDto>()?.name
     }
 
     override suspend fun getStudents(): List<UserDto> {

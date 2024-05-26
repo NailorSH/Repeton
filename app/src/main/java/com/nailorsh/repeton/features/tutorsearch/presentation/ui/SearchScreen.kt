@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.lesson.SubjectWithPrice
 import com.nailorsh.repeton.common.data.models.user.Tutor
 import com.nailorsh.repeton.common.data.sources.FakeTutorsSource
 import com.nailorsh.repeton.core.ui.components.ErrorScreen
@@ -336,7 +337,7 @@ fun InfoSection(
 fun PriceSection(
     modifier: Modifier = Modifier,
     @StringRes title: Int,
-    subjectsPrices: Map<String, String>
+    subjectsPrices: List<SubjectWithPrice>
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.Top),
@@ -356,13 +357,13 @@ fun PriceSection(
             verticalArrangement = Arrangement.spacedBy(3.dp, Alignment.Top),
             horizontalAlignment = Alignment.Start,
         ) {
-            for (pair in subjectsPrices) {
+            for (subjectWithPrice in subjectsPrices) {
                 Row(
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = pair.key,
+                        text = subjectWithPrice.subject.name,
                         style = TextStyle(
                             fontSize = 16.sp,
                             lineHeight = 20.sp,
@@ -374,7 +375,7 @@ fun PriceSection(
                             .padding(end = 5.dp)
                     )
                     Text(
-                        text = pair.value,
+                        text = subjectWithPrice.price.toString(),
                         style = TextStyle(
                             fontSize = 16.sp,
                             lineHeight = 20.sp,

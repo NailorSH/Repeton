@@ -10,9 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import com.nailorsh.repeton.R
+import com.nailorsh.repeton.common.data.models.language.Language
 
 @Composable
-fun LanguageSkills(tutorLanguages: Map<String, String>) {
+fun LanguageSkills(tutorLanguages: List<Language>) {
     Text(
         text = stringResource(R.string.my_languages),
         style = MaterialTheme.typography.titleLarge,
@@ -21,8 +22,8 @@ fun LanguageSkills(tutorLanguages: Map<String, String>) {
     Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_small)))
 
     Column {
-        tutorLanguages.forEach { (language, level) ->
-            LanguageItem(name = language, level = level)
+        tutorLanguages.forEach {
+            LanguageItem(name = it.name, level = it.level.value)
         }
     }
 }

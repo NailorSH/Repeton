@@ -21,4 +21,10 @@ enum class LanguageLevel(val value: String) {
     override fun toString(): String {
         return value
     }
+
+    companion object {
+        fun getLevelByString(level: String): LanguageLevel {
+            return values().find { it.value == level } ?: OTHER
+        }
+    }
 }

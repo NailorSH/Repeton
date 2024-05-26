@@ -11,11 +11,15 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.nailorsh.repeton.features.about.presentation.ui.AboutScreen
+import com.nailorsh.repeton.features.about.presentation.viewmodel.AboutNavigationEvent
+import com.nailorsh.repeton.features.about.presentation.viewmodel.AboutViewModel
 import com.nailorsh.repeton.features.messenger.presentation.ui.ChatsScreen
 import com.nailorsh.repeton.features.messenger.presentation.viewmodel.MessengerViewModel
 import com.nailorsh.repeton.features.navigation.routes.BottomBarScreen
 import com.nailorsh.repeton.features.navigation.routes.Graph
 import com.nailorsh.repeton.features.navigation.routes.LessonViewScreen
+import com.nailorsh.repeton.features.navigation.routes.ProfileScreen
 import com.nailorsh.repeton.features.navigation.routes.TutorViewScreen
 import com.nailorsh.repeton.features.schedule.presentation.ui.ScheduleScreen
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleNavigationEvent
@@ -96,7 +100,24 @@ fun HomeNavGraph(
                 onOptionNavigate = { navController.navigate(it.route) },
                 onOptionClicked = profileViewModel::onOptionClicked
             )
+        }
 
+        composable(route = ProfileScreen.ABOUT.route) {
+            val aboutViewModel = hiltViewModel<AboutViewModel>()
+
+            val lifecycleOwner = LocalLifecycleOwner.current
+            val navigationEvents = aboutViewModel.navigationEvents
+            val uiEvents = aboutViewModel.uiEvents
+            LaunchedEffect(lifecycleOwner.lifecycle) {
+                lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    navigationEvents.collect { navigationEvent ->
+                        when (navigationEvent) {
+                            AboutNavigationEvent.NavigateBack -> navController.popBackStack()
+                        }
+                    }
+                }
+            }
+            AboutScreen(aboutState = aboutViewModel.state.collectAsState().value, onAction = aboutViewModel::onAction)
         }
     }
 }

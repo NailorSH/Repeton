@@ -1,6 +1,7 @@
 package com.nailorsh.repeton.common.firestore
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
@@ -11,11 +12,17 @@ import com.nailorsh.repeton.common.data.models.lesson.Subject
 import com.nailorsh.repeton.common.data.models.user.Tutor
 import com.nailorsh.repeton.common.firestore.mappers.toDomain
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
+import com.nailorsh.repeton.common.firestore.models.LanguageWithLevelDto
 import com.nailorsh.repeton.common.firestore.models.LessonDto
 import com.nailorsh.repeton.common.firestore.models.ReviewDto
 import com.nailorsh.repeton.common.firestore.models.SubjectDto
+import com.nailorsh.repeton.common.firestore.models.SubjectWithPriceDto
 import com.nailorsh.repeton.common.firestore.models.UserDto
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import javax.inject.Inject
 
@@ -32,6 +39,31 @@ class FirestoreRepositoryImpl @Inject constructor(
             .collection("reviews").document().set(
                 ReviewDto(text = message)
             )
+    }
+
+    override suspend fun updateUserName(name: String) {
+        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+        db.collection("users").document(userId).update("name", name).await()
+    }
+
+    override suspend fun updateUserSurname(surname: String) {
+        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+        db.collection("users").document(userId).update("surname", surname).await()
+    }
+
+    override suspend fun updatePhotoSrc(url: String) {
+        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+        db.collection("users").document(userId).update("photoSrc", url).await()
+    }
+
+    override suspend fun updateUserAbout(about: String) {
+        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+        db.collection("users").document(userId).update("about", about).await()
+    }
+
+    override suspend fun updateUserSpecialization(specialization: String) {
+        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+        db.collection("users").document(userId).update("specialization", specialization).await()
     }
 
     override suspend fun getUserDto(): UserDto {
@@ -66,7 +98,7 @@ class FirestoreRepositoryImpl @Inject constructor(
     override suspend fun getUser(userId: Id): UserDto {
         val document = db.collection("users").document(userId.value).get().await()
         if (document.exists()) {
-            val user = document.toObject(UserDto::class.java)!!
+            val user = document.toObject<UserDto>()!!
             return user
         } else {
             throw (IOException("User not found"))
@@ -77,7 +109,7 @@ class FirestoreRepositoryImpl @Inject constructor(
         val document =
             db.collection("lessons").document().collection("homework").document().get().await()
         if (document.exists()) {
-            val homework = document.toObject(HomeworkDto::class.java)!!
+            val homework = document.toObject<HomeworkDto>()!!
             return homework.toDomain()
         } else throw (IOException("Homework not found"))
     }
@@ -92,12 +124,148 @@ class FirestoreRepositoryImpl @Inject constructor(
         } else throw (IOException("Lesson not found"))
     }
 
+    override suspend fun getUserId(): String {
+        return getUserDto().id
+    }
+
     override suspend fun getUserType(): Boolean {
         return getUserDto().canBeTutor
     }
 
-    override suspend fun getUserId(): String {
-        return getUserDto().id
+    override suspend fun getUserName(): String {
+        return getUserDto().name
+    }
+
+    override suspend fun getUserSurname(): String {
+        return getUserDto().surname
+    }
+
+    override suspend fun getUserPhotoSrc(): String? {
+        return getUserDto().photoSrc
+    }
+
+    override suspend fun getUserAbout(): String? {
+        return getUserDto().about
+    }
+
+    override suspend fun getUserSpecialization(): String? {
+        return getUserDto().specialization
+    }
+
+    override suspend fun getUserStudents(): List<UserDto>? = withContext(Dispatchers.IO) {
+        val studentsIds = getUserDto().students
+
+        if (studentsIds.isNullOrEmpty()) {
+            return@withContext null  // Возвращаем null если нет списка студентов
+        }
+
+        val studentTasks = studentsIds.map { studentId ->
+            async {
+                db.collection("users").document(studentId).get().await().toObject<UserDto>()
+            }
+        }
+        studentTasks.awaitAll().filterNotNull()
+            .takeIf { it.isNotEmpty() }  // Возвращаем null если список пуст.
+    }
+
+    override suspend fun addUserStudent(studentId: String) {
+        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+        val userDocRef = db.collection("users").document(userId)
+
+        db.runTransaction { transaction ->
+            val snapshot = transaction.get(userDocRef)
+
+            // Проверяем, есть ли уже такой studentId в массиве
+            if (snapshot.exists()) {
+                val students = snapshot.get("students") as? List<String> ?: listOf()
+                if (!students.contains(studentId)) {
+                    transaction.update(userDocRef, "students", FieldValue.arrayUnion(studentId))
+                }
+            }
+            // Возвращаем результат для дальнейшего использования, если необходимо
+            snapshot
+        }.await()
+    }
+
+    override suspend fun removeUserStudent(studentId: String) {
+        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+        val userDocRef = db.collection("users").document(userId)
+
+        db.runTransaction { transaction ->
+            val snapshot = transaction.get(userDocRef)
+
+            // Проверяем, есть ли уже такой studentId в массиве
+            if (snapshot.exists()) {
+                val students = snapshot.get("students") as? List<String> ?: listOf()
+                if (!students.contains(studentId)) {
+                    transaction.update(userDocRef, "students", FieldValue.arrayRemove(studentId))
+                }
+            }
+            // Возвращаем результат для дальнейшего использования, если необходимо
+            snapshot
+        }.await()
+    }
+
+    override suspend fun getUserTutors(): List<UserDto>? = withContext(Dispatchers.IO) {
+        val tutorsIds = getUserDto().students
+
+        if (tutorsIds.isNullOrEmpty()) {
+            return@withContext null  // Возвращаем null если нет списка студентов
+        }
+
+        val tutorTasks = tutorsIds.map { tutorId ->
+            async {
+                db.collection("users").document(tutorId).get().await().toObject<UserDto>()
+            }
+        }
+        tutorTasks.awaitAll().filterNotNull()
+            .takeIf { it.isNotEmpty() }  // Возвращаем null если список пуст.
+    }
+
+    override suspend fun addUserTutor(tutorId: String) {
+        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+        val userDocRef = db.collection("users").document(userId)
+
+        db.runTransaction { transaction ->
+            val snapshot = transaction.get(userDocRef)
+
+            // Проверяем, есть ли уже такой tutorId в массиве
+            if (snapshot.exists()) {
+                val tutors = snapshot.get("tutors") as? List<String> ?: listOf()
+                if (!tutors.contains(tutorId)) {
+                    transaction.update(userDocRef, "tutors", FieldValue.arrayUnion(tutorId))
+                }
+            }
+            // Возвращаем результат для дальнейшего использования, если необходимо
+            snapshot
+        }.await()
+    }
+
+    override suspend fun removeUserTutor(tutorId: String) {
+        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
+        val userDocRef = db.collection("users").document(userId)
+
+        db.runTransaction { transaction ->
+            val snapshot = transaction.get(userDocRef)
+
+            // Проверяем, есть ли уже такой tutorId в массиве
+            if (snapshot.exists()) {
+                val tutors = snapshot.get("tutors") as? List<String> ?: listOf()
+                if (!tutors.contains(tutorId)) {
+                    transaction.update(userDocRef, "tutors", FieldValue.arrayRemove(tutorId))
+                }
+            }
+            // Возвращаем результат для дальнейшего использования, если необходимо
+            snapshot
+        }.await()
+    }
+
+    override suspend fun getUserSubjectsWithPrices(): List<SubjectWithPriceDto>? {
+        return getUserDto().subjects
+    }
+
+    override suspend fun getUserLanguagesWithLevels(): List<LanguageWithLevelDto>? {
+        return getUserDto().languages
     }
 
     override suspend fun getStudents(): List<UserDto> {
@@ -105,7 +273,7 @@ class FirestoreRepositoryImpl @Inject constructor(
         if (!querySnapshot.isEmpty) {
             val students = mutableListOf<UserDto>()
             querySnapshot.documents.forEach { document ->
-                val user = document.toObject(UserDto::class.java)
+                val user = document.toObject<UserDto>()
                 if (user != null) {
                     students.add(
                         user.copy(id = document.id)

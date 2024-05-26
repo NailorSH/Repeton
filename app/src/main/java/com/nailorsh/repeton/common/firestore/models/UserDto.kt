@@ -14,6 +14,7 @@ data class UserDto(
     @PropertyName("languages") val languages: List<LanguageWithLevelDto>? = null,
     @PropertyName("educationId") val educationId: String? = null,
     @PropertyName("subjects") val subjects: List<SubjectWithPriceDto>? = null,
+    @PropertyName("lessons") val lessons: List<String>? = null,
     @PropertyName("students") val students: List<String>? = null,
     @PropertyName("tutors") val tutors: List<String>? = null,
     @PropertyName("specialization") val specialization: String? = null

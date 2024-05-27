@@ -145,7 +145,7 @@ fun StudentsScreen(
                                 leadingContent = {
                                     UserImage(photoSrc = student.photoSrc, 48.dp)
                                 },
-                                headlineContent = { Text(student.name) },
+                                headlineContent = { Text("${student.surname} ${student.name}") },
                                 trailingContent = {
                                     IconButton(onClick = {
                                         onAction(StudentsAction.AddStudent(student))

@@ -1,8 +1,10 @@
 package com.nailorsh.repeton.features.students.presentation.ui.components
 
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,10 +24,21 @@ fun StudentItem(
 ) {
     ListItem(
         leadingContent = { UserImage(photoSrc = student.photoSrc, size = 64.dp) },
-        headlineContent = { Text("${student.surname} ${student.name}") },
-        trailingContent = { IconButton(onClick = onRemoveStudent) {
-            Icon(painter = painterResource(id = R.drawable.ic_delete), contentDescription = null)
-        }},
+        headlineContent = {
+            Text(
+                "${student.surname} ${student.name}",
+                style = MaterialTheme.typography.titleLarge,
+            )
+        },
+        trailingContent = {
+            IconButton(onClick = onRemoveStudent, ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_delete),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        },
         modifier = modifier
     )
 }

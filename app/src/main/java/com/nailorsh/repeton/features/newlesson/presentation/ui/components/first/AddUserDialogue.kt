@@ -32,9 +32,9 @@ fun AddUserDialogue(
             Text(
                 stringResource(R.string.new_lesson_screen_students_list_title),
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(start = 8.dp, top = 16.dp)
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp)
             )
-            LazyColumn(modifier = Modifier.padding(vertical = 32.dp)) {
+            LazyColumn(modifier = Modifier.padding(top = 16.dp, bottom = 32.dp)) {
                 itemsIndexed(students) { index, user ->
 
                     ListItem(

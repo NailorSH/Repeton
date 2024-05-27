@@ -58,6 +58,10 @@ class FirestoreRepositoryImpl @Inject constructor(
         return auth.currentUser
     }
 
+    override suspend fun signoutUser() {
+        auth.signOut()
+    }
+
     override suspend fun sendHomeworkMessage(lessonId: Id, message: String) {
         db.collection("lessons").document(lessonId.value).collection("homework").document()
             .collection("reviews").document().set(

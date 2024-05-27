@@ -337,6 +337,33 @@ class FirestoreRepositoryImpl @Inject constructor(
             .map { it.toDomainStudent() }
     }
 
+    override suspend fun getTutors(): List<Tutor> = withContext(Dispatchers.IO) {
+        db.collection("users")
+            .whereEqualTo("canBeTutor", true)
+            .get()
+            .await()
+            .toObjects<UserDto>()
+            .map {
+                it.toDomainTutor(
+                    subjectsPrices = getUserSubjectsWithPrices(),
+                    languages = getUserLanguagesWithLevels(),
+                    educations = getUserEducations()
+                )
+            }
+    }
+
+    override suspend fun getTutor(id: Id): Tutor = withContext(Dispatchers.IO) {
+        db.collection("users")
+            .document(id.value)
+            .get()
+            .await()
+            .toObject<UserDto>()
+            ?.toDomainTutor(
+                subjectsPrices = getUserSubjectsWithPrices(),
+                languages = getUserLanguagesWithLevels(),
+                educations = getUserEducations()
+            ) ?: throw NoSuchElementException("Tutor not found for id: ${id.value}")
+    }
 
     override suspend fun addLesson(newLesson: Lesson) {
         // Convert Lesson to LessonDto
@@ -366,7 +393,7 @@ class FirestoreRepositoryImpl @Inject constructor(
         val lessonsDto = querySnapshot.toObjects<LessonDto>()
 
         return lessonsDto.map {
-            val tutor = tutorProvider(it.tutorId)
+            val tutor = getTutor(Id(it.tutorId))
             val subject = getSubject(Id(it.subjectId))
             it.toDomain(subject, tutor)
         }
@@ -379,7 +406,7 @@ class FirestoreRepositoryImpl @Inject constructor(
 
             return lesson?.toDomain(
                 subject = getSubject(Id(lesson.subjectId)),
-                tutor = tutorProvider(lesson.tutorId)
+                tutor = getTutor(Id(lesson.tutorId))
             ) ?: throw (IOException("Error parsing lesson"))
         } else throw (IOException("Lesson not found"))
     }
@@ -488,14 +515,5 @@ class FirestoreRepositoryImpl @Inject constructor(
 
             userRef.delete().await()
         }
-    }
-
-    private suspend fun tutorProvider(id: String): Tutor {
-        val userSnapshot = db.collection("users").document(id).get().await()
-
-        val userDto = userSnapshot.toObject<UserDto>()
-        return userDto?.let {
-            Tutor(id = Id(id), name = it.name, surname = it.surname)
-        } ?: Tutor(id = Id("-1")) // TODO обработать более умно
     }
 }

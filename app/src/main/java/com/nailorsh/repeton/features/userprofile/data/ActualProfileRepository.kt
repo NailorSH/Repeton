@@ -3,6 +3,7 @@ package com.nailorsh.repeton.features.userprofile.data
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.nailorsh.repeton.R
+import com.nailorsh.repeton.common.data.models.user.User
 import com.nailorsh.repeton.common.firestore.FirestoreRepository
 import com.nailorsh.repeton.features.userprofile.data.models.ProfileUserData
 import javax.inject.Inject
@@ -131,13 +132,13 @@ class ActualProfileRepository @Inject constructor(
         )
 
     override suspend fun getUserData(): ProfileUserData {
-        val userDto = firestoreRepository.getUserDto()
+        val user: User = firestoreRepository.getUser()
         return ProfileUserData(
-            name = userDto.name,
-            surname = userDto.surname,
-            phoneNumber = userDto.phoneNumber,
+            name = user.name,
+            surname = user.surname,
+            phoneNumber = user.phoneNumber,
             photoSrc = "https://i.imgur.com/C25Otm8.jpeg",
-            isTutor = userDto.canBeTutor
+            isTutor = user.isTutor
         )
     }
 }

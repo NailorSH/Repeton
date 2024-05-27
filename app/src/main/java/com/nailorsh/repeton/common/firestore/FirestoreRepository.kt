@@ -33,6 +33,8 @@ interface FirestoreRepository {
     suspend fun getUserDto(): UserDto
     suspend fun getUser(): User
     suspend fun getStudents(): List<Student>
+    suspend fun getTutors(): List<Tutor>
+    suspend fun getTutor(id: Id): Tutor?
     suspend fun addLesson(newLesson: Lesson)
     suspend fun getLessons(): List<Lesson>
     suspend fun getLesson(id: Id): Lesson

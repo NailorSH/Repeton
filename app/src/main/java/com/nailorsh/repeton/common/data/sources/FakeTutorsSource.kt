@@ -24,6 +24,7 @@ object FakeTutorsSource {
             taughtLessonNumber = 250,
             experienceYears = 6,
             languages = null,
+            phoneNumber = ""
         ),
 
         Tutor(
@@ -43,6 +44,7 @@ object FakeTutorsSource {
             taughtLessonNumber = 10,
             experienceYears = 1,
             languages = null,
+            phoneNumber = ""
         ),
 
         Tutor(
@@ -63,6 +65,7 @@ object FakeTutorsSource {
             taughtLessonNumber = 50,
             experienceYears = 2,
             languages = null,
+            phoneNumber = ""
         ),
 
         Tutor(
@@ -83,6 +86,7 @@ object FakeTutorsSource {
             taughtLessonNumber = 100,
             experienceYears = 8,
             languages = null,
+            phoneNumber = ""
         ),
     )
 

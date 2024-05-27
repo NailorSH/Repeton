@@ -10,6 +10,7 @@ interface User {
     val middleName: String?
     val about: String?
     val photoSrc: String?
+    val phoneNumber: String
     val location: Location?
     val isTutor : Boolean
 }

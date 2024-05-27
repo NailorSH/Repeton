@@ -125,6 +125,7 @@ fun UserDto.toDomainStudent(): Student {
         middleName = this.middleName,
         about = this.about,
         photoSrc = this.photoSrc,
+        phoneNumber = this.phoneNumber,
         location = null,
         isTutor = false,
     )
@@ -144,6 +145,7 @@ fun UserDto.toDomainTutor(
         middleName = this.middleName,
         about = this.about,
         photoSrc = this.photoSrc,
+        phoneNumber = this.phoneNumber,
         location = null,
         isTutor = true,
         subjects = subjects,

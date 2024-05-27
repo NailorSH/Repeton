@@ -11,7 +11,7 @@ import com.nailorsh.repeton.common.data.models.lesson.Subject
 import com.nailorsh.repeton.common.data.models.lesson.SubjectWithPrice
 import com.nailorsh.repeton.common.data.models.user.Student
 import com.nailorsh.repeton.common.data.models.user.Tutor
-import com.nailorsh.repeton.common.firestore.models.LessonDto
+import com.nailorsh.repeton.common.data.models.user.User
 import com.nailorsh.repeton.common.firestore.models.UserDto
 
 interface FirestoreRepository {
@@ -31,8 +31,9 @@ interface FirestoreRepository {
     suspend fun getUserLanguagesWithLevels(): List<Language>?
     suspend fun getUserEducations(): List<Education>?
     suspend fun getUserDto(): UserDto
+    suspend fun getUser(): User
     suspend fun getStudents(): List<Student>
-    suspend fun addLesson(newLesson: LessonDto)
+    suspend fun addLesson(newLesson: Lesson)
     suspend fun getLessons(): List<Lesson>
     suspend fun getLesson(id: Id): Lesson
     suspend fun getSubjects(): List<Subject>

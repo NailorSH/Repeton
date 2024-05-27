@@ -21,7 +21,7 @@ import java.time.ZoneOffset
 fun Lesson.toDto(): LessonDto {
     return LessonDto(
         tutorId = this.tutor.id.value,
-        studentIds = emptyList(),
+        studentIds = this.studentIds.map { it.value },
         subjectId = this.subject.id.value,
         topic = this.topic,
         startTime = this.startTime.toTimestamp(),

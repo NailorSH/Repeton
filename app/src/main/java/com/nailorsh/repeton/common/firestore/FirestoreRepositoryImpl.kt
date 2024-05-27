@@ -16,6 +16,7 @@ import com.nailorsh.repeton.common.data.models.lesson.Subject
 import com.nailorsh.repeton.common.data.models.lesson.SubjectWithPrice
 import com.nailorsh.repeton.common.data.models.user.Student
 import com.nailorsh.repeton.common.data.models.user.Tutor
+import com.nailorsh.repeton.common.data.models.user.User
 import com.nailorsh.repeton.common.firestore.mappers.toDomain
 import com.nailorsh.repeton.common.firestore.mappers.toDomainStudent
 import com.nailorsh.repeton.common.firestore.mappers.toDomainTutor
@@ -91,6 +92,10 @@ class FirestoreRepositoryImpl @Inject constructor(
 
         }
         return userDto!!
+    }
+
+    override suspend fun getUser(): User {
+        return getUserDto().toDomain()
     }
 
     override suspend fun getSubjects(): List<Subject> {
@@ -333,9 +338,9 @@ class FirestoreRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun addLesson(newLesson: LessonDto) {
+    override suspend fun addLesson(newLesson: Lesson) {
         // Convert Lesson to LessonDto
-        val lessonDto = newLesson
+        val lessonDto = newLesson.toDto()
 
         // Add lesson to "lessons" collection
         val lessonRef = db.collection("lessons").document()
@@ -348,12 +353,11 @@ class FirestoreRepositoryImpl @Inject constructor(
 //            homeworkDto.id = homeworkRef.id // Set the generated ID to homeworkDto
             homeworkRef.set(homework).await()
 
-            homework.attachments.forEach { attachment ->
+            homework.attachments?.forEach { attachment ->
                 val attachmentRef = homeworkRef.collection("attachments").document()
 //                attachmentDto.id = attachmentRef.id // Set the generated ID to attachmentDto
                 attachmentRef.set(attachment).await()
             }
-
         }
     }
 

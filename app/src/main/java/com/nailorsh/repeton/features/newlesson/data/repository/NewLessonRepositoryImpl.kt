@@ -4,11 +4,9 @@ import android.net.Uri
 import androidx.core.net.toUri
 import com.google.firebase.storage.FirebaseStorage
 import com.nailorsh.repeton.common.data.models.lesson.Attachment
+import com.nailorsh.repeton.common.data.models.lesson.Homework
+import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.firestore.FirestoreRepository
-import com.nailorsh.repeton.common.firestore.mappers.toDto
-import com.nailorsh.repeton.common.firestore.mappers.toTimestamp
-import com.nailorsh.repeton.common.firestore.models.HomeworkDto
-import com.nailorsh.repeton.common.firestore.models.LessonDto
 import com.nailorsh.repeton.features.newlesson.data.mappers.toNewLessonUserItem
 import com.nailorsh.repeton.features.newlesson.data.models.NewLessonItem
 import com.nailorsh.repeton.features.newlesson.data.models.NewLessonUserItem
@@ -28,29 +26,31 @@ class NewLessonRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveNewLesson(lesson: NewLessonItem) = withContext(Dispatchers.IO) {
-        val tutorId = firestoreRepository.getUserId()
-        val studentsIds = lesson.students.map { it.id.value }
-        var homeworkDto: HomeworkDto? = null
+        val tutor = firestoreRepository.getUser()
+        val studentsIds = lesson.students.map { it.id }
+        var homework: Homework? = null
         if (lesson.homework != null) {
-            val attachments = lesson.homework.attachments?.map { it.toDto() } ?: emptyList()
-            homeworkDto = HomeworkDto(
-                authorId = tutorId,
+            val attachments = lesson.homework.attachments ?: emptyList()
+            homework = Homework(
+                authorID = tutor.id,
                 text = lesson.homework.text,
                 attachments = attachments
             )
         }
-        val lessonDto = LessonDto(
-            tutorId = tutorId,
+
+        val newLesson = Lesson(
+            tutor = tutor,
             studentIds = studentsIds,
             topic = lesson.topic,
-            subjectId = lesson.subject.id.value,
+            subject = lesson.subject,
             description = lesson.description ?: "",
-            startTime = lesson.startTime.toTimestamp(),
-            endTime = lesson.endTime.toTimestamp(),
-            homework = homeworkDto,
+            startTime = lesson.startTime,
+            endTime = lesson.endTime,
+            homework = homework,
             additionalMaterials = lesson.additionalMaterials ?: ""
         )
-        firestoreRepository.addLesson(lessonDto)
+
+        firestoreRepository.addLesson(newLesson)
     }
 
     override suspend fun getSubject(subjectName: String) = withContext(Dispatchers.IO) {

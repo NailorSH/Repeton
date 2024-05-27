@@ -79,6 +79,7 @@ fun LessonDto.toDomain(
         topic = this.topic,
         description = this.description,
         tutor = tutor,
+        studentIds = this.studentIds.map { Id(it) },
         startTime = this.startTime.toLocalDateTime(),
         endTime = this.endTime.toLocalDateTime(),
         homework = this.homework?.toDomain(),

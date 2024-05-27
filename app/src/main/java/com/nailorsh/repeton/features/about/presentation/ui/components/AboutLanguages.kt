@@ -67,9 +67,6 @@ fun AboutLanguages(
         mutableStateOf(false)
     }
 
-
-
-
     Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = modifier) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -114,7 +111,10 @@ fun AboutLanguages(
                             text = language.name,
                             style = MaterialTheme.typography.titleSmall
                         )
-                    }, modifier = Modifier.clickable { onAddLanguage(language) })
+                    }, modifier = Modifier.clickable {
+                        onAddLanguage(language)
+                        active = false
+                    })
                 }
 
             }
@@ -153,7 +153,7 @@ fun AboutLanguages(
                                 expanded = languageDropDownMenu,
                                 onExpandedChange = { languageDropDownMenu = it },
                                 modifier = Modifier
-                                    .widthIn(min = 96.dp, max = 120.dp)
+                                    .widthIn(min = 96.dp, max = 124.dp)
                                     .height(48.dp)
                             ) {
                                 TextField(
@@ -161,7 +161,7 @@ fun AboutLanguages(
                                     readOnly = true,
                                     value = "",
                                     prefix = {
-                                        Text(text = if (languageWithLevel.level == LanguageLevel.OTHER) "" else languageWithLevel.level.toString())
+                                        Text(text = if (languageWithLevel.level == LanguageLevel.OTHER) "" else languageWithLevel.level.toString(), style = MaterialTheme.typography.titleSmall)
                                     },
                                     textStyle = MaterialTheme.typography.labelMedium,
                                     onValueChange = {},
@@ -211,11 +211,11 @@ fun AboutLanguages(
                                                     languageLevel
                                                 )
                                                 languageDropDownMenu = false
-                                            })
+                                            }
+                                        )
                                     }
                                 }
                             }
-
                         }
                     )
                 }

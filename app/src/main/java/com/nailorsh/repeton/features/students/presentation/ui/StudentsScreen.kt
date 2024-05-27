@@ -156,6 +156,9 @@ fun StudentsScreen(
                                             contentDescription = null
                                         )
                                     }
+                                }, modifier = Modifier.clickable {
+                                    onAction(StudentsAction.AddStudent(student))
+                                    active = false
                                 })
                         }
                     }

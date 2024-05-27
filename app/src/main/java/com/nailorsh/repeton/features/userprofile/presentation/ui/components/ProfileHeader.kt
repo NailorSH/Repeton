@@ -24,6 +24,7 @@ import com.nailorsh.repeton.features.userprofile.data.models.ProfileUserData
 @Composable
 fun ProfileHeader(
     profileUserData: ProfileUserData,
+    onImageClick : () -> Unit,
     modifier: Modifier = Modifier
 ) {
     OutlinedCard(
@@ -40,7 +41,7 @@ fun ProfileHeader(
             modifier = Modifier
                 .padding(horizontal = 24.dp, vertical = 20.dp)
         ) {
-            UserImage(photoSrc = profileUserData.photoSrc, size = 80.dp)
+            UserImage(photoSrc = profileUserData.photoSrc, size = 80.dp, onClick = onImageClick)
             Column(
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
@@ -74,6 +75,6 @@ fun ProfileHeaderPreview() {
             surname = "Пупкин",
             phoneNumber = "+8-888-888-88-88",
             isTutor = true,
-        )
+        ), onImageClick = {}
     )
 }

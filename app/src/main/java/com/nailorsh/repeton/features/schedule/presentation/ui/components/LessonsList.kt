@@ -2,15 +2,16 @@ package com.nailorsh.repeton.features.schedule.presentation.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -28,36 +29,40 @@ fun LessonsList(
         modifier = Modifier
             .height(10.dp)
     )
+
+
+
+
     Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
+            .fillMaxWidth()
+            .fillMaxSize()
+            .padding(top = 6.dp)
+
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .padding(top = 6.dp)
-        ) {
         if (lessons.isEmpty()) {
-            item {
-                ElevatedCard(
+
+            ElevatedCard(
+                modifier = modifier
+                    .padding(top = 10.dp)
+                    .width(dimensionResource(R.dimen.schedule_screen_button_width))
+                    .height(dimensionResource(R.dimen.schedule_screen_lesson_size))
+            ) {
+                Text(
+                    text = stringResource(R.string.lessons_not_found),
+                    style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier
-                        .padding(top = 10.dp)
-                        .width(dimensionResource(R.dimen.schedule_screen_button_width))
-                        .height(dimensionResource(R.dimen.schedule_screen_lesson_size))
-                ) {
-                    Text(
-                        text = stringResource(R.string.lessons_not_found),
-                        style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier
-                            .padding(horizontal = 13.dp, vertical = 16.dp)
-                    )
-                }
+                        .padding(horizontal = 13.dp, vertical = 16.dp)
+                )
             }
-        } else {
-                items(items = lessons) { lesson ->
-                    LessonCard(lesson = lesson, onClick = onLessonClicked)
-                }
+        } else
+            lessons.forEach { lesson ->
+                LessonCard(lesson = lesson, onClick = onLessonClicked)
             }
-        }
+
 
     }
+
 
 }

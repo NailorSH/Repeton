@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +22,8 @@ import com.nailorsh.repeton.R
 
 @Composable
 fun AboutBioCard(
-    biography: String
+    biography: String,
+    onBioClicked : () -> Unit,
 ) {
 
     Column(
@@ -44,7 +45,7 @@ fun AboutBioCard(
                 top = 12.dp, bottom = 18.dp, start = 24.dp, end = 24.dp
             )
         )
-        ElevatedCard(
+        Card(
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -70,5 +71,5 @@ fun AboutBioCardPreview() {
                 " the 1500s, when an unknown printer took a galley of type and scrambled it " +
                 "to make a type specimen book. It has survived not only five centuries, but" +
                 " also the leap into electronic typesetting, remaining essentially unchanged."
-    )
+    ) {}
 }

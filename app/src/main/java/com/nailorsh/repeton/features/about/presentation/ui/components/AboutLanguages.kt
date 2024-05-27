@@ -68,6 +68,8 @@ fun AboutLanguages(
     }
 
 
+
+
     Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = modifier) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -104,7 +106,8 @@ fun AboutLanguages(
             },
             placeholder = { Text("Поиск языка") }
         ) {
-            LazyColumn {
+            LazyColumn(
+            ) {
                 items(languages) { language ->
                     ListItem(headlineContent = {
                         Text(

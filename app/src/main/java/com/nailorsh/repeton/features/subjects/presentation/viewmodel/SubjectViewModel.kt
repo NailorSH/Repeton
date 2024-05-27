@@ -116,6 +116,7 @@ class SubjectViewModel @Inject constructor(
                     onAction(SubjectsAction.UpdateLoadingScreen(true))
                     saveUpdates()
                     onAction(SubjectsAction.UpdateLoadingScreen(false))
+                    _navigationEvents.emit(SubjectsNavigationEvent.NavigateBack)
                 }
 
                 is SubjectsAction.UpdateLoadingScreen -> {

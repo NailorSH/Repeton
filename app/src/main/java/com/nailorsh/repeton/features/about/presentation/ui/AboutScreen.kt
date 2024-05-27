@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -155,6 +156,7 @@ fun AboutScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
+                    .imePadding()
             ) {
                 item {
                     AboutHeader(
@@ -164,7 +166,7 @@ fun AboutScreen(
                         isTutor = state.isTutor
                     )
                 }
-                item { AboutBioCard(biography = state.about) }
+                item { AboutBioCard(biography = state.about, onBioClicked = { onAction(AboutAction.UpdateShowChangeAbout(true)) })  }
                 item {
                     HorizontalDivider(
                         modifier = Modifier.padding(

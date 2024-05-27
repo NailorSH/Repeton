@@ -223,11 +223,12 @@ class AboutViewModel @Inject constructor(
                 }
 
                 is AboutAction.AddLanguage -> {
+                    println()
                     if (_state.value.languagesWithLevels != null && _state.value.languagesWithLevels!!.size == 5) {
                         _uiEvents.emit(AboutUiEvent.TooMuchLessons)
-                    } else if (_state.value.languagesWithLevels != null && _state.value.languagesWithLevels!!.filter { languageWithLevel ->
+                    } else if (_state.value.languagesWithLevels != null && !_state.value.languagesWithLevels!!.none { languageWithLevel ->
                             languageWithLevel.language.id == action.languageItem.id
-                        }.isEmpty()) {
+                        }) {
                         _uiEvents.emit(AboutUiEvent.LanguageAlreadyAdded)
                     } else
                         _state.update { state ->

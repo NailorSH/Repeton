@@ -46,7 +46,6 @@ class AboutRepositoryImpl @Inject constructor(
         data.languagesWithLevels?.let {
             firestoreRepository.updateCurrentUserLanguagesWithLevels(languagesWithLevels = it)
         }
-        println()
         data.education?.let { firestoreRepository.updateCurrentUserEducations(educations = listOf(it)) }
         return@withContext
     }

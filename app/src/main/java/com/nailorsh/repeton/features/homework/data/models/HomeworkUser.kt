@@ -6,5 +6,5 @@ data class HomeworkUser(
     val id : Id,
     val name : String,
     val surname : String,
-    val photoSrc : String,
+    val photoSrc : String?,
 )

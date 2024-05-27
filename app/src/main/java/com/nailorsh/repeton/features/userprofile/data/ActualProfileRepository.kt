@@ -168,13 +168,13 @@ class ActualProfileRepository @Inject constructor(
 
 
     override suspend fun getUserData(): ProfileUserData {
-        val userDto = firestoreRepository.getCurrentUserDto()
+        val currentUser = firestoreRepository.getCurrentUser()
         return ProfileUserData(
-            name = userDto.name,
-            surname = userDto.surname,
-            phoneNumber = userDto.phoneNumber,
-            photoSrc = userDto.photoSrc,
-            isTutor = userDto.canBeTutor
+            name = currentUser.name,
+            surname = currentUser.surname,
+            phoneNumber = currentUser.phoneNumber,
+            photoSrc = currentUser.photoSrc,
+            isTutor = currentUser.isTutor
         )
     }
 }

@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.core.ui.components.images.ImageSliderDialogue
-import com.nailorsh.repeton.features.homework.presentation.ui.components.HomeworkBottomBar
 import com.nailorsh.repeton.features.homework.presentation.ui.components.HomeworkImages
 import com.nailorsh.repeton.features.homework.presentation.ui.components.HomeworkTextCard
 import com.nailorsh.repeton.features.homework.presentation.ui.components.HomeworkTopBar
@@ -71,11 +70,11 @@ fun HomeworkScreenContent(
             )
         },
         bottomBar = {
-            HomeworkBottomBar(
-                answerText = state.answerText,
-                onTextChange = { onAction(HomeworkAction.UpdateAnswerText(it)) },
-                onSendMessage = { onAction(HomeworkAction.SendMessage) }
-            )
+//            HomeworkBottomBar(
+//                answerText = state.answerText,
+//                onTextChange = { onAction(HomeworkAction.UpdateAnswerText(it)) },
+//                onSendMessage = { onAction(HomeworkAction.SendMessage) }
+//            )
         },
         modifier = Modifier.imePadding()
     ) { paddingValues ->

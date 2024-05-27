@@ -50,6 +50,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.core.ui.components.ErrorScreen
 import com.nailorsh.repeton.core.ui.components.LessonTopBar
+import com.nailorsh.repeton.core.ui.components.LoadingDialogue
 import com.nailorsh.repeton.features.subjects.presentation.ui.components.SubjectItem
 import com.nailorsh.repeton.features.subjects.presentation.viewmodel.SubjectsAction
 import com.nailorsh.repeton.features.subjects.presentation.viewmodel.SubjectsState
@@ -167,6 +168,9 @@ fun SubjectsScreen(
         } else if (state.error) {
             ErrorScreen(retryAction = { onAction(SubjectsAction.RetryAction) })
         } else {
+            if (state.showLoadingScreen) {
+                LoadingDialogue()
+            }
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -184,7 +188,7 @@ fun SubjectsScreen(
                 items(state.userSubjects) { subject ->
                     SubjectItem(
                         subject = subject,
-                        price = subject.price.toString(),
+                        price = if (subject.price > 0) subject.price.toString() else "",
                         onPriceSave = { subjectWithPrice, price ->
                             onAction(
                                 SubjectsAction.SaveSubjectPrice(

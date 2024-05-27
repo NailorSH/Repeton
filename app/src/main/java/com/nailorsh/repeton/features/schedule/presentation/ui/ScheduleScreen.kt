@@ -192,14 +192,14 @@ fun ScheduleScreenContent(
             .fillMaxSize()
             .nestedScroll(pullToRefreshState.nestedScrollConnection)
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
+
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = MaterialTheme.colorScheme.background)
         ) {
-
+            Spacer(modifier = Modifier.height(24.dp))
             Box(
                 modifier = Modifier
                     .padding(top = dimensionResource(R.dimen.padding_medium))

@@ -140,7 +140,7 @@
     <string name="name">Имя</string>
     <string name="enter_name_surname_tutor">Как Вас зовут?</string>
     <string name="enter_name_surname_pupil">Как тебя зовут?</string>
-    <string name="new_lesson_screen_subject_error">Предмет не найден и/или Вы его не преподаёте</string>
+    <string name="new_lesson_screen_subject_error">Предмет не найден и/или Вы его не преподаёте. Добавить предмет можно в профиле</string>
     <string name="new_lesson_screen_topic_error">Поле темы не может быть пустым</string>
     <string name="new_lesson_screen_date_error">Некорректная дата</string>
     <string name="new_lesson_screen_start_time_error">Некорректное время начала занятия</string>

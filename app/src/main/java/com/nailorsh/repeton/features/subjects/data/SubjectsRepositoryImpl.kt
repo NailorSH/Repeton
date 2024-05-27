@@ -19,8 +19,8 @@ class SubjectsRepositoryImpl @Inject constructor(
         firestoreRepository.getCurrentUserSubjectsWithPrices()
     }
 
-    override suspend fun updateUserSubjects() {
-        /* TODO */
+    override suspend fun updateUserSubjects(userSubjects : List<SubjectWithPrice>?) {
+        firestoreRepository.updateCurrentUserSubjectsWithPrices(userSubjects)
     }
 
 

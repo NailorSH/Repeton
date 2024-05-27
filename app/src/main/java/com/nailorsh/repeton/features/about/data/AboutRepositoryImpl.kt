@@ -3,6 +3,8 @@ package com.nailorsh.repeton.features.about.data
 import androidx.core.net.toUri
 import com.google.firebase.storage.FirebaseStorage
 import com.nailorsh.repeton.common.firestore.FirestoreRepository
+import com.nailorsh.repeton.features.about.data.mappers.toEducationItem
+import com.nailorsh.repeton.features.about.data.mappers.toLanguageItem
 import com.nailorsh.repeton.features.about.data.model.AboutUpdatedData
 import com.nailorsh.repeton.features.about.data.model.AboutUserData
 import com.nailorsh.repeton.features.about.data.model.EducationItem
@@ -53,13 +55,12 @@ class AboutRepositoryImpl @Inject constructor(
 
 
     override suspend fun getLanguages(): List<LanguageItem> = withContext(Dispatchers.IO) {
-        emptyList()
+        firestoreRepository.getLanguages().map { it.toLanguageItem() }
     }
 
     override suspend fun getEducation(): List<EducationItem> = withContext(Dispatchers.IO){
         val eduicationType = firestoreRepository.getEducationTypes()
-        eduicationType.map { it ->
-            EducationItem(id = it.id, name = it.name)
+        eduicationType.map { it.toEducationItem()
         }
     }
 

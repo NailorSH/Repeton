@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -15,10 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -40,9 +35,6 @@ fun SubjectItem(
     onPriceSave: (SubjectWithPrice, String) -> Unit,
     onRemoveSubject: () -> Unit,
 ) {
-    var price by rememberSaveable {
-        mutableStateOf(price)
-    }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -90,33 +82,33 @@ fun SubjectItem(
                     .fillMaxWidth(),
                 value = price,
                 onValueChange = { newValue ->
-                    if (newValue.all { it.isDigit() }) {
-                        price = newValue
+                    if (newValue.all { it.isDigit() } && newValue.length < 6) {
+                        onPriceSave(subject, newValue)
                     }
                 },
                 supportingText = {
-                    Row {
-                        Text(stringResource(R.string.subject_screen_price_supporting_text))
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_check_circle),
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
+//                    Row {
+//                        Text(stringResource(R.string.subject_screen_price_supporting_text))
+//                        Icon(
+//                            painter = painterResource(id = R.drawable.ic_check_circle),
+//                            contentDescription = null,
+//                            modifier = Modifier.size(16.dp)
+//                        )
+//                    }
                 },
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow
                 ),
                 trailingIcon = {
-                    IconButton(onClick = { onPriceSave(subject, price) }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_check_circle),
-                            contentDescription = null
-                        )
-                    }
+//                    IconButton(onClick = { onPriceSave(subject, price) }) {
+//                        Icon(
+//                            painter = painterResource(id = R.drawable.ic_check_circle),
+//                            contentDescription = null
+//                        )
+//                    }
                 },
                 leadingIcon = {
-                    IconButton(onClick = { price = "" }) {
+                    IconButton(onClick = { onPriceSave(subject, "0") }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_cancel_w400),
                             contentDescription = null

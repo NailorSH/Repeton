@@ -41,6 +41,7 @@ import com.nailorsh.repeton.common.data.models.language.Language
 import com.nailorsh.repeton.common.data.models.language.LanguageLevel
 import com.nailorsh.repeton.common.data.models.language.LanguageWithLevel
 import com.nailorsh.repeton.core.ui.components.ErrorScreen
+import com.nailorsh.repeton.core.ui.components.LoadingDialogue
 import com.nailorsh.repeton.features.about.presentation.ui.components.AboutBioCard
 import com.nailorsh.repeton.features.about.presentation.ui.components.AboutBottomSheet
 import com.nailorsh.repeton.features.about.presentation.ui.components.AboutEducation
@@ -141,9 +142,7 @@ fun AboutScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
         if (state.isLoading) {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
+            LoadingDialogue()
         } else if (state.error) {
             ErrorScreen(retryAction = { onAction(AboutAction.RetryAction) })
         } else

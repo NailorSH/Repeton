@@ -7,6 +7,6 @@ interface SubjectsRepository {
 
     suspend fun getSubjects() : List<Subject>
     suspend fun getUserSubjects() : List<SubjectWithPrice>?
-    suspend fun updateUserSubjects()
+    suspend fun updateUserSubjects(userSubjects : List<SubjectWithPrice>?)
 
 }

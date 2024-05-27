@@ -43,8 +43,9 @@ sealed interface SubjectsAction {
 
     data class RemoveSubject(val subject: SubjectWithPrice) : SubjectsAction
 
-    data class SaveSubjectPrice(val subject : SubjectWithPrice, val price : String) : SubjectsAction
+    data class SaveSubjectPrice(val subject: SubjectWithPrice, val price: String) : SubjectsAction
 
+    data class UpdateLoadingScreen(val isLoading: Boolean) : SubjectsAction
 }
 
 data class SubjectsState(
@@ -100,6 +101,10 @@ class SubjectViewModel @Inject constructor(
         }
     }
 
+    private suspend fun saveUpdates() = withContext(Dispatchers.IO) {
+        subjectsRepository.updateUserSubjects(_state.value.userSubjects.ifEmpty { null })
+    }
+
     fun onAction(action: SubjectsAction) {
         viewModelScope.launch {
             when (action) {
@@ -108,7 +113,15 @@ class SubjectViewModel @Inject constructor(
                 }
 
                 SubjectsAction.SaveUpdates -> {
+                    onAction(SubjectsAction.UpdateLoadingScreen(true))
+                    saveUpdates()
+                    onAction(SubjectsAction.UpdateLoadingScreen(false))
+                }
 
+                is SubjectsAction.UpdateLoadingScreen -> {
+                    _state.update { state ->
+                        state.copy(showLoadingScreen = action.isLoading)
+                    }
                 }
 
                 is SubjectsAction.SaveSubjectPrice -> {
@@ -116,7 +129,7 @@ class SubjectViewModel @Inject constructor(
                         state.copy(
                             userSubjects = state.userSubjects.map { subject ->
                                 if (subject == action.subject) {
-                                    subject.copy(price = action.price.toInt())
+                                    subject.copy(price = if (action.price.isNotEmpty()) action.price.toInt() else 0)
                                 } else {
                                     subject
                                 }

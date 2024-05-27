@@ -1,5 +1,6 @@
 package com.nailorsh.repeton.core.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,7 +18,7 @@ import coil.compose.SubcomposeAsyncImage
 import com.nailorsh.repeton.R
 
 @Composable
-fun UserImage(photoSrc : String?, size : Dp) {
+fun UserImage(photoSrc : String?, size : Dp, onClick : () -> Unit = {}) {
     Box {
         val shape = remember {
             mutableIntStateOf(0)
@@ -41,6 +42,7 @@ fun UserImage(photoSrc : String?, size : Dp) {
             modifier = Modifier
                 .size(size)
                 .clip(RoundedCornerShape(percent = shape.intValue))
+                .clickable { onClick() }
         )
     }
 }

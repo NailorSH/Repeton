@@ -149,6 +149,9 @@ fun SubjectsScreen(
                                 }) {
                                     Icon(imageVector = Icons.Default.Add, contentDescription = null)
                                 }
+                            }, modifier = Modifier.clickable {
+                                onAction(SubjectsAction.AddSubject(subject))
+                                active = false
                             })
                         }
                     }

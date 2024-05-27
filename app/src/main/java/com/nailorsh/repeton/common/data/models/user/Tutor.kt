@@ -1,6 +1,7 @@
 package com.nailorsh.repeton.common.data.models.user
 
 import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.contact.Contact
 import com.nailorsh.repeton.common.data.models.education.Education
 import com.nailorsh.repeton.common.data.models.language.LanguageWithLevel
 import com.nailorsh.repeton.common.data.models.lesson.Subject
@@ -26,4 +27,5 @@ data class Tutor(
     val taughtLessonNumber: Int = 0,
     val experienceYears: Int = 0,
     val languagesWithLevels: List<LanguageWithLevel>? = null,
+    val contacts: List<Contact>? = null,
 ) : User

@@ -199,4 +199,5 @@
     <string name="confirm">Подтвердить</string>
     <string name="new_lesson_screen_empty_users_subjects">Похоже у вас нет ни одного предмета. Добавить их можно в профиле</string>
     <string name="profile_screen_logout">Выход</string>
+    <string name="my_contacts">Мои контакты</string>
 </resources>

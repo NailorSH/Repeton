@@ -27,9 +27,7 @@ import com.nailorsh.repeton.core.ui.components.ErrorScreen
 import com.nailorsh.repeton.core.ui.components.LoadingScreen
 import com.nailorsh.repeton.core.ui.components.TitleWithExpandableText
 import com.nailorsh.repeton.core.ui.theme.RepetonTheme
-import com.nailorsh.repeton.features.tutorprofile.presentation.ui.components.Advantages
-import com.nailorsh.repeton.features.tutorprofile.presentation.ui.components.AllSubjectsButton
-import com.nailorsh.repeton.features.tutorprofile.presentation.ui.components.BottomTutorProfileBar
+import com.nailorsh.repeton.features.tutorprofile.presentation.ui.components.Contacts
 import com.nailorsh.repeton.features.tutorprofile.presentation.ui.components.ExperienceYearsNumber
 import com.nailorsh.repeton.features.tutorprofile.presentation.ui.components.LanguageSkills
 import com.nailorsh.repeton.features.tutorprofile.presentation.ui.components.PriceInfo
@@ -38,7 +36,6 @@ import com.nailorsh.repeton.features.tutorprofile.presentation.ui.components.Rat
 import com.nailorsh.repeton.features.tutorprofile.presentation.ui.components.ReviewsNumber
 import com.nailorsh.repeton.features.tutorprofile.presentation.ui.components.TaughtLessonsNumber
 import com.nailorsh.repeton.features.tutorprofile.presentation.ui.components.TopTutorProfileBar
-import com.nailorsh.repeton.features.tutorprofile.presentation.ui.components.WorkScheduleButton
 import com.nailorsh.repeton.features.tutorprofile.presentation.viewmodel.TutorProfileUiState
 import com.nailorsh.repeton.features.tutorprofile.presentation.viewmodel.TutorProfileViewModel
 
@@ -76,16 +73,16 @@ fun TutorProfile(
         topBar = {
             TopTutorProfileBar(
                 onBackClick = onBackClicked,
-                onShareClick = {},
-                onFavoriteClick = {}
+//                onShareClick = {},
+//                onFavoriteClick = {}
             )
         },
-        bottomBar = {
-            BottomTutorProfileBar(
-                onChatButtonClicked = {},
-                onTrialLessonButtonClicked = {}
-            )
-        }
+//        bottomBar = {
+//            BottomTutorProfileBar(
+//                onChatButtonClicked = {},
+//                onTrialLessonButtonClicked = {}
+//            )
+//        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -101,18 +98,30 @@ fun TutorProfile(
 
             TutorAdditionalInfoBlock(tutor)
 
-            HorizontalDivider(
-                thickness = 2.dp,
-                modifier = Modifier.padding(vertical = 20.dp)
-            )
+//            HorizontalDivider(
+//                thickness = 2.dp,
+//                modifier = Modifier.padding(vertical = 20.dp)
+//            )
 
-            WorkScheduleButton {/*TODO*/ }
+//            WorkScheduleButton {/*TODO*/ }
 
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = dimensionResource(R.dimen.padding_medium))
-            )
+//            HorizontalDivider(
+//                modifier = Modifier.padding(vertical = dimensionResource(R.dimen.padding_medium))
+//            )
 
-            AllSubjectsButton {/*TODO*/ }
+//            AllSubjectsButton {/*TODO*/ }
+
+            tutor.contacts?.let {
+                HorizontalDivider(
+                    thickness = 2.dp,
+                    modifier = Modifier.padding(vertical = 20.dp)
+                )
+
+                Contacts(
+                    contacts = it,
+                    modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium))
+                )
+            }
 
             Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
         }
@@ -130,7 +139,7 @@ private fun TutorMainInfoBlock(
         )
     ) {
         ProfileInfoRow(
-            profileImageId = R.drawable.man_photo,
+            profileImageSrc = tutor.photoSrc,
             name = "${tutor.name} ${tutor.surname.first()}.",
             country = tutor.location?.country
         )
@@ -153,13 +162,13 @@ private fun TutorMainInfoBlock(
             ExperienceYearsNumber(tutor.experienceYears)
         }
 
-        HorizontalDivider(
-            modifier = Modifier.padding(
-                vertical = dimensionResource(R.dimen.padding_medium)
-            )
-        )
-
-        Advantages()
+//        HorizontalDivider(
+//            modifier = Modifier.padding(
+//                vertical = dimensionResource(R.dimen.padding_medium)
+//            )
+//        )
+//
+//        Advantages()
     }
 }
 

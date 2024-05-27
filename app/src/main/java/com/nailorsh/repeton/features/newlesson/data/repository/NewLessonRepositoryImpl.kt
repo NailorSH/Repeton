@@ -20,9 +20,9 @@ class NewLessonRepositoryImpl @Inject constructor(
     private val firestoreRepository: FirestoreRepository
 ) : NewLessonRepository {
     override suspend fun getSubjects(filter: String): List<String> = withContext(Dispatchers.IO) {
-        firestoreRepository.getSubjects().filter { subject ->
-            subject.name.lowercase().startsWith(filter.lowercase())
-        }.map { subject -> subject.name }
+        firestoreRepository.getCurrentUserSubjectsWithPrices()?.filter { subject ->
+            subject.subject.name.lowercase().startsWith(filter.lowercase())
+        }?.map { subject -> subject.subject.name } ?: emptyList()
     }
 
     override suspend fun saveNewLesson(lesson: NewLessonItem) = withContext(Dispatchers.IO) {
@@ -54,11 +54,11 @@ class NewLessonRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getSubject(subjectName: String) = withContext(Dispatchers.IO) {
-        firestoreRepository.getSubjects().first { it.name == subjectName }
+        firestoreRepository.getCurrentUserSubjectsWithPrices()?.firstOrNull { it.subject.name == subjectName }?.subject
     }
 
-    override suspend fun getStudents(): List<NewLessonUserItem> = withContext(Dispatchers.IO) {
-        firestoreRepository.getStudents().map { it.toNewLessonUserItem() }
+    override suspend fun getStudents(): List<NewLessonUserItem>? = withContext(Dispatchers.IO) {
+        firestoreRepository.getCurrentUserStudents()?.map { it.toNewLessonUserItem() }
     }
 
     override suspend fun uploadImages(images: List<Attachment.Image>): List<String> = withContext(Dispatchers.IO) {

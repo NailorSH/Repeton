@@ -2,6 +2,7 @@ package com.nailorsh.repeton.common.firestore
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
@@ -11,6 +12,7 @@ import com.nailorsh.repeton.common.data.models.education.Education
 import com.nailorsh.repeton.common.data.models.education.EducationType
 import com.nailorsh.repeton.common.data.models.language.Language
 import com.nailorsh.repeton.common.data.models.language.LanguageLevel
+import com.nailorsh.repeton.common.data.models.language.LanguageWithLevel
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.models.lesson.Subject
@@ -22,7 +24,6 @@ import com.nailorsh.repeton.common.firestore.mappers.toDomain
 import com.nailorsh.repeton.common.firestore.mappers.toDomainStudent
 import com.nailorsh.repeton.common.firestore.mappers.toDomainTutor
 import com.nailorsh.repeton.common.firestore.mappers.toDto
-import com.nailorsh.repeton.common.firestore.mappers.toLanguageWithLevelDto
 import com.nailorsh.repeton.common.firestore.models.EducationTypeDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
 import com.nailorsh.repeton.common.firestore.models.LanguageDto
@@ -48,6 +49,7 @@ class FirestoreRepositoryImpl @Inject constructor(
     private var userDto: UserDto? = null
     private var subjects: List<Subject>? = null
     private var educationTypes: List<EducationType>? = null
+    private var languages: List<Language>? = null
     private var languageLevels: List<LanguageLevel>? = null
 
     override suspend fun sendHomeworkMessage(lessonId: Id, message: String) {
@@ -245,7 +247,7 @@ class FirestoreRepositoryImpl @Inject constructor(
             // Проверяем, есть ли уже такой studentId в массиве
             if (snapshot.exists()) {
                 val students = snapshot.get("students") as? List<String> ?: listOf()
-                if (!students.contains(studentId)) {
+                if (students.contains(studentId)) {
                     transaction.update(userDocRef, "students", FieldValue.arrayRemove(studentId))
                 }
             }
@@ -264,7 +266,7 @@ class FirestoreRepositoryImpl @Inject constructor(
                     .toObject<UserDto>()
                     ?.toDomainTutor(
                         subjectsPrices = getUserSubjectsWithPrices(Id(tutorId)),
-                        languages = getUserLanguagesWithLevels(Id(tutorId)),
+                        languagesWithLevels = getUserLanguagesWithLevels(Id(tutorId)),
                         educations = getUserEducations(Id(tutorId))
                     )
             }
@@ -331,7 +333,43 @@ class FirestoreRepositoryImpl @Inject constructor(
             getUserSubjectsWithPrices(getCurrentUserId())
         }
 
-    override suspend fun getUserLanguagesWithLevels(userId: Id): List<Language>? =
+    override suspend fun updateCurrentUserSubjectsWithPrices(userSubjects: List<SubjectWithPrice>?) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users").document(getCurrentUserId().value)
+
+            db.runTransaction { transaction ->
+
+                val updatedSubjects = userSubjects?.map { it.toDto() }
+
+                transaction.update(userRef, "subjects", updatedSubjects)
+            }.await()
+        }
+    }
+
+    override suspend fun updateCurrentUserLanguageLevel(languageId: Id, level: LanguageLevel) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users").document(getCurrentUserId().value)
+
+            db.runTransaction { transaction ->
+                val snapshot = transaction.get(userRef)
+                val languages =
+                    snapshot.get("languages") as? List<LanguageWithLevelDto> ?: emptyList()
+
+                val updatedLanguages = languages.toMutableList()
+
+                val index = languages.indexOfFirst { it.languageId == languageId.value }
+                if (index != -1) {
+                    updatedLanguages[index] = updatedLanguages[index].copy(level = level.value)
+                } else {
+                    updatedLanguages.add(LanguageWithLevelDto(languageId.value, level.value))
+                }
+
+                transaction.update(userRef, "languages", updatedLanguages)
+            }.await()
+        }
+    }
+
+    override suspend fun getUserLanguagesWithLevels(userId: Id): List<LanguageWithLevel>? =
         withContext(Dispatchers.IO) {
             val languagesWithLevels = getUserDto(userId).languages ?: return@withContext null
             val languagesTasks = languagesWithLevels.map { languageWithLevel ->
@@ -340,17 +378,31 @@ class FirestoreRepositoryImpl @Inject constructor(
                         .await()
                         .toObject<LanguageDto>()
                         .apply { Log.d("TutorLanguage", "$this") }
-                        ?.let { languageWithLevel.toDomain(it.name) }
+                        ?.let {
+                            languageWithLevel.toDomain(
+                                language = getLanguage(Id(it.id))
+                            )
+                        }
                 }
             }
 
             languagesTasks.awaitAll().filterNotNull().takeIf { it.isNotEmpty() }
         }
 
-    override suspend fun getCurrentUserLanguagesWithLevels(): List<Language>? =
+    override suspend fun getCurrentUserLanguagesWithLevels(): List<LanguageWithLevel>? =
         withContext(Dispatchers.IO) {
             getUserLanguagesWithLevels(getCurrentUserId())
         }
+
+    override suspend fun updateCurrentUserLanguagesWithLevels(languagesWithLevels: List<LanguageWithLevel>) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users").document(getCurrentUserId().value)
+            db.runTransaction { transaction ->
+                val updatedLanguages = languagesWithLevels.map { it.toDto() }
+                transaction.update(userRef, "languages", updatedLanguages)
+            }
+        }
+    }
 
     override suspend fun getUserEducations(userId: Id): List<Education>? =
         withContext(Dispatchers.IO) {
@@ -373,6 +425,29 @@ class FirestoreRepositoryImpl @Inject constructor(
             getUserEducations(getCurrentUserId())
         }
 
+    override suspend fun updateCurrentUserEducations(educations: List<Education>) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users")
+                .document(getCurrentUserId().value)
+                .collection("educations")
+
+            // Получаем текущие документы в подколлекции "educations"
+            val currentEducations = userRef.get().await()
+
+            // Удаляем все существующие документы в подколлекции "educations"
+            currentEducations.documents.forEach { document ->
+                userRef.document(document.id).delete().await()
+            }
+
+            // Добавляем новые образования
+            educations.forEach { education ->
+                val educationRef = userRef.document()
+                val educationDto = education.toDto()
+                educationRef.set(educationDto).await()
+            }
+        }
+    }
+
     override suspend fun getStudents(): List<Student> = withContext(Dispatchers.IO) {
         db.collection("users")
             .whereEqualTo("canBeTutor", false)
@@ -391,7 +466,7 @@ class FirestoreRepositoryImpl @Inject constructor(
             .map {
                 it.toDomainTutor(
                     subjectsPrices = getUserSubjectsWithPrices(Id(it.id)),
-                    languages = getUserLanguagesWithLevels(Id(it.id)),
+                    languagesWithLevels = getUserLanguagesWithLevels(Id(it.id)),
                     educations = getUserEducations(Id(it.id))
                 )
             }
@@ -405,18 +480,27 @@ class FirestoreRepositoryImpl @Inject constructor(
             .toObject<UserDto>()
             ?.toDomainTutor(
                 subjectsPrices = getUserSubjectsWithPrices(id),
-                languages = getUserLanguagesWithLevels(id),
+                languagesWithLevels = getUserLanguagesWithLevels(id),
                 educations = getUserEducations(id)
             ) ?: throw NoSuchElementException("Tutor not found for id: ${id.value}")
     }
-
-    override suspend fun addLesson(newLesson: Lesson) {
+    private suspend fun addLessonIdToUser(userId: String, lessonId: String) {
+        val userRef = db.collection("users").document(userId)
+        db.runTransaction { transaction ->
+            val snapshot = transaction.get(userRef)
+            val lessonIds = snapshot.get("lessons") as? List<String> ?: emptyList()
+            val updatedLessonIds = lessonIds + lessonId
+            transaction.update(userRef, "lessons", updatedLessonIds)
+        }.await()
+    }
+    override suspend fun addLesson(newLesson: Lesson) = withContext(Dispatchers.IO) {
         // Convert Lesson to LessonDto
         val lessonDto = newLesson.toDto()
 
         // Add lesson to "lessons" collection
         val lessonRef = db.collection("lessons").document()
 //        lessonDto.id = lessonRef.id // Set the generated ID to lessonDto
+        val lessonId = lessonRef.id
         lessonRef.set(lessonDto).await()
 
         // Add homework if it exists
@@ -431,13 +515,30 @@ class FirestoreRepositoryImpl @Inject constructor(
                 attachmentRef.set(attachment).await()
             }
         }
+
+        addLessonIdToUser(newLesson.tutor.id.value, lessonId)
+
+        // Добавляем lessonId всем ученикам
+        newLesson.studentIds.forEach { studentId ->
+            addLessonIdToUser(studentId.value, lessonId)
+        }
     }
 
-    override suspend fun getLessons(): List<Lesson> {
-        val querySnapshot = db.collection("lessons").get().await()
-        val lessonsDto = querySnapshot.toObjects<LessonDto>()
 
-        return lessonsDto.map {
+    override suspend fun getLessons(): List<Lesson> = withContext(Dispatchers.IO) {
+        val userLessons = getUserDto(getCurrentUserId()).lessons ?: return@withContext emptyList<Lesson>()
+        if (userLessons.isEmpty()) {
+            return@withContext emptyList<Lesson>()
+        }
+
+        // Запрашиваем документы уроков, идентификаторы которых содержатся в списке userLessons
+        val lessonsDto = db.collection("lessons")
+            .whereIn(FieldPath.documentId(), userLessons)
+            .get()
+            .await()
+            .toObjects<LessonDto>()
+
+        lessonsDto.map {
             val tutor = getTutor(Id(it.tutorId))
             val subject = getSubject(Id(it.subjectId))
             it.toDomain(subject, tutor)
@@ -467,7 +568,7 @@ class FirestoreRepositoryImpl @Inject constructor(
         return educationTypes!!
     }
 
-    override suspend fun addCurrentUserLanguage(language: Language) {
+    override suspend fun addCurrentUserLanguageWithLevel(languageWithLevel: LanguageWithLevel) {
         withContext(Dispatchers.IO) {
             val userRef = db.collection("users").document(getCurrentUserId().value)
             db.runTransaction { transaction ->
@@ -475,36 +576,14 @@ class FirestoreRepositoryImpl @Inject constructor(
                 val languages =
                     snapshot.get("languages") as? List<LanguageWithLevelDto> ?: emptyList()
 
-                val updatedLanguages = languages + language.toLanguageWithLevelDto()
+                val updatedLanguages = languages + languageWithLevel.toDto()
                 transaction.update(userRef, "languages", updatedLanguages)
             }
         }
     }
 
-    override suspend fun updateCurrentUserLanguageLevel(languageId: Id, level: LanguageLevel) {
-        withContext(Dispatchers.IO) {
-            val userRef = db.collection("users").document(getCurrentUserId().value)
 
-            db.runTransaction { transaction ->
-                val snapshot = transaction.get(userRef)
-                val languages =
-                    snapshot.get("languages") as? List<LanguageWithLevelDto> ?: emptyList()
-
-                val updatedLanguages = languages.toMutableList()
-
-                val index = languages.indexOfFirst { it.languageId == languageId.value }
-                if (index != -1) {
-                    updatedLanguages[index] = updatedLanguages[index].copy(level = level.value)
-                } else {
-                    updatedLanguages.add(LanguageWithLevelDto(languageId.value, level.value))
-                }
-
-                transaction.update(userRef, "languages", updatedLanguages)
-            }.await()
-        }
-    }
-
-    override suspend fun removeCurrentUserLanguage(languageId: Id) {
+    override suspend fun removeCurrentUserLanguageWithLevel(languageId: Id) {
         withContext(Dispatchers.IO) {
             val userRef = db.collection("users").document(getCurrentUserId().value)
 
@@ -560,5 +639,26 @@ class FirestoreRepositoryImpl @Inject constructor(
 
             userRef.delete().await()
         }
+    }
+
+    override suspend fun getLanguages(): List<Language> {
+        if (languages == null) {
+            val querySnapshot = db.collection("languages").get().await()
+            languages = querySnapshot.documents.map { document ->
+                val language = document.toObject<LanguageDto>()
+                language?.toDomain() ?: throw (IOException("Language not found"))
+            }
+        }
+        return languages!!
+    }
+
+    override suspend fun getLanguage(id: Id): Language {
+        val document = db.collection("languages").document(id.value).get().await()
+
+        if (document.exists()) {
+            val language = document.toObject<LanguageDto>()
+
+            return language?.toDomain() ?: throw (IOException("Error parsing language"))
+        } else throw (IOException("Language not found"))
     }
 }

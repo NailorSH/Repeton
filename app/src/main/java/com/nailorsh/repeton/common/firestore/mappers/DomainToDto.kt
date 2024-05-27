@@ -3,18 +3,22 @@ package com.nailorsh.repeton.common.firestore.mappers
 import com.google.firebase.Timestamp
 import com.nailorsh.repeton.common.data.models.education.Education
 import com.nailorsh.repeton.common.data.models.language.Language
+import com.nailorsh.repeton.common.data.models.language.LanguageWithLevel
 import com.nailorsh.repeton.common.data.models.lesson.Attachment
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.models.lesson.Review
+import com.nailorsh.repeton.common.data.models.lesson.SubjectWithPrice
 import com.nailorsh.repeton.common.firestore.models.AttachmentDto
 import com.nailorsh.repeton.common.firestore.models.EducationDto
 import com.nailorsh.repeton.common.firestore.models.FileDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
 import com.nailorsh.repeton.common.firestore.models.ImageDto
+import com.nailorsh.repeton.common.firestore.models.LanguageDto
 import com.nailorsh.repeton.common.firestore.models.LanguageWithLevelDto
 import com.nailorsh.repeton.common.firestore.models.LessonDto
 import com.nailorsh.repeton.common.firestore.models.ReviewDto
+import com.nailorsh.repeton.common.firestore.models.SubjectWithPriceDto
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
@@ -70,10 +74,17 @@ fun Attachment.toDto(): AttachmentDto {
     }
 }
 
-fun Language.toLanguageWithLevelDto(): LanguageWithLevelDto {
+fun LanguageWithLevel.toDto(): LanguageWithLevelDto {
     return LanguageWithLevelDto(
-        languageId = this.id.value,
+        languageId = this.language.id.value,
         level = this.level.value
+    )
+}
+
+fun Language.toDto(): LanguageDto {
+    return LanguageDto(
+        id = this.id.value,
+        name = this.name
     )
 }
 
@@ -82,5 +93,12 @@ fun Education.toDto(): EducationDto {
         id = this.id.value,
         typeId = this.type.id.value,
         specialization = this.specialization
+    )
+}
+
+fun SubjectWithPrice.toDto() : SubjectWithPriceDto {
+    return SubjectWithPriceDto(
+        subjectId = subject.id.value,
+        price = price
     )
 }

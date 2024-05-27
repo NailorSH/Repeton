@@ -24,6 +24,12 @@ import com.nailorsh.repeton.features.navigation.routes.TutorViewScreen
 import com.nailorsh.repeton.features.schedule.presentation.ui.ScheduleScreen
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleNavigationEvent
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleViewModel
+import com.nailorsh.repeton.features.students.presentation.ui.StudentsScreen
+import com.nailorsh.repeton.features.students.presentation.viewmodel.StudentsNavigationEvent
+import com.nailorsh.repeton.features.students.presentation.viewmodel.StudentsViewModel
+import com.nailorsh.repeton.features.subjects.presentation.ui.SubjectsScreen
+import com.nailorsh.repeton.features.subjects.presentation.viewmodel.SubjectViewModel
+import com.nailorsh.repeton.features.subjects.presentation.viewmodel.SubjectsNavigationEvent
 import com.nailorsh.repeton.features.tutorsearch.presentation.ui.SearchScreen
 import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.TutorSearchViewModel
 import com.nailorsh.repeton.features.userprofile.presentation.ui.ProfileScreen
@@ -65,8 +71,13 @@ fun HomeNavGraph(
                 lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     navigationEvents.collect { navigationEvent ->
                         when (navigationEvent) {
-                            is ScheduleNavigationEvent.NavigateToLesson -> navController.navigate(LessonViewScreen.Lesson.createLessonRoute(navigationEvent.lesson.id))
-                            ScheduleNavigationEvent.NavigateToNewLesson -> navController.navigate(Graph.LESSON_CREATION.route)
+                            is ScheduleNavigationEvent.NavigateToLesson -> navController.navigate(
+                                LessonViewScreen.Lesson.createLessonRoute(navigationEvent.lesson.id)
+                            )
+
+                            ScheduleNavigationEvent.NavigateToNewLesson -> navController.navigate(
+                                Graph.LESSON_CREATION.route
+                            )
                         }
                     }
                 }
@@ -113,11 +124,68 @@ fun HomeNavGraph(
                     navigationEvents.collect { navigationEvent ->
                         when (navigationEvent) {
                             AboutNavigationEvent.NavigateBack -> navController.popBackStack()
+                            AboutNavigationEvent.ChangedSuccessful -> {
+                                navController.popBackStack(
+                                    BottomBarScreen.Profile.route,
+                                    true
+                                )
+                                navController.navigate(BottomBarScreen.Profile.route)
+                            }
                         }
                     }
                 }
             }
-            AboutScreen(aboutState = aboutViewModel.state.collectAsState().value, onAction = aboutViewModel::onAction)
+            AboutScreen(
+                state = aboutViewModel.state.collectAsState().value,
+                onAction = aboutViewModel::onAction,
+                uiEvents = uiEvents
+            )
+        }
+
+        composable(route = ProfileScreen.SUBJECTS.route) {
+            val subjectsViewModel = hiltViewModel<SubjectViewModel>()
+
+            val lifecycleOwner = LocalLifecycleOwner.current
+            val navigationEvents = subjectsViewModel.navigationEvents
+            val uiEvents = subjectsViewModel.uiEvents
+            LaunchedEffect(lifecycleOwner.lifecycle) {
+                lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    navigationEvents.collect { navigationEvent ->
+                        when (navigationEvent) {
+                            SubjectsNavigationEvent.NavigateBack -> navController.popBackStack()
+                        }
+                    }
+                }
+            }
+
+            SubjectsScreen(
+                state = subjectsViewModel.state.collectAsState().value,
+                uiEvents = uiEvents,
+                onAction = subjectsViewModel::onAction
+            )
+        }
+
+        composable(route = ProfileScreen.STUDENTS.route) {
+            val studentsViewModel = hiltViewModel<StudentsViewModel>()
+
+            val lifecycleOwner = LocalLifecycleOwner.current
+            val navigationEvents = studentsViewModel.navigationEvents
+            val uiEvents = studentsViewModel.uiEvents
+            LaunchedEffect(lifecycleOwner.lifecycle) {
+                lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    navigationEvents.collect { navigationEvent ->
+                        when (navigationEvent) {
+                            StudentsNavigationEvent.NavigateBack -> navController.popBackStack()
+                        }
+                    }
+                }
+            }
+
+            StudentsScreen(
+                state = studentsViewModel.state.collectAsState().value,
+                uiEvents = uiEvents,
+                onAction = studentsViewModel::onAction
+            )
         }
     }
 }

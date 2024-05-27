@@ -5,6 +5,7 @@ import com.nailorsh.repeton.common.data.models.education.Education
 import com.nailorsh.repeton.common.data.models.education.EducationType
 import com.nailorsh.repeton.common.data.models.language.Language
 import com.nailorsh.repeton.common.data.models.language.LanguageLevel
+import com.nailorsh.repeton.common.data.models.language.LanguageWithLevel
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.models.lesson.Subject
@@ -57,26 +58,26 @@ interface FirestoreRepository {
     // UserSubjectsWithPrices
     suspend fun getUserSubjectsWithPrices(userId: Id): List<SubjectWithPrice>?
     suspend fun getCurrentUserSubjectsWithPrices(): List<SubjectWithPrice>?
+    suspend fun updateCurrentUserSubjectsWithPrices(userSubjects : List<SubjectWithPrice>?)
 
     // UserLanguagesWithLevels
-    suspend fun getUserLanguagesWithLevels(userId: Id): List<Language>?
-    suspend fun getCurrentUserLanguagesWithLevels(): List<Language>?
-    suspend fun addCurrentUserLanguage(language: Language)
+    suspend fun getUserLanguagesWithLevels(userId: Id): List<LanguageWithLevel>?
+    suspend fun getCurrentUserLanguagesWithLevels(): List<LanguageWithLevel>?
+    suspend fun updateCurrentUserLanguagesWithLevels(languagesWithLevels: List<LanguageWithLevel>)
+    suspend fun addCurrentUserLanguageWithLevel(languageWithLevel: LanguageWithLevel)
     suspend fun updateCurrentUserLanguageLevel(languageId: Id, level: LanguageLevel)
-    suspend fun removeCurrentUserLanguage(languageId: Id)
+    suspend fun removeCurrentUserLanguageWithLevel(languageId: Id)
 
     // UserEducations
     suspend fun getUserEducations(userId: Id): List<Education>?
     suspend fun getCurrentUserEducations(): List<Education>?
+    suspend fun updateCurrentUserEducations(educations: List<Education>)
     suspend fun addCurrentUserEducation(education: Education)
     suspend fun updateCurrentUserEducation(education: Education)
     suspend fun removeCurrentUserEducation(educationId: Id)
 
     // EducationTypes
     suspend fun getEducationTypes(): List<EducationType>
-
-    // LanguageLevels
-    suspend fun getLanguageLevels(): List<LanguageLevel>?
 
     // Students
     suspend fun getStudents(): List<Student>
@@ -90,6 +91,7 @@ interface FirestoreRepository {
     suspend fun addLesson(newLesson: Lesson)
     suspend fun getLesson(id: Id): Lesson
 
+
     // Subject
     suspend fun getSubjects(): List<Subject>
     suspend fun getSubject(id: Id): Subject
@@ -97,4 +99,11 @@ interface FirestoreRepository {
     // Homework
     suspend fun getHomework(lessonId: Id): Homework
     suspend fun sendHomeworkMessage(lessonId: Id, message: String)
+
+    // Language
+    suspend fun getLanguages(): List<Language>
+    suspend fun getLanguage(id: Id): Language
+
+    // LanguageLevels
+    suspend fun getLanguageLevels(): List<LanguageLevel>?
 }

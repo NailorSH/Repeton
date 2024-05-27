@@ -228,7 +228,7 @@ fun NewLessonScreenSecondContent(
             verticalArrangement = Arrangement.spacedBy(24.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.surfaceBright)
+                .background(color = MaterialTheme.colorScheme.surface)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,

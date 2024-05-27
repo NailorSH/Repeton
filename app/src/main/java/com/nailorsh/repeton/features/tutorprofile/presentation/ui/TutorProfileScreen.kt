@@ -186,7 +186,7 @@ private fun TutorAdditionalInfoBlock(
             )
         )
 
-        tutor.languages?.let { LanguageSkills(it) }
+        tutor.languagesWithLevels?.let { LanguageSkills(it) }
     }
 }
 

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -18,9 +19,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.nailorsh.repeton.core.ui.theme.BottomNavigationBarColor
-import com.nailorsh.repeton.core.ui.theme.SelectedBottomBarIconColor
-import com.nailorsh.repeton.core.ui.theme.UnselectedBottomBarIconColor
 import com.nailorsh.repeton.features.navigation.routes.BottomBarScreen
 
 @Composable
@@ -39,7 +37,7 @@ fun RepetonBottomBar(
             contentPadding = PaddingValues(0.dp)
         ) {
             NavigationBar(
-                containerColor = BottomNavigationBarColor,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             ) {
                 tabs.forEach { item ->
                     NavigationBarItem(
@@ -56,13 +54,13 @@ fun RepetonBottomBar(
                             Icon(
                                 imageVector = ImageVector.vectorResource(item.icon),
                                 contentDescription = null,
-                                modifier = Modifier.size(25.dp)
+                                modifier = Modifier.size(24.dp)
                             )
                         },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = SelectedBottomBarIconColor,
-                            unselectedIconColor = UnselectedBottomBarIconColor,
-                            indicatorColor = BottomNavigationBarColor
+                            selectedIconColor = MaterialTheme.colorScheme.onSurface,
+                            unselectedIconColor = MaterialTheme.colorScheme.outline,
+                            indicatorColor = MaterialTheme.colorScheme.surfaceContainerHigh
                         )
                     )
                 }

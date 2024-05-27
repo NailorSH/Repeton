@@ -23,7 +23,7 @@ object FakeTutorsSource {
             reviewsNumber = 100,
             taughtLessonNumber = 250,
             experienceYears = 6,
-            languages = null,
+            languagesWithLevels = null,
             phoneNumber = ""
         ),
 
@@ -43,7 +43,7 @@ object FakeTutorsSource {
             reviewsNumber = 3,
             taughtLessonNumber = 10,
             experienceYears = 1,
-            languages = null,
+            languagesWithLevels = null,
             phoneNumber = ""
         ),
 
@@ -64,7 +64,7 @@ object FakeTutorsSource {
             reviewsNumber = 10,
             taughtLessonNumber = 50,
             experienceYears = 2,
-            languages = null,
+            languagesWithLevels = null,
             phoneNumber = ""
         ),
 
@@ -85,7 +85,7 @@ object FakeTutorsSource {
             reviewsNumber = 19,
             taughtLessonNumber = 100,
             experienceYears = 8,
-            languages = null,
+            languagesWithLevels = null,
             phoneNumber = ""
         ),
     )

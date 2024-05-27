@@ -74,7 +74,8 @@ fun ProfileScreenContent(
         ) {
             Spacer(modifier = Modifier.height(24.dp))
             ProfileHeader(
-                profileUserData = profileScreenState.profileUserData
+                profileUserData = profileScreenState.profileUserData,
+                onImageClick = { onOptionClicked(Options.AboutTutor)}
             )
             Spacer(modifier = Modifier.height(24.dp))
             Text(

@@ -11,7 +11,7 @@ interface NewLessonRepository {
     suspend fun getSubjects(filter: String): List<String>
     suspend fun getSubject(subjectName: String): Subject?
     suspend fun saveNewLesson(lesson: NewLessonItem)
-    suspend fun getStudents(): List<NewLessonUserItem>
+    suspend fun getStudents(): List<NewLessonUserItem>?
     suspend fun uploadImages(images: List<Attachment.Image>): List<String>
     suspend fun uploadFile(uri: Uri): String
     suspend fun getUserType() : Boolean

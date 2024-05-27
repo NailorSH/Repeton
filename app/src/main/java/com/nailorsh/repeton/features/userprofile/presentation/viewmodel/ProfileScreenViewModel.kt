@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.core.navigation.NavigationRoute
 import com.nailorsh.repeton.features.navigation.routes.BottomBarScreen
-import com.nailorsh.repeton.features.navigation.routes.LessonCreationScreen
 import com.nailorsh.repeton.features.navigation.routes.ProfileScreen
 import com.nailorsh.repeton.features.settings.UserSettingsRepository
 import com.nailorsh.repeton.features.userprofile.data.Options
@@ -58,7 +57,7 @@ class ProfileViewModel @Inject constructor(
     val sideEffect: SharedFlow<NavigationRoute> = _sideEffect.asSharedFlow()
 
 
-    suspend fun getOptions() = withContext(Dispatchers.IO) {
+    private suspend fun getOptions() = withContext(Dispatchers.IO) {
         _uiState.update { ProfileScreenUiState.Loading }
         try {
             val profileOptions = profileRepository.getUserOptions()
@@ -121,7 +120,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun onThemeUpdate(isDarkThemeEnabled: Boolean) {
+    private fun onThemeUpdate(isDarkThemeEnabled: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             settingsRepository.updateTheme(isDarkThemeEnabled)
         }
@@ -130,16 +129,20 @@ class ProfileViewModel @Inject constructor(
     fun onOptionClicked(option: Options) { // Передаётся параметром в NavGraph'e
         viewModelScope.launch {
             when (option) {
-                is Options.Lessons -> _sideEffect.emit(LessonCreationScreen.NewLesson)
-                is Options.Students -> _sideEffect.emit(BottomBarScreen.Home)
+                is Options.Subjects -> _sideEffect.emit(ProfileScreen.SUBJECTS)
+                is Options.LessonsTutor -> _sideEffect.emit(BottomBarScreen.Home)
+                is Options.Students -> _sideEffect.emit(ProfileScreen.STUDENTS)
                 is Options.Statistics -> _sideEffect.emit(BottomBarScreen.Home)
-                is Options.About -> _sideEffect.emit(ProfileScreen.ABOUT)
+                is Options.AboutTutor -> _sideEffect.emit(ProfileScreen.ABOUT)
                 is Options.Security -> _sideEffect.emit(BottomBarScreen.Home)
                 is Options.Notifications -> _sideEffect.emit(BottomBarScreen.Home)
                 is Options.Language -> _sideEffect.emit(BottomBarScreen.Home)
                 is Options.Help -> _sideEffect.emit(BottomBarScreen.Home)
                 is Options.Homework -> _sideEffect.emit(BottomBarScreen.Home)
                 is Options.ThemeSwitch -> {}
+                is Options.AboutStudent -> _sideEffect.emit(ProfileScreen.ABOUT)
+                is Options.LessonsStudent -> _sideEffect.emit(BottomBarScreen.Home)
+                Options.Tutors -> _sideEffect.emit(BottomBarScreen.Home)
             }
         }
     }

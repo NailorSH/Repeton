@@ -3,7 +3,6 @@ package com.nailorsh.repeton.features.userprofile.data
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.common.data.models.user.User
 import com.nailorsh.repeton.common.firestore.FirestoreRepository
 import com.nailorsh.repeton.features.userprofile.data.models.ProfileUserData
 import javax.inject.Inject
@@ -36,10 +35,32 @@ sealed interface Options {
     val type: OptionType
     val trailingItem: TrailingContentType
 
-    object Lessons : Options {
+    object Subjects : Options {
+        override val icon: Int = R.drawable.ic_subjects
+        override val text: Int = R.string.profile_screen_subjects
+        override val type: OptionType = OptionType.Tutor
+        override val trailingItem: TrailingContentType = TrailingContentType.Empty
+    }
+
+
+    object LessonsTutor : Options {
         override val icon = R.drawable.ic_lessons
         override val text = R.string.profile_screen_lessons
         override val type = OptionType.Tutor
+        override val trailingItem = TrailingContentType.Empty
+    }
+
+    object LessonsStudent : Options {
+        override val icon = R.drawable.ic_lessons
+        override val text = R.string.profile_screen_lessons
+        override val type = OptionType.Student
+        override val trailingItem = TrailingContentType.Empty
+    }
+
+    object Tutors : Options {
+        override val icon = R.drawable.ic_students
+        override val text = R.string.profile_screen_tutors
+        override val type = OptionType.Student
         override val trailingItem = TrailingContentType.Empty
     }
 
@@ -57,7 +78,14 @@ sealed interface Options {
         override val trailingItem = TrailingContentType.Empty
     }
 
-    object About : Options {
+    object AboutStudent : Options {
+        override val icon = R.drawable.ic_about
+        override val text = R.string.profile_screen_about
+        override val type = OptionType.Student
+        override val trailingItem = TrailingContentType.Empty
+    }
+
+    object AboutTutor : Options {
         override val icon = R.drawable.ic_about
         override val text = R.string.profile_screen_about
         override val type = OptionType.Tutor
@@ -114,31 +142,39 @@ class ActualProfileRepository @Inject constructor(
 
     override suspend fun getSettingsOptions(): List<Options> =
         listOf(
-            Options.Security,
-            Options.Notifications,
-            Options.Language,
-            Options.Help,
+//            Options.Security,
+//            Options.Notifications,
+//            Options.Language,
+//            Options.Help,
             Options.ThemeSwitch(TrailingContentType.ThemeSwitcher())
         )
 
 
-    override suspend fun getUserOptions(): List<Options> =
-        listOf(
-            Options.Lessons,
-            Options.Students,
-            Options.Homework(TrailingContentType.HomeworkBadge()),
-            Options.Statistics,
-            Options.About
-        )
+    override suspend fun getUserOptions(): List<Options> {
+        if (firestoreRepository.getCurrentUserType()) {
+            return listOf(
+                Options.LessonsTutor,
+                Options.Subjects,
+                Options.Students,
+//                Options.Homework(TrailingContentType.HomeworkBadge()),
+//                Options.Statistics,
+                Options.AboutTutor
+            )
+        } else {
+            return listOf(Options.LessonsStudent, Options.Tutors, Options.AboutStudent)
+        }
+
+    }
+
 
     override suspend fun getUserData(): ProfileUserData {
-        val user: User = firestoreRepository.getCurrentUser()
+        val currentUser = firestoreRepository.getCurrentUser()
         return ProfileUserData(
-            name = user.name,
-            surname = user.surname,
-            phoneNumber = user.phoneNumber,
-            photoSrc = "https://i.imgur.com/C25Otm8.jpeg",
-            isTutor = user.isTutor
+            name = currentUser.name,
+            surname = currentUser.surname,
+            phoneNumber = currentUser.phoneNumber,
+            photoSrc = currentUser.photoSrc,
+            isTutor = currentUser.isTutor
         )
     }
 }

@@ -6,6 +6,7 @@ import com.nailorsh.repeton.common.data.models.education.Education
 import com.nailorsh.repeton.common.data.models.education.EducationType
 import com.nailorsh.repeton.common.data.models.language.Language
 import com.nailorsh.repeton.common.data.models.language.LanguageLevel
+import com.nailorsh.repeton.common.data.models.language.LanguageWithLevel
 import com.nailorsh.repeton.common.data.models.lesson.Attachment
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
@@ -19,6 +20,7 @@ import com.nailorsh.repeton.common.firestore.models.AttachmentDto
 import com.nailorsh.repeton.common.firestore.models.EducationDto
 import com.nailorsh.repeton.common.firestore.models.EducationTypeDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
+import com.nailorsh.repeton.common.firestore.models.LanguageDto
 import com.nailorsh.repeton.common.firestore.models.LanguageLevelDto
 import com.nailorsh.repeton.common.firestore.models.LanguageWithLevelDto
 import com.nailorsh.repeton.common.firestore.models.LessonDto
@@ -103,13 +105,13 @@ fun SubjectWithPriceDto.toDomain(
 
 fun UserDto.toDomain(
     subjectsPrices: List<SubjectWithPrice>? = null,
-    languages: List<Language>? = null,
+    languagesWithLevels: List<LanguageWithLevel>? = null,
     educations: List<Education>? = null
 ): User {
     return if (this.canBeTutor) {
         this.toDomainTutor(
             subjectsPrices = subjectsPrices,
-            languages = languages,
+            languagesWithLevels = languagesWithLevels,
             educations = educations
         )
     } else {
@@ -133,7 +135,7 @@ fun UserDto.toDomainStudent(): Student {
 
 fun UserDto.toDomainTutor(
     subjectsPrices: List<SubjectWithPrice>? = null,
-    languages: List<Language>? = null,
+    languagesWithLevels: List<LanguageWithLevel>? = null,
     educations: List<Education>? = null
 ): Tutor {
     val subjects = subjectsPrices?.map { it.subject }
@@ -156,16 +158,15 @@ fun UserDto.toDomainTutor(
         reviewsNumber = this.reviewsNumber,
         taughtLessonNumber = this.taughtLessonNumber,
         experienceYears = this.experienceYears,
-        languages = languages,
+        languagesWithLevels = languagesWithLevels,
     )
 }
 
 fun LanguageWithLevelDto.toDomain(
-    language: String
-): Language {
-    return Language(
-        id = Id(this.languageId),
-        name = language,
+    language: Language
+): LanguageWithLevel {
+    return LanguageWithLevel(
+        language = language,
         level = LanguageLevel.getLevelByString(this.level)
     )
 }
@@ -186,4 +187,11 @@ fun EducationDto.toDomain(
 
 fun LanguageLevelDto.toDomain(): LanguageLevel {
     return LanguageLevel.fromId(Id(this.id))
+}
+
+fun LanguageDto.toDomain(): Language {
+    return Language(
+        id = Id(this.id),
+        name = this.name
+    )
 }

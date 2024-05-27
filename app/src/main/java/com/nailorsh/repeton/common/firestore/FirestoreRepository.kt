@@ -97,4 +97,6 @@ interface FirestoreRepository {
     // Homework
     suspend fun getHomework(lessonId: Id): Homework
     suspend fun sendHomeworkMessage(lessonId: Id, message: String)
+
+    // Languages
 }

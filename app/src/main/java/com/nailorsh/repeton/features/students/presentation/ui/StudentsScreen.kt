@@ -211,12 +211,6 @@ fun StudentsScreen(
                         )
                     },
                     title = { Text(stringResource(R.string.students_screen_remove_student_title)) },
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_delete),
-                            contentDescription = null
-                        )
-                    },
                     onDismissRequest = { onAction(StudentsAction.DismissAlertDialog) },
                     dismissButton = {
                         TextButton(onClick = { onAction(StudentsAction.DismissAlertDialog) }) {

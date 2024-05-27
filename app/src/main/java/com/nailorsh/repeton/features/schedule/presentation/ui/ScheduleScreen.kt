@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
@@ -204,107 +205,104 @@ fun ScheduleScreenContent(
     ) {
 
 
-        Column(
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = MaterialTheme.colorScheme.background)
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
-            Box(
-                modifier = Modifier
-                    .padding(top = dimensionResource(R.dimen.padding_medium))
-                    .width(dimensionResource(R.dimen.schedule_screen_button_width))
-                    .height(63.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = MaterialTheme.shapes.medium
-                    )
-                    .align(Alignment.CenterHorizontally)
-                    .clickable {
-                        showDatePicker = true
-                    }
-            )
-            {
-                Text(
-                    text = stringResource(R.string.calendar),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    style = MaterialTheme.typography.displaySmall,
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+            item {
+                Box(
                     modifier = Modifier
-                        .align(Alignment.Center)
+                        .padding(top = dimensionResource(R.dimen.padding_medium))
+                        .width(dimensionResource(R.dimen.schedule_screen_button_width))
+                        .height(63.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = MaterialTheme.shapes.medium
+                        )
+                        .clickable {
+                            showDatePicker = true
+                        }
                 )
+                {
+                    Text(
+                        text = stringResource(R.string.calendar),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        style = MaterialTheme.typography.displaySmall,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                    )
+                }
             }
 
 
 
-            DaySlider(
-                selectedDay = selectedDay,
-                onDaySelected = { selectedDay = it },
-                changeSelectionSource = { selectionSource = SelectionSource.DaySlider },
-                weekPagerState = weekPagerState,
-                lessonsMap = scheduleState.lessons,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-            )
+            item {
+                DaySlider(
+                    selectedDay = selectedDay,
+                    onDaySelected = { selectedDay = it },
+                    changeSelectionSource = { selectionSource = SelectionSource.DaySlider },
+                    weekPagerState = weekPagerState,
+                    lessonsMap = scheduleState.lessons,
+                    modifier = Modifier
+                )
+            }
 
-            HorizontalPager(
-                state = dayPagerState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.CenterHorizontally)
-            ) { page ->
-                Column(
+            item {
+                HorizontalPager(
+                    state = dayPagerState,
+                    verticalAlignment = Alignment.Top,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .align(Alignment.CenterHorizontally)
-                ) {
-
-                    // Отображение списка занятий
-                    val day = BASE_DATE.plusDays(page.toLong())
-                    LessonsList(
-                        onLessonClicked = { onAction(ScheduleAction.NavigateToLesson(it)) },
-                        lessons = scheduleState.lessons.getOrDefault(day, emptyList()),
-                        modifier = Modifier
-                            .width(dimensionResource(R.dimen.schedule_screen_button_width))
-                            .weight(0.7f)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    if (scheduleState.isTutor) {
-                        Column(
+                ) { page ->
+                    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                        val day = BASE_DATE.plusDays(page.toLong())
+                        LessonsList(
+                            onLessonClicked = { onAction(ScheduleAction.NavigateToLesson(it)) },
+                            lessons = scheduleState.lessons.getOrDefault(day, emptyList()),
                             modifier = Modifier
-                                .weight(0.3f)
-                                .align(Alignment.CenterHorizontally)
-                        ) {
-
-                            HorizontalDivider(
+                                .width(dimensionResource(R.dimen.schedule_screen_button_width))
+                        )
+                        if (scheduleState.isTutor) {
+                            Column(
                                 modifier = Modifier
-                                    .padding(top = 22.dp)
-                                    .width(dimensionResource(R.dimen.divider_width))
-                                    .align(Alignment.CenterHorizontally),
-
-                                thickness = dimensionResource(R.dimen.divider_thickness),
-                                color = LineColor
-                            )
-
-                            Button(
-                                onClick = { onAction(ScheduleAction.NavigateToNewLesson) },
-                                modifier = Modifier
-                                    .padding(top = 32.dp)
-                                    .width(dimensionResource(R.dimen.schedule_screen_button_width))
-                                    .height(52.dp)
-                                    .align(Alignment.CenterHorizontally),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = MaterialTheme.colorScheme.onPrimary
-                                )
                             ) {
-                                Text(
-                                    text = stringResource(R.string.add_lesson_button),
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    fontWeight = FontWeight.SemiBold,
-                                )
-                            }
-                        }
 
+                                HorizontalDivider(
+                                    modifier = Modifier
+                                        .padding(top = 22.dp)
+                                        .width(dimensionResource(R.dimen.divider_width))
+                                        .align(Alignment.CenterHorizontally),
+
+                                    thickness = dimensionResource(R.dimen.divider_thickness),
+                                    color = LineColor
+                                )
+
+                                Button(
+                                    onClick = { onAction(ScheduleAction.NavigateToNewLesson) },
+                                    modifier = Modifier
+                                        .padding(top = 32.dp)
+                                        .width(dimensionResource(R.dimen.schedule_screen_button_width))
+                                        .height(52.dp)
+                                        .align(Alignment.CenterHorizontally),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary,
+                                        contentColor = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.add_lesson_button),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.SemiBold,
+                                    )
+                                }
+                            }
+
+                        }
                     }
                 }
             }
@@ -342,7 +340,7 @@ fun ScheduleScreenContent(
 fun ScheduleScreenPreview() {
     RepetonTheme {
         ScheduleScreen(
-            scheduleUiState = ScheduleUiState.Success(ScheduleState()),
+            scheduleUiState = ScheduleUiState.Success(ScheduleState(isTutor = true)),
             onAction = { },
             uiEvents = flowOf()
         )

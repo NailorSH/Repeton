@@ -31,7 +31,7 @@ interface FirestoreRepository {
     suspend fun getUserLanguagesWithLevels(): List<Language>?
     suspend fun getUserEducations(): List<Education>?
     suspend fun getUserDto(): UserDto
-    suspend fun getStudents(): List<UserDto>
+    suspend fun getStudents(): List<Student>
     suspend fun addLesson(newLesson: LessonDto)
     suspend fun getLessons(): List<Lesson>
     suspend fun getLesson(id: Id): Lesson

@@ -323,22 +323,13 @@ class FirestoreRepositoryImpl @Inject constructor(
         educationsTasks.awaitAll().filterNotNull().takeIf { it.isNotEmpty() }
     }
 
-    override suspend fun getStudents(): List<UserDto> {
-        val querySnapshot = db.collection("users").whereEqualTo("canBeTutor", false).get().await()
-        if (!querySnapshot.isEmpty) {
-            val students = mutableListOf<UserDto>()
-            querySnapshot.documents.forEach { document ->
-                val user = document.toObject<UserDto>()
-                if (user != null) {
-                    students.add(
-                        user.copy(id = document.id)
-                    )
-                }
-            }
-            return students
-        } else {
-            return emptyList()
-        }
+    override suspend fun getStudents(): List<Student> = withContext(Dispatchers.IO) {
+        db.collection("users")
+            .whereEqualTo("canBeTutor", false)
+            .get()
+            .await()
+            .toObjects<UserDto>()
+            .map { it.toDomainStudent() }
     }
 
 

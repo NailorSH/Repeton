@@ -23,6 +23,6 @@ class ScheduleRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getUserType(): Boolean {
-        return firestoreRepository.getUserType()
+        return firestoreRepository.getCurrentUserType()
     }
 }

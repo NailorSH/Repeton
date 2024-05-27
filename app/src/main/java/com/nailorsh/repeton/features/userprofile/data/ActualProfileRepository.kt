@@ -35,6 +35,15 @@ sealed interface Options {
     val type: OptionType
     val trailingItem: TrailingContentType
 
+    object Exit : Options {
+        override val icon: Int = 0
+        override val text: Int = 0
+        override val type: OptionType = OptionType.Setting
+        override val trailingItem: TrailingContentType = TrailingContentType.Empty
+
+    }
+
+
     object Subjects : Options {
         override val icon: Int = R.drawable.ic_subjects
         override val text: Int = R.string.profile_screen_subjects

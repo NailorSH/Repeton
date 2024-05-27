@@ -143,6 +143,7 @@ class ProfileViewModel @Inject constructor(
                 is Options.AboutStudent -> _sideEffect.emit(ProfileScreen.ABOUT)
                 is Options.LessonsStudent -> _sideEffect.emit(BottomBarScreen.Home)
                 Options.Tutors -> _sideEffect.emit(BottomBarScreen.Home)
+                Options.Exit -> {}
             }
         }
     }

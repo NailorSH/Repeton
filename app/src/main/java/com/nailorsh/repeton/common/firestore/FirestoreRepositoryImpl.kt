@@ -279,7 +279,8 @@ class FirestoreRepositoryImpl @Inject constructor(
                     ?.toDomainTutor(
                         subjectsPrices = getUserSubjectsWithPrices(Id(tutorId)),
                         languagesWithLevels = getUserLanguagesWithLevels(Id(tutorId)),
-                        educations = getUserEducations(Id(tutorId))
+                        educations = getUserEducations(Id(tutorId)),
+                        contacts = getUserContacts(Id(tutorId))
                     )
             }
         }
@@ -484,7 +485,8 @@ class FirestoreRepositoryImpl @Inject constructor(
                 it.toDomainTutor(
                     subjectsPrices = getUserSubjectsWithPrices(Id(it.id)),
                     languagesWithLevels = getUserLanguagesWithLevels(Id(it.id)),
-                    educations = getUserEducations(Id(it.id))
+                    educations = getUserEducations(Id(it.id)),
+                    contacts = getUserContacts(Id(it.id))
                 )
             }
     }
@@ -498,7 +500,8 @@ class FirestoreRepositoryImpl @Inject constructor(
             ?.toDomainTutor(
                 subjectsPrices = getUserSubjectsWithPrices(id),
                 languagesWithLevels = getUserLanguagesWithLevels(id),
-                educations = getUserEducations(id)
+                educations = getUserEducations(id),
+                contacts = getUserContacts(id)
             ) ?: throw NoSuchElementException("Tutor not found for id: ${id.value}")
     }
 

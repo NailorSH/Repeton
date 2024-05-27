@@ -109,13 +109,15 @@ fun SubjectWithPriceDto.toDomain(
 fun UserDto.toDomain(
     subjectsPrices: List<SubjectWithPrice>? = null,
     languagesWithLevels: List<LanguageWithLevel>? = null,
-    educations: List<Education>? = null
+    educations: List<Education>? = null,
+    contacts: List<Contact>? = null
 ): User {
     return if (this.canBeTutor) {
         this.toDomainTutor(
             subjectsPrices = subjectsPrices,
             languagesWithLevels = languagesWithLevels,
-            educations = educations
+            educations = educations,
+            contacts = contacts
         )
     } else {
         this.toDomainStudent()
@@ -139,7 +141,8 @@ fun UserDto.toDomainStudent(): Student {
 fun UserDto.toDomainTutor(
     subjectsPrices: List<SubjectWithPrice>? = null,
     languagesWithLevels: List<LanguageWithLevel>? = null,
-    educations: List<Education>? = null
+    educations: List<Education>? = null,
+    contacts: List<Contact>? = null
 ): Tutor {
     val subjects = subjectsPrices?.map { it.subject }
 
@@ -162,6 +165,7 @@ fun UserDto.toDomainTutor(
         taughtLessonNumber = this.taughtLessonNumber,
         experienceYears = this.experienceYears,
         languagesWithLevels = languagesWithLevels,
+        contacts = contacts
     )
 }
 

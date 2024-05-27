@@ -178,8 +178,23 @@
     <string name="subjects_screen_too_much_subjects">Нельзя добавить более 5 предметов</string>
     <string name="subjects_screen_subject_already_added">Вы уже добавили этот предмет</string>
     <string name="subject_screen_lesson_price">Цена за занятие (руб.)</string>
-    <string name="subject_screen_search_placeholder">Поиск предемета...</string>
+    <string name="subject_screen_search_placeholder">Поиск предемета…</string>
     <string name="subject_screen_title">Предеметы</string>
     <string name="profile_screen_tutors">Преподаватели</string>
     <string name="subject_screen_price_supporting_text">"Чтобы сохранить цену нажмите на "</string>
+    <string name="students_screen_too_much_students">Вы не можете добавить более 5 учеников</string>
+    <string name="students_screen_loading_error">Не удалось обновить список всех учеников</string>
+    <string name="students_screen_student_already_added">Вы уже добавили этого ученика</string>
+    <string name="students_screen_title">Ученики</string>
+    <string name="students_screen_search_placeholder">Поиск ученика…</string>
+    <string name="new_lesson_screen_students_list_title">Ваши ученики</string>
+    <string name="students_screen_add_student_title">Добавление ученика</string>
+    <string name="students_screen_remove_student_title">Удаление ученика</string>
+    <string name="students_screen_add_student_text">Вы уверены, что хотите сделать %1$s %2$s своим учеником?</string>
+    <string name="students_screen_remove_student_text">Вы уверены, что хотите удалить %1$s %2$s из своих учеников?</string>
+    <string name="new_lesson_screen_empty_users_students">Похоже у вас нет ни одного ученика. Добавить их можно в профиле</string>
+    <string name="students_screen_update_student_error">Произошла ошибка добавления/удаления студента</string>
+    <string name="subject_screen_save_error">Произошла ошибка при сохранении изменений</string>
+    <string name="dismiss">Отмена</string>
+    <string name="confirm">Подтвердить</string>
 </resources>

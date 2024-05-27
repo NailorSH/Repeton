@@ -247,7 +247,7 @@ class FirestoreRepositoryImpl @Inject constructor(
             // Проверяем, есть ли уже такой studentId в массиве
             if (snapshot.exists()) {
                 val students = snapshot.get("students") as? List<String> ?: listOf()
-                if (!students.contains(studentId)) {
+                if (students.contains(studentId)) {
                     transaction.update(userDocRef, "students", FieldValue.arrayRemove(studentId))
                 }
             }

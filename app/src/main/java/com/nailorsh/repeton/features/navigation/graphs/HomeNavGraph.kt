@@ -24,6 +24,9 @@ import com.nailorsh.repeton.features.navigation.routes.TutorViewScreen
 import com.nailorsh.repeton.features.schedule.presentation.ui.ScheduleScreen
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleNavigationEvent
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleViewModel
+import com.nailorsh.repeton.features.students.presentation.ui.StudentsScreen
+import com.nailorsh.repeton.features.students.presentation.viewmodel.StudentsNavigationEvent
+import com.nailorsh.repeton.features.students.presentation.viewmodel.StudentsViewModel
 import com.nailorsh.repeton.features.subjects.presentation.ui.SubjectsScreen
 import com.nailorsh.repeton.features.subjects.presentation.viewmodel.SubjectViewModel
 import com.nailorsh.repeton.features.subjects.presentation.viewmodel.SubjectsNavigationEvent
@@ -159,6 +162,29 @@ fun HomeNavGraph(
                 state = subjectsViewModel.state.collectAsState().value,
                 uiEvents = uiEvents,
                 onAction = subjectsViewModel::onAction
+            )
+        }
+
+        composable(route = ProfileScreen.STUDENTS.route) {
+            val studentsViewModel = hiltViewModel<StudentsViewModel>()
+
+            val lifecycleOwner = LocalLifecycleOwner.current
+            val navigationEvents = studentsViewModel.navigationEvents
+            val uiEvents = studentsViewModel.uiEvents
+            LaunchedEffect(lifecycleOwner.lifecycle) {
+                lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    navigationEvents.collect { navigationEvent ->
+                        when (navigationEvent) {
+                            StudentsNavigationEvent.NavigateBack -> navController.popBackStack()
+                        }
+                    }
+                }
+            }
+
+            StudentsScreen(
+                state = studentsViewModel.state.collectAsState().value,
+                uiEvents = uiEvents,
+                onAction = studentsViewModel::onAction
             )
         }
     }

@@ -9,10 +9,12 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.nailorsh.repeton.R
@@ -27,6 +29,11 @@ fun AddUserDialogue(
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         ElevatedCard {
+            Text(
+                stringResource(R.string.new_lesson_screen_students_list_title),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(start = 8.dp, top = 16.dp)
+            )
             LazyColumn(modifier = Modifier.padding(vertical = 32.dp)) {
                 itemsIndexed(students) { index, user ->
 

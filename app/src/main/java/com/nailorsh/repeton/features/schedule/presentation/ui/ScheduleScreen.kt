@@ -46,7 +46,7 @@ import com.nailorsh.repeton.core.ui.components.ErrorScreen
 import com.nailorsh.repeton.core.ui.components.LoadingScreen
 import com.nailorsh.repeton.core.ui.theme.LineColor
 import com.nailorsh.repeton.core.ui.theme.RepetonTheme
-import com.nailorsh.repeton.features.schedule.presentation.ui.components.CalendarDatePicker
+import com.nailorsh.repeton.core.util.CalendarDialog
 import com.nailorsh.repeton.features.schedule.presentation.ui.components.DaySlider
 import com.nailorsh.repeton.features.schedule.presentation.ui.components.LessonsList
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleAction
@@ -55,7 +55,9 @@ import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleUIE
 import com.nailorsh.repeton.features.schedule.presentation.viewmodel.ScheduleUiState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 const val TAG = "SCHEDULE_SCREEN"
@@ -69,7 +71,7 @@ private enum class SelectionSource {
 @Composable
 fun ScheduleScreen(
     scheduleUiState: ScheduleUiState,
-    uiEvents : Flow<ScheduleUIEvent>,
+    uiEvents: Flow<ScheduleUIEvent>,
     onAction: (ScheduleAction) -> Unit
 ) {
     when (scheduleUiState) {
@@ -137,11 +139,19 @@ fun ScheduleScreenContent(
 
 
     if (showDatePicker) {
-        CalendarDatePicker(
-            selectedDay = selectedDay,
-            selectedDayUpdate = { selectedDay = it },
-            showDatePickerUpdate = { showDatePicker = false },
-            changeSelectionSource = { selectionSource = SelectionSource.Calendar }
+        CalendarDialog(
+            date = selectedDay.atStartOfDay(),
+            onDateChange = {
+                selectionSource = SelectionSource.Calendar
+                if (it != null) {
+                    selectedDay = Instant
+                        .ofEpochMilli(it)
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()
+                }
+                showDatePicker = false
+            },
+            onDismissRequest = { showDatePicker = false }
         )
     }
 
@@ -300,7 +310,10 @@ fun ScheduleScreenContent(
             }
         }
 
-        SnackbarHost(hostState = snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
 
 
         if (pullToRefreshState.isRefreshing) {

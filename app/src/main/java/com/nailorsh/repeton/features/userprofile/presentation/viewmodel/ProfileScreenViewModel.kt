@@ -57,7 +57,7 @@ class ProfileViewModel @Inject constructor(
     val sideEffect: SharedFlow<NavigationRoute> = _sideEffect.asSharedFlow()
 
 
-    suspend fun getOptions() = withContext(Dispatchers.IO) {
+    private suspend fun getOptions() = withContext(Dispatchers.IO) {
         _uiState.update { ProfileScreenUiState.Loading }
         try {
             val profileOptions = profileRepository.getUserOptions()
@@ -120,7 +120,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun onThemeUpdate(isDarkThemeEnabled: Boolean) {
+    private fun onThemeUpdate(isDarkThemeEnabled: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             settingsRepository.updateTheme(isDarkThemeEnabled)
         }
@@ -131,7 +131,7 @@ class ProfileViewModel @Inject constructor(
             when (option) {
                 is Options.Subjects -> _sideEffect.emit(ProfileScreen.SUBJECTS)
                 is Options.LessonsTutor -> _sideEffect.emit(BottomBarScreen.Home)
-                is Options.Students -> _sideEffect.emit(BottomBarScreen.Home)
+                is Options.Students -> _sideEffect.emit(ProfileScreen.STUDENTS)
                 is Options.Statistics -> _sideEffect.emit(BottomBarScreen.Home)
                 is Options.AboutTutor -> _sideEffect.emit(ProfileScreen.ABOUT)
                 is Options.Security -> _sideEffect.emit(BottomBarScreen.Home)

@@ -57,8 +57,8 @@ class NewLessonRepositoryImpl @Inject constructor(
         firestoreRepository.getCurrentUserSubjectsWithPrices()?.firstOrNull { it.subject.name == subjectName }?.subject
     }
 
-    override suspend fun getStudents(): List<NewLessonUserItem> = withContext(Dispatchers.IO) {
-        firestoreRepository.getStudents().map { it.toNewLessonUserItem() }
+    override suspend fun getStudents(): List<NewLessonUserItem>? = withContext(Dispatchers.IO) {
+        firestoreRepository.getCurrentUserStudents()?.map { it.toNewLessonUserItem() }
     }
 
     override suspend fun uploadImages(images: List<Attachment.Image>): List<String> = withContext(Dispatchers.IO) {

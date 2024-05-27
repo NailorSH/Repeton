@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okio.IOException
+import java.net.HttpRetryException
 import java.util.Locale
 import javax.inject.Inject
 
@@ -31,6 +33,8 @@ sealed class SubjectsUIEvent(@StringRes val msg: Int) {
     object TooMuchSubject : SubjectsUIEvent(R.string.subjects_screen_too_much_subjects)
 
     object SubjectAlreadyAdded : SubjectsUIEvent(R.string.subjects_screen_subject_already_added)
+
+    object SaveError : SubjectsUIEvent(R.string.subject_screen_save_error)
 }
 
 sealed interface SubjectsAction {
@@ -114,7 +118,15 @@ class SubjectViewModel @Inject constructor(
 
                 SubjectsAction.SaveUpdates -> {
                     onAction(SubjectsAction.UpdateLoadingScreen(true))
-                    saveUpdates()
+                    try {
+                        saveUpdates()
+                    } catch (e : IOException) {
+                        _uiEvents.emit(SubjectsUIEvent.SaveError)
+                    } catch (e : HttpRetryException) {
+                        _uiEvents.emit(SubjectsUIEvent.SaveError)
+                    } catch (e : Exception) {
+                        _uiEvents.emit(SubjectsUIEvent.SaveError)
+                    }
                     onAction(SubjectsAction.UpdateLoadingScreen(false))
                     _navigationEvents.emit(SubjectsNavigationEvent.NavigateBack)
                 }

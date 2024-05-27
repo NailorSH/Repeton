@@ -175,6 +175,7 @@ fun EducationDto.toDomain(
     type: EducationType
 ): Education {
     return Education(
+        id = Id(this.id),
         type = type,
         specialization = this.specialization
     )

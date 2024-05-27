@@ -19,6 +19,7 @@ import com.nailorsh.repeton.common.data.models.user.Tutor
 import com.nailorsh.repeton.common.firestore.mappers.toDomain
 import com.nailorsh.repeton.common.firestore.mappers.toDomainStudent
 import com.nailorsh.repeton.common.firestore.mappers.toDomainTutor
+import com.nailorsh.repeton.common.firestore.mappers.toDto
 import com.nailorsh.repeton.common.firestore.mappers.toLanguageWithLevelDto
 import com.nailorsh.repeton.common.firestore.models.EducationTypeDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
@@ -455,6 +456,42 @@ class FirestoreRepositoryImpl @Inject constructor(
 
                 transaction.update(userRef, "languages", updatedLanguages)
             }.await()
+        }
+    }
+
+    override suspend fun addUserEducation(education: Education) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users")
+                .document(getUserId())
+                .collection("educations")
+
+            val newEducationRef = userRef.document()
+            val educationDto = education.copy(id = Id(newEducationRef.id)).toDto()
+
+            newEducationRef.set(educationDto).await()
+        }
+    }
+
+    override suspend fun updateUserEducation(education: Education) {
+        withContext(Dispatchers.IO) {
+            val educationDto = education.toDto()
+            val userRef = db.collection("users")
+                .document(getUserId())
+                .collection("educations")
+                .document(educationDto.id)
+
+            userRef.set(educationDto).await()
+        }
+    }
+
+    override suspend fun removeUserEducation(educationId: Id) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users")
+                .document(getUserId())
+                .collection("educations")
+                .document(educationId.value)
+
+            userRef.delete().await()
         }
     }
 

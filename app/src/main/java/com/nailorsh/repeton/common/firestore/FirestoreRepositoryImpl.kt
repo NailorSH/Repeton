@@ -24,6 +24,7 @@ import com.nailorsh.repeton.common.firestore.mappers.toDomain
 import com.nailorsh.repeton.common.firestore.mappers.toDomainStudent
 import com.nailorsh.repeton.common.firestore.mappers.toDomainTutor
 import com.nailorsh.repeton.common.firestore.mappers.toDto
+import com.nailorsh.repeton.common.firestore.models.EducationDto
 import com.nailorsh.repeton.common.firestore.models.EducationTypeDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
 import com.nailorsh.repeton.common.firestore.models.LanguageDto
@@ -406,18 +407,23 @@ class FirestoreRepositoryImpl @Inject constructor(
 
     override suspend fun getUserEducations(userId: Id): List<Education>? =
         withContext(Dispatchers.IO) {
-            val educations = getUserDto(userId).educations ?: return@withContext null
+            val userRef = db.collection("users").document(userId.value)
+            val educationsRef = userRef.collection("educations")
 
-            val educationsTasks = educations.map { education ->
+            val educations = educationsRef.get().await().documents.mapNotNull { document ->
                 async {
-                    db.collection("education_types").document(education.typeId).get()
-                        .await()
-                        .toObject<EducationTypeDto>()
-                        ?.let { education.toDomain(it.toDomain()) }
-                }
-            }
+                    val educationDto = document.toObject<EducationDto>()
+                    val educationType =
+                        educationDto?.let {
+                            db.collection("education_types").document(it.typeId).get().await()
+                                .toObject<EducationTypeDto>()?.toDomain()
+                        }
 
-            educationsTasks.awaitAll().filterNotNull().takeIf { it.isNotEmpty() }
+                    educationType?.let { educationDto.toDomain(it) }
+                }
+            }.awaitAll().filterNotNull()
+
+            educations.ifEmpty { null }
         }
 
     override suspend fun getCurrentUserEducations(): List<Education>? =
@@ -484,6 +490,7 @@ class FirestoreRepositoryImpl @Inject constructor(
                 educations = getUserEducations(id)
             ) ?: throw NoSuchElementException("Tutor not found for id: ${id.value}")
     }
+
     private suspend fun addLessonIdToUser(userId: String, lessonId: String) {
         val userRef = db.collection("users").document(userId)
         db.runTransaction { transaction ->
@@ -493,6 +500,7 @@ class FirestoreRepositoryImpl @Inject constructor(
             transaction.update(userRef, "lessons", updatedLessonIds)
         }.await()
     }
+
     override suspend fun addLesson(newLesson: Lesson) = withContext(Dispatchers.IO) {
         // Convert Lesson to LessonDto
         val lessonDto = newLesson.toDto()
@@ -526,7 +534,8 @@ class FirestoreRepositoryImpl @Inject constructor(
 
 
     override suspend fun getLessons(): List<Lesson> = withContext(Dispatchers.IO) {
-        val userLessons = getUserDto(getCurrentUserId()).lessons ?: return@withContext emptyList<Lesson>()
+        val userLessons =
+            getUserDto(getCurrentUserId()).lessons ?: return@withContext emptyList<Lesson>()
         if (userLessons.isEmpty()) {
             return@withContext emptyList<Lesson>()
         }

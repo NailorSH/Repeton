@@ -1,7 +1,7 @@
 package com.nailorsh.repeton.features.tutorprofile.presentation.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -31,10 +31,9 @@ fun ContactItem(
             ContactType.OTHER -> painterResource(R.drawable.ic_info)
         }
 
-        Icon(
+        Image(
             painter = painter,
             contentDescription = contact.type,
-            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(dimensionResource(R.dimen.padding_large))
         )
     }

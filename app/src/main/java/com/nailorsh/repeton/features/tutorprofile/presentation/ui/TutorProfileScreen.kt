@@ -57,7 +57,7 @@ fun TutorProfileScreen(
             onBackClicked = onBackClicked
         )
 
-        TutorProfileUiState.Error -> ErrorScreen(
+        is TutorProfileUiState.Error -> ErrorScreen(
             { viewModel.getTutorProfile(tutorId) },
             modifier = Modifier.fillMaxSize()
         )

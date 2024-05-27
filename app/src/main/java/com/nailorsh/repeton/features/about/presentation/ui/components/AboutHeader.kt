@@ -25,6 +25,7 @@ fun AboutHeader(
     surname : String,
     photoSrc : String?,
     isTutor : Boolean,
+    onImageClick : () -> Unit,
     modifier: Modifier = Modifier
 ) {
     OutlinedCard(
@@ -41,7 +42,7 @@ fun AboutHeader(
             modifier = Modifier
                 .padding(horizontal = 24.dp, vertical = 20.dp)
         ) {
-            UserImage(photoSrc = photoSrc, size = 80.dp)
+            UserImage(photoSrc = photoSrc, size = 80.dp, onClick = onImageClick)
             Column(
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {

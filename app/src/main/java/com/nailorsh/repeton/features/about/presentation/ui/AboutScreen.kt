@@ -163,7 +163,10 @@ fun AboutScreen(
                         name = state.name,
                         surname = state.surname,
                         photoSrc = state.photoSrc,
-                        isTutor = state.isTutor
+                        isTutor = state.isTutor,
+                        onImageClick = { photoPickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        ) }
                     )
                 }
                 item { AboutBioCard(biography = state.about, onBioClicked = { onAction(AboutAction.UpdateShowChangeAbout(true)) })  }

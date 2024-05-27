@@ -20,8 +20,8 @@ class AboutRepositoryImpl @Inject constructor(
 ) : AboutRepository {
     override suspend fun getUserData() = withContext(Dispatchers.IO) {
         val user = firestoreRepository.getCurrentUser()
-        val userLanguages = firestoreRepository.getUserLanguagesWithLevels(user.id)
-        val userEducation = firestoreRepository.getUserEducations(user.id)
+        val userLanguages = firestoreRepository.getCurrentUserLanguagesWithLevels()
+        val userEducation = firestoreRepository.getCurrentUserEducations()
         val education = userEducation?.first()
         AboutUserData(
             name = user.name,

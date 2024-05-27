@@ -35,9 +35,9 @@ sealed interface Options {
     val type: OptionType
     val trailingItem: TrailingContentType
 
-    object Exit : Options {
-        override val icon: Int = 0
-        override val text: Int = 0
+    object Logout : Options {
+        override val icon: Int = R.drawable.ic_logout
+        override val text: Int = R.string.profile_screen_logout
         override val type: OptionType = OptionType.Setting
         override val trailingItem: TrailingContentType = TrailingContentType.Empty
 
@@ -149,13 +149,18 @@ class ActualProfileRepository @Inject constructor(
     private val firestoreRepository: FirestoreRepository
 ) : UserProfileRepository {
 
+    override suspend fun signOut() {
+        firestoreRepository.signoutUser()
+    }
+
     override suspend fun getSettingsOptions(): List<Options> =
         listOf(
 //            Options.Security,
 //            Options.Notifications,
 //            Options.Language,
 //            Options.Help,
-            Options.ThemeSwitch(TrailingContentType.ThemeSwitcher())
+            Options.ThemeSwitch(TrailingContentType.ThemeSwitcher()),
+            Options.Logout
         )
 
 

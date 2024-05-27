@@ -1,5 +1,6 @@
 package com.nailorsh.repeton.common.firestore
 
+import com.google.firebase.auth.FirebaseUser
 import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.education.Education
 import com.nailorsh.repeton.common.data.models.education.EducationType
@@ -16,6 +17,7 @@ import com.nailorsh.repeton.common.data.models.user.User
 import com.nailorsh.repeton.common.firestore.models.UserDto
 
 interface FirestoreRepository {
+    suspend fun getSignedInUser(): FirebaseUser?
     suspend fun getCurrentUserId(): Id
     suspend fun getCurrentUserDto(): UserDto
     suspend fun getCurrentUser(): User

@@ -2,6 +2,7 @@ package com.nailorsh.repeton.common.firestore
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -51,6 +52,10 @@ class FirestoreRepositoryImpl @Inject constructor(
     private var educationTypes: List<EducationType>? = null
     private var languages: List<Language>? = null
     private var languageLevels: List<LanguageLevel>? = null
+
+    override suspend fun getSignedInUser(): FirebaseUser? {
+        return auth.currentUser
+    }
 
     override suspend fun sendHomeworkMessage(lessonId: Id, message: String) {
         db.collection("lessons").document(lessonId.value).collection("homework").document()

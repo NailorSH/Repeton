@@ -142,10 +142,15 @@ fun AboutScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
         if (state.isLoading) {
-            LoadingDialogue()
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
         } else if (state.error) {
             ErrorScreen(retryAction = { onAction(AboutAction.RetryAction) })
-        } else
+        } else {
+            if (state.showSavingDialogue) {
+                LoadingDialogue()
+            }
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -213,6 +218,7 @@ fun AboutScreen(
                     Spacer(Modifier.height(16.dp))
                 }
             }
+        }
     }
 }
 

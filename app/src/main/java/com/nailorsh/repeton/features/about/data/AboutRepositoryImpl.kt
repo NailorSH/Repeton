@@ -43,13 +43,11 @@ class AboutRepositoryImpl @Inject constructor(
             val downloadUrl = imagesRef.downloadUrl.await().toString()
             firestoreRepository.updateCurrentUserPhotoSrc(downloadUrl)
         }
-        data.languagesWithLevels?.forEach {
-            firestoreRepository.updateCurrentUserLanguageLevel(
-                languageId = it.language.id,
-                level = it.level
-            )
+        data.languagesWithLevels?.let {
+            firestoreRepository.updateCurrentUserLanguagesWithLevels(languagesWithLevels = it)
         }
-         data.education?.let { firestoreRepository.updateCurrentUserEducation(education = it) }
+        println()
+        data.education?.let { firestoreRepository.updateCurrentUserEducations(educations = listOf(it)) }
         return@withContext
     }
 

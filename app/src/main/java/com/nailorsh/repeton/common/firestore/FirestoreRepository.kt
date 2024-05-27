@@ -1,6 +1,8 @@
 package com.nailorsh.repeton.common.firestore
 
 import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.education.Education
+import com.nailorsh.repeton.common.data.models.education.EducationType
 import com.nailorsh.repeton.common.data.models.language.Language
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
@@ -18,7 +20,6 @@ interface FirestoreRepository {
     suspend fun getUserSurname(): String
     suspend fun getUserPhotoSrc(): String?
     suspend fun getUserAbout(): String?
-    suspend fun getUserSpecialization(): String?
     suspend fun getUserStudents(): List<Student>?
     suspend fun addUserStudent(studentId: String)
     suspend fun removeUserStudent(studentId: String)
@@ -27,7 +28,7 @@ interface FirestoreRepository {
     suspend fun removeUserTutor(tutorId: String)
     suspend fun getUserSubjectsWithPrices(): List<SubjectWithPrice>?
     suspend fun getUserLanguagesWithLevels(): List<Language>?
-    suspend fun getUserEducation(): String?
+    suspend fun getUserEducations(): List<Education>?
     suspend fun getUserDto(): UserDto
     suspend fun getStudents(): List<UserDto>
     suspend fun addLesson(newLesson: LessonDto)
@@ -42,5 +43,5 @@ interface FirestoreRepository {
     suspend fun updateUserSurname(surname: String)
     suspend fun updatePhotoSrc(url: String)
     suspend fun updateUserAbout(about: String)
-    suspend fun updateUserSpecialization(specialization: String)
+    suspend fun getEducationTypes(): List<EducationType>
 }

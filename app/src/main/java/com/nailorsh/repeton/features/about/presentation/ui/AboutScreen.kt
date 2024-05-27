@@ -11,8 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.education.Education
+import com.nailorsh.repeton.common.data.models.education.EducationType
 import com.nailorsh.repeton.features.about.presentation.ui.components.AboutBioCard
 import com.nailorsh.repeton.features.about.presentation.ui.components.AboutEducation
 import com.nailorsh.repeton.features.about.presentation.ui.components.AboutHeader
@@ -62,7 +62,7 @@ fun AboutScreen(
             }
             item {
                 AboutEducation(
-                    education = aboutState.education?.name,
+                    education = aboutState.education?.type?.name,  // TODO проверить то ли передаём
                     specialization = aboutState.education?.specialization,
                     educationsList = aboutState.educationList,
                     onEducationChange = { onAction(AboutAction.ChangeEducation(it)) },
@@ -88,7 +88,7 @@ fun AboutScreen(
 @Composable
 fun PreviewAboutScreen() {
     AboutScreen(aboutState = AboutState(
-        education = Education(id = Id("-1"), name = "Bach"),
+        education = Education(type = EducationType.MASTER),
         about = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. " +
                 "Lorem Ipsum has been the industry's standard dummy text ever since" +
                 " the 1500s, when an unknown printer took a galley of type and scrambled it " +

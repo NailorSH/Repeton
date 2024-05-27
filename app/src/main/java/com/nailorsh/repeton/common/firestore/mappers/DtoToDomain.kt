@@ -3,6 +3,7 @@ package com.nailorsh.repeton.common.firestore.mappers
 import com.google.firebase.Timestamp
 import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.education.Education
+import com.nailorsh.repeton.common.data.models.education.EducationType
 import com.nailorsh.repeton.common.data.models.language.Language
 import com.nailorsh.repeton.common.data.models.language.LanguageLevel
 import com.nailorsh.repeton.common.data.models.lesson.Attachment
@@ -15,6 +16,8 @@ import com.nailorsh.repeton.common.data.models.user.Student
 import com.nailorsh.repeton.common.data.models.user.Tutor
 import com.nailorsh.repeton.common.data.models.user.User
 import com.nailorsh.repeton.common.firestore.models.AttachmentDto
+import com.nailorsh.repeton.common.firestore.models.EducationDto
+import com.nailorsh.repeton.common.firestore.models.EducationTypeDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
 import com.nailorsh.repeton.common.firestore.models.LanguageWithLevelDto
 import com.nailorsh.repeton.common.firestore.models.LessonDto
@@ -99,13 +102,13 @@ fun SubjectWithPriceDto.toDomain(
 fun UserDto.toDomain(
     subjectsPrices: List<SubjectWithPrice>? = null,
     languages: List<Language>? = null,
-    education: Education? = null
+    educations: List<Education>? = null
 ): User {
     return if (this.canBeTutor) {
         this.toDomainTutor(
             subjectsPrices = subjectsPrices,
             languages = languages,
-            education = education?.name
+            educations = educations
         )
     } else {
         this.toDomainStudent()
@@ -128,7 +131,7 @@ fun UserDto.toDomainStudent(): Student {
 fun UserDto.toDomainTutor(
     subjectsPrices: List<SubjectWithPrice>? = null,
     languages: List<Language>? = null,
-    education: String? = null
+    educations: List<Education>? = null
 ): Tutor {
     val subjects = subjectsPrices?.map { it.subject }
 
@@ -142,7 +145,7 @@ fun UserDto.toDomainTutor(
         location = null,
         isTutor = true,
         subjects = subjects,
-        education = education,
+        educations = educations,
         subjectsPrices = subjectsPrices,
         averagePrice = this.averagePrice,
         rating = this.averageRating,
@@ -160,5 +163,18 @@ fun LanguageWithLevelDto.toDomain(
         id = Id(this.languageId),
         name = language,
         level = LanguageLevel.getLevelByString(this.level)
+    )
+}
+
+fun EducationTypeDto.toDomain(): EducationType {
+    return EducationType.fromId(Id(this.id))
+}
+
+fun EducationDto.toDomain(
+    type: EducationType
+): Education {
+    return Education(
+        type = type,
+        specialization = this.specialization
     )
 }

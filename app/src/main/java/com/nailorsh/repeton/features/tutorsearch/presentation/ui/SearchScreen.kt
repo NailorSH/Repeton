@@ -263,7 +263,8 @@ fun TutorCard(
                     )
                 }
 
-                tutor.education?.let {
+                // TODO добавить обработку списка образований
+                tutor.educations?.get(0)?.specialization?.let {
                     InfoSection(
                         modifier = Modifier.fillMaxWidth(),
                         title = R.string.education_section,

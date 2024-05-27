@@ -2,6 +2,7 @@ package com.nailorsh.repeton.common.data.models.user
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.education.Education
 import com.nailorsh.repeton.common.data.models.language.Language
 import com.nailorsh.repeton.common.data.models.lesson.Subject
 import com.nailorsh.repeton.common.data.models.lesson.SubjectWithPrice
@@ -17,7 +18,7 @@ data class Tutor(
     override val location: Location? = null,
     override val isTutor: Boolean = true,
     val subjects: List<Subject>? = null,
-    val education: String? = null,
+    val educations: List<Education>? = null,
     val subjectsPrices: List<SubjectWithPrice>? = null,
     val averagePrice: Int = 0,
     val rating: Double = 0.0,
@@ -64,7 +65,7 @@ fun DocumentSnapshot.toTutorWithId(): Tutor {
         middleName = middleName,
         about = about,
         photoSrc = photoSrc,
-        education = education,
+        educations = null,
         subjectsPrices = null,
         averagePrice = averagePrice,
         rating = rating,

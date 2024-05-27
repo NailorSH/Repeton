@@ -394,6 +394,16 @@ class FirestoreRepositoryImpl @Inject constructor(
             getUserLanguagesWithLevels(getCurrentUserId())
         }
 
+    override suspend fun updateCurrentUserLanguagesWithLevels(languagesWithLevels: List<LanguageWithLevel>) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users").document(getCurrentUserId().value)
+            db.runTransaction { transaction ->
+                val updatedLanguages = languagesWithLevels.map { it.toDto() }
+                transaction.update(userRef, "languages", updatedLanguages)
+            }
+        }
+    }
+
     override suspend fun getUserEducations(userId: Id): List<Education>? =
         withContext(Dispatchers.IO) {
             val educations = getUserDto(userId).educations ?: return@withContext null
@@ -414,6 +424,29 @@ class FirestoreRepositoryImpl @Inject constructor(
         withContext(Dispatchers.IO) {
             getUserEducations(getCurrentUserId())
         }
+
+    override suspend fun updateCurrentUserEducations(educations: List<Education>) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users")
+                .document(getCurrentUserId().value)
+                .collection("educations")
+
+            // Получаем текущие документы в подколлекции "educations"
+            val currentEducations = userRef.get().await()
+
+            // Удаляем все существующие документы в подколлекции "educations"
+            currentEducations.documents.forEach { document ->
+                userRef.document(document.id).delete().await()
+            }
+
+            // Добавляем новые образования
+            educations.forEach { education ->
+                val educationRef = userRef.document()
+                val educationDto = education.toDto()
+                educationRef.set(educationDto).await()
+            }
+        }
+    }
 
     override suspend fun getStudents(): List<Student> = withContext(Dispatchers.IO) {
         db.collection("users")

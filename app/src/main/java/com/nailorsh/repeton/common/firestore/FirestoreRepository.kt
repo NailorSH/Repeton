@@ -59,9 +59,11 @@ interface FirestoreRepository {
     suspend fun getUserSubjectsWithPrices(userId: Id): List<SubjectWithPrice>?
     suspend fun getCurrentUserSubjectsWithPrices(): List<SubjectWithPrice>?
     suspend fun updateCurrentUserSubjectsWithPrices(userSubjects : List<SubjectWithPrice>?)
+
     // UserLanguagesWithLevels
     suspend fun getUserLanguagesWithLevels(userId: Id): List<LanguageWithLevel>?
     suspend fun getCurrentUserLanguagesWithLevels(): List<LanguageWithLevel>?
+    suspend fun updateCurrentUserLanguagesWithLevels(languagesWithLevels: List<LanguageWithLevel>)
     suspend fun addCurrentUserLanguageWithLevel(languageWithLevel: LanguageWithLevel)
     suspend fun updateCurrentUserLanguageLevel(languageId: Id, level: LanguageLevel)
     suspend fun removeCurrentUserLanguageWithLevel(languageId: Id)
@@ -69,6 +71,7 @@ interface FirestoreRepository {
     // UserEducations
     suspend fun getUserEducations(userId: Id): List<Education>?
     suspend fun getCurrentUserEducations(): List<Education>?
+    suspend fun updateCurrentUserEducations(educations: List<Education>)
     suspend fun addCurrentUserEducation(education: Education)
     suspend fun updateCurrentUserEducation(education: Education)
     suspend fun removeCurrentUserEducation(educationId: Id)

@@ -19,10 +19,12 @@ import com.nailorsh.repeton.common.data.models.user.Tutor
 import com.nailorsh.repeton.common.firestore.mappers.toDomain
 import com.nailorsh.repeton.common.firestore.mappers.toDomainStudent
 import com.nailorsh.repeton.common.firestore.mappers.toDomainTutor
+import com.nailorsh.repeton.common.firestore.mappers.toLanguageWithLevelDto
 import com.nailorsh.repeton.common.firestore.models.EducationTypeDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
 import com.nailorsh.repeton.common.firestore.models.LanguageDto
 import com.nailorsh.repeton.common.firestore.models.LanguageLevelDto
+import com.nailorsh.repeton.common.firestore.models.LanguageWithLevelDto
 import com.nailorsh.repeton.common.firestore.models.LessonDto
 import com.nailorsh.repeton.common.firestore.models.ReviewDto
 import com.nailorsh.repeton.common.firestore.models.SubjectDto
@@ -397,8 +399,66 @@ class FirestoreRepositoryImpl @Inject constructor(
         return educationTypes!!
     }
 
+    override suspend fun addUserLanguage(language: Language) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users").document(getUserId())
+            db.runTransaction { transaction ->
+                val snapshot = transaction.get(userRef)
+                val languages =
+                    snapshot.get("languages") as? List<LanguageWithLevelDto> ?: emptyList()
+
+                val updatedLanguages = languages + language.toLanguageWithLevelDto()
+                transaction.update(userRef, "languages", updatedLanguages)
+            }
+        }
+    }
+
+    override suspend fun updateUserLanguageLevel(languageId: Id, level: LanguageLevel) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users").document(getUserId())
+
+            db.runTransaction { transaction ->
+                val snapshot = transaction.get(userRef)
+                val languages =
+                    snapshot.get("languages") as? List<LanguageWithLevelDto> ?: emptyList()
+
+                val updatedLanguages = languages.toMutableList()
+
+                val index = languages.indexOfFirst { it.languageId == languageId.value }
+                if (index != -1) {
+                    updatedLanguages[index] = updatedLanguages[index].copy(level = level.value)
+                } else {
+                    updatedLanguages.add(LanguageWithLevelDto(languageId.value, level.value))
+                }
+
+                transaction.update(userRef, "languages", updatedLanguages)
+            }.await()
+        }
+    }
+
+    override suspend fun removeUserLanguage(languageId: Id) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users").document(getUserId())
+
+            db.runTransaction { transaction ->
+                val snapshot = transaction.get(userRef)
+                val languages =
+                    snapshot.get("languages") as? List<LanguageWithLevelDto> ?: emptyList()
+
+                val updatedLanguages = languages.toMutableList()
+
+                // Находим индекс языка с указанным languageId и удаляем его из списка
+                val index = languages.indexOfFirst { it.languageId == languageId.value }
+                if (index != -1) {
+                    updatedLanguages.removeAt(index)
+                }
+
+                transaction.update(userRef, "languages", updatedLanguages)
+            }.await()
+        }
+    }
+
     private suspend fun tutorProvider(id: String): Tutor {
-        println()
         val userSnapshot = db.collection("users").document(id).get().await()
 
         val userDto = userSnapshot.toObject<UserDto>()

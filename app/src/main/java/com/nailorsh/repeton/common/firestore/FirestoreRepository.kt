@@ -46,4 +46,7 @@ interface FirestoreRepository {
     suspend fun updateUserAbout(about: String)
     suspend fun getEducationTypes(): List<EducationType>
     suspend fun getLanguageLevels(): List<LanguageLevel>?
+    suspend fun addUserLanguage(language: Language)
+    suspend fun updateUserLanguageLevel(languageId: Id, level: LanguageLevel)
+    suspend fun removeUserLanguage(languageId: Id)
 }

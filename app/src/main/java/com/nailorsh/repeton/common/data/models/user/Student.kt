@@ -10,6 +10,7 @@ data class Student(
     override val middleName: String? = null,
     override val about: String? = null,
     override val photoSrc: String? = null,
+    override val phoneNumber: String,
     override val location: Location? = null,
     override val isTutor: Boolean = false,
 ) : User

@@ -63,7 +63,7 @@ class HomeworkRepositoryImpl @Inject constructor(
     override suspend fun getUser(id: Id): HomeworkUser {
         val user = firestoreRepository.getUser(id)
         return HomeworkUser(
-            id = Id(user.id),
+            id = user.id,
             name = user.name,
             surname = user.surname,
             photoSrc = "https://i.imgur.com/FEbhLoO.jpeg"

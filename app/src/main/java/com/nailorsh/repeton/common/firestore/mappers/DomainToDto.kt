@@ -1,14 +1,18 @@
 package com.nailorsh.repeton.common.firestore.mappers
 
 import com.google.firebase.Timestamp
+import com.nailorsh.repeton.common.data.models.education.Education
+import com.nailorsh.repeton.common.data.models.language.Language
 import com.nailorsh.repeton.common.data.models.lesson.Attachment
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.models.lesson.Review
 import com.nailorsh.repeton.common.firestore.models.AttachmentDto
+import com.nailorsh.repeton.common.firestore.models.EducationDto
 import com.nailorsh.repeton.common.firestore.models.FileDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
 import com.nailorsh.repeton.common.firestore.models.ImageDto
+import com.nailorsh.repeton.common.firestore.models.LanguageWithLevelDto
 import com.nailorsh.repeton.common.firestore.models.LessonDto
 import com.nailorsh.repeton.common.firestore.models.ReviewDto
 import java.time.LocalDateTime
@@ -17,7 +21,7 @@ import java.time.ZoneOffset
 fun Lesson.toDto(): LessonDto {
     return LessonDto(
         tutorId = this.tutor.id.value,
-        studentIds = emptyList(),
+        studentIds = this.studentIds.map { it.value },
         subjectId = this.subject.id.value,
         topic = this.topic,
         startTime = this.startTime.toTimestamp(),
@@ -64,4 +68,19 @@ fun Attachment.toDto(): AttachmentDto {
             )
         )
     }
+}
+
+fun Language.toLanguageWithLevelDto(): LanguageWithLevelDto {
+    return LanguageWithLevelDto(
+        languageId = this.id.value,
+        level = this.level.value
+    )
+}
+
+fun Education.toDto(): EducationDto {
+    return EducationDto(
+        id = this.id.value,
+        typeId = this.type.id.value,
+        specialization = this.specialization
+    )
 }

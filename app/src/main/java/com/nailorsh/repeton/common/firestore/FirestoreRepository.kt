@@ -1,47 +1,100 @@
 package com.nailorsh.repeton.common.firestore
 
 import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.education.Education
+import com.nailorsh.repeton.common.data.models.education.EducationType
 import com.nailorsh.repeton.common.data.models.language.Language
+import com.nailorsh.repeton.common.data.models.language.LanguageLevel
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.models.lesson.Subject
 import com.nailorsh.repeton.common.data.models.lesson.SubjectWithPrice
 import com.nailorsh.repeton.common.data.models.user.Student
 import com.nailorsh.repeton.common.data.models.user.Tutor
-import com.nailorsh.repeton.common.firestore.models.LessonDto
+import com.nailorsh.repeton.common.data.models.user.User
 import com.nailorsh.repeton.common.firestore.models.UserDto
 
 interface FirestoreRepository {
-    suspend fun getUserId(): String
-    suspend fun getUserType(): Boolean
-    suspend fun getUserName(): String
-    suspend fun getUserSurname(): String
-    suspend fun getUserPhotoSrc(): String?
-    suspend fun getUserAbout(): String?
-    suspend fun getUserSpecialization(): String?
-    suspend fun getUserStudents(): List<Student>?
-    suspend fun addUserStudent(studentId: String)
-    suspend fun removeUserStudent(studentId: String)
-    suspend fun getUserTutors(): List<Tutor>?
-    suspend fun addUserTutor(tutorId: String)
-    suspend fun removeUserTutor(tutorId: String)
-    suspend fun getUserSubjectsWithPrices(): List<SubjectWithPrice>?
-    suspend fun getUserLanguagesWithLevels(): List<Language>?
-    suspend fun getUserEducation(): String?
-    suspend fun getUserDto(): UserDto
-    suspend fun getStudents(): List<UserDto>
-    suspend fun addLessonIdToUser(userId: String, lessonId: String)
-    suspend fun addLesson(newLesson: LessonDto)
+    suspend fun getCurrentUserId(): Id
+    suspend fun getCurrentUserDto(): UserDto
+    suspend fun getCurrentUser(): User
+    suspend fun getUser(userId: Id): User
+
+    // UserType
+    suspend fun getUserType(userId: Id): Boolean
+    suspend fun getCurrentUserType(): Boolean
+
+    // UserName
+    suspend fun getUserName(userId: Id): String
+    suspend fun getCurrentUserName(): String
+    suspend fun updateCurrentUserName(name: String)
+
+    // UserSurname
+    suspend fun getUserSurname(userId: Id): String
+    suspend fun getCurrentUserSurname(): String
+    suspend fun updateCurrentUserSurname(surname: String)
+
+    // UserPhotoSrc
+    suspend fun getUserPhotoSrc(userId: Id): String?
+    suspend fun getCurrentUserPhotoSrc(): String?
+    suspend fun updateCurrentUserPhotoSrc(url: String)
+
+    // UserAbout
+    suspend fun getUserAbout(userId: Id): String?
+    suspend fun getCurrentUserAbout(): String?
+    suspend fun updateCurrentUserAbout(about: String)
+
+    // UserStudents
+    suspend fun getCurrentUserStudents(): List<Student>?
+    suspend fun addCurrentUserStudent(studentId: String)
+    suspend fun removeCurrentUserStudent(studentId: String)
+
+    // UserTutors
+    suspend fun getCurrentUserTutors(): List<Tutor>?
+    suspend fun addCurrentUserTutor(tutorId: String)
+    suspend fun removeCurrentUserTutor(tutorId: Id)
+
+    // UserSubjectsWithPrices
+    suspend fun getUserSubjectsWithPrices(userId: Id): List<SubjectWithPrice>?
+    suspend fun getCurrentUserSubjectsWithPrices(): List<SubjectWithPrice>?
+
+    // UserLanguagesWithLevels
+    suspend fun getUserLanguagesWithLevels(userId: Id): List<Language>?
+    suspend fun getCurrentUserLanguagesWithLevels(): List<Language>?
+    suspend fun addCurrentUserLanguage(language: Language)
+    suspend fun updateCurrentUserLanguageLevel(languageId: Id, level: LanguageLevel)
+    suspend fun removeCurrentUserLanguage(languageId: Id)
+
+    // UserEducations
+    suspend fun getUserEducations(userId: Id): List<Education>?
+    suspend fun getCurrentUserEducations(): List<Education>?
+    suspend fun addCurrentUserEducation(education: Education)
+    suspend fun updateCurrentUserEducation(education: Education)
+    suspend fun removeCurrentUserEducation(educationId: Id)
+
+    // EducationTypes
+    suspend fun getEducationTypes(): List<EducationType>
+
+    // LanguageLevels
+    suspend fun getLanguageLevels(): List<LanguageLevel>?
+
+    // Students
+    suspend fun getStudents(): List<Student>
+
+    // Tutors
+    suspend fun getTutors(): List<Tutor>
+    suspend fun getTutor(id: Id): Tutor?
+
+    // Lesson
     suspend fun getLessons(): List<Lesson>
+    suspend fun addLesson(newLesson: Lesson)
     suspend fun getLesson(id: Id): Lesson
+
+    // Subject
     suspend fun getSubjects(): List<Subject>
-    suspend fun getUser(userId: Id): UserDto
     suspend fun getSubject(id: Id): Subject
+
+    // Homework
     suspend fun getHomework(lessonId: Id): Homework
     suspend fun sendHomeworkMessage(lessonId: Id, message: String)
-    suspend fun updateUserName(name: String)
-    suspend fun updateUserSurname(surname: String)
-    suspend fun updatePhotoSrc(url: String)
-    suspend fun updateUserAbout(about: String)
-    suspend fun updateUserSpecialization(specialization: String)
 }

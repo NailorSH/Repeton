@@ -1,25 +1,33 @@
 package com.nailorsh.repeton.common.firestore
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.education.Education
+import com.nailorsh.repeton.common.data.models.education.EducationType
 import com.nailorsh.repeton.common.data.models.language.Language
+import com.nailorsh.repeton.common.data.models.language.LanguageLevel
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.models.lesson.Subject
 import com.nailorsh.repeton.common.data.models.lesson.SubjectWithPrice
 import com.nailorsh.repeton.common.data.models.user.Student
 import com.nailorsh.repeton.common.data.models.user.Tutor
+import com.nailorsh.repeton.common.data.models.user.User
 import com.nailorsh.repeton.common.firestore.mappers.toDomain
 import com.nailorsh.repeton.common.firestore.mappers.toDomainStudent
 import com.nailorsh.repeton.common.firestore.mappers.toDomainTutor
-import com.nailorsh.repeton.common.firestore.models.EducationDto
+import com.nailorsh.repeton.common.firestore.mappers.toDto
+import com.nailorsh.repeton.common.firestore.mappers.toLanguageWithLevelDto
+import com.nailorsh.repeton.common.firestore.models.EducationTypeDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
 import com.nailorsh.repeton.common.firestore.models.LanguageDto
+import com.nailorsh.repeton.common.firestore.models.LanguageLevelDto
+import com.nailorsh.repeton.common.firestore.models.LanguageWithLevelDto
 import com.nailorsh.repeton.common.firestore.models.LessonDto
 import com.nailorsh.repeton.common.firestore.models.ReviewDto
 import com.nailorsh.repeton.common.firestore.models.SubjectDto
@@ -39,6 +47,8 @@ class FirestoreRepositoryImpl @Inject constructor(
 
     private var userDto: UserDto? = null
     private var subjects: List<Subject>? = null
+    private var educationTypes: List<EducationType>? = null
+    private var languageLevels: List<LanguageLevel>? = null
 
     override suspend fun sendHomeworkMessage(lessonId: Id, message: String) {
         db.collection("lessons").document(lessonId.value).collection("homework").document()
@@ -47,32 +57,27 @@ class FirestoreRepositoryImpl @Inject constructor(
             )
     }
 
-    override suspend fun updateUserName(name: String) {
+    override suspend fun updateCurrentUserName(name: String) {
         val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
         db.collection("users").document(userId).update("name", name).await()
     }
 
-    override suspend fun updateUserSurname(surname: String) {
+    override suspend fun updateCurrentUserSurname(surname: String) {
         val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
         db.collection("users").document(userId).update("surname", surname).await()
     }
 
-    override suspend fun updatePhotoSrc(url: String) {
+    override suspend fun updateCurrentUserPhotoSrc(url: String) {
         val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
         db.collection("users").document(userId).update("photoSrc", url).await()
     }
 
-    override suspend fun updateUserAbout(about: String) {
+    override suspend fun updateCurrentUserAbout(about: String) {
         val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
         db.collection("users").document(userId).update("about", about).await()
     }
 
-    override suspend fun updateUserSpecialization(specialization: String) {
-        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
-        db.collection("users").document(userId).update("specialization", specialization).await()
-    }
-
-    override suspend fun getUserDto(): UserDto {
+    override suspend fun getCurrentUserDto(): UserDto {
         if (userDto == null) {
             val uid = auth.currentUser?.uid
             if (uid != null) {
@@ -90,25 +95,43 @@ class FirestoreRepositoryImpl @Inject constructor(
         return userDto!!
     }
 
+    private suspend fun getUserDto(userId: Id): UserDto = withContext(Dispatchers.IO) {
+        db.collection("users")
+            .document(userId.value)
+            .get()
+            .await()
+            .toObject<UserDto>()
+            ?: throw NoSuchElementException("User not found for id: ${userId.value}")
+    }
+
+    override suspend fun getCurrentUser(): User {
+        return getUser(getCurrentUserId())
+    }
+
     override suspend fun getSubjects(): List<Subject> {
         if (subjects == null) {
             val querySnapshot = db.collection("subjects").get().await()
             subjects = querySnapshot.documents.map { document ->
-                val subject = document.toObject(SubjectDto::class.java)
+                val subject = document.toObject<SubjectDto>()
                 subject?.toDomain() ?: throw (IOException("Lesson not found"))
             }
         }
         return subjects!!
     }
 
-    override suspend fun getUser(userId: Id): UserDto {
-        val document = db.collection("users").document(userId.value).get().await()
-        if (document.exists()) {
-            val user = document.toObject<UserDto>()!!
-            return user
-        } else {
-            throw (IOException("User not found"))
+    override suspend fun getUser(userId: Id): User {
+        return getUserDto(userId).toDomain()
+    }
+
+    override suspend fun getLanguageLevels(): List<LanguageLevel>? {
+        if (languageLevels == null) {
+            val querySnapshot = db.collection("language_level").get().await()
+            languageLevels = querySnapshot.documents.map { document ->
+                val languageLevel = document.toObject<LanguageLevelDto>()
+                languageLevel?.toDomain() ?: throw (IOException("Lesson not found"))
+            }
         }
+        return languageLevels!!
     }
 
     override suspend fun getHomework(lessonId: Id): Homework {
@@ -130,36 +153,57 @@ class FirestoreRepositoryImpl @Inject constructor(
         } else throw (IOException("Lesson not found"))
     }
 
-    override suspend fun getUserId(): String {
-        return getUserDto().id
+    override suspend fun getCurrentUserId(): Id {
+        return Id(getCurrentUserDto().id)
     }
 
-    override suspend fun getUserType(): Boolean {
-        return getUserDto().canBeTutor
+    override suspend fun getCurrentUserType(): Boolean {
+        return getCurrentUserDto().canBeTutor
     }
 
-    override suspend fun getUserName(): String {
-        return getUserDto().name
+    override suspend fun getUserType(userId: Id): Boolean {
+        return if (userId == getCurrentUserId()) getCurrentUserDto().canBeTutor
+        else getUserDto(userId).canBeTutor
     }
 
-    override suspend fun getUserSurname(): String {
-        return getUserDto().surname
+    override suspend fun getCurrentUserName(): String {
+        return getCurrentUserDto().name
     }
 
-    override suspend fun getUserPhotoSrc(): String? {
-        return getUserDto().photoSrc
+    override suspend fun getUserName(userId: Id): String {
+        return if (userId == getCurrentUserId()) getCurrentUserDto().name
+        else getUserDto(userId).name
     }
 
-    override suspend fun getUserAbout(): String? {
-        return getUserDto().about
+    override suspend fun getCurrentUserSurname(): String {
+        return getCurrentUserDto().surname
     }
 
-    override suspend fun getUserSpecialization(): String? {
-        return getUserDto().specialization
+    override suspend fun getUserSurname(userId: Id): String {
+        return if (userId == getCurrentUserId()) getCurrentUserDto().surname
+        else getUserDto(userId).surname
     }
 
-    override suspend fun getUserStudents(): List<Student>? = withContext(Dispatchers.IO) {
-        val studentsIds = getUserDto().students ?: return@withContext null
+    override suspend fun getCurrentUserPhotoSrc(): String? {
+        return getCurrentUserDto().photoSrc
+    }
+
+    override suspend fun getUserPhotoSrc(userId: Id): String? {
+        return if (userId == getCurrentUserId()) getCurrentUserDto().photoSrc
+        else getUserDto(userId).photoSrc
+    }
+
+    override suspend fun getCurrentUserAbout(): String? {
+        return getCurrentUserDto().about
+    }
+
+    override suspend fun getUserAbout(userId: Id): String? {
+        return if (userId == getCurrentUserId()) getCurrentUserDto().about
+        else getUserDto(userId).about
+    }
+
+    override suspend fun getCurrentUserStudents(): List<Student>? = withContext(Dispatchers.IO) {
+        val studentsIds = getCurrentUserDto().students ?: return@withContext null
 
         val studentTasks = studentsIds.map { studentId ->
             async {
@@ -172,7 +216,7 @@ class FirestoreRepositoryImpl @Inject constructor(
         studentTasks.awaitAll().filterNotNull().takeIf { it.isNotEmpty() }
     }
 
-    override suspend fun addUserStudent(studentId: String) {
+    override suspend fun addCurrentUserStudent(studentId: String) {
         val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
         val userDocRef = db.collection("users").document(userId)
 
@@ -191,7 +235,7 @@ class FirestoreRepositoryImpl @Inject constructor(
         }.await()
     }
 
-    override suspend fun removeUserStudent(studentId: String) {
+    override suspend fun removeCurrentUserStudent(studentId: String) {
         val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
         val userDocRef = db.collection("users").document(userId)
 
@@ -210,8 +254,8 @@ class FirestoreRepositoryImpl @Inject constructor(
         }.await()
     }
 
-    override suspend fun getUserTutors(): List<Tutor>? = withContext(Dispatchers.IO) {
-        val tutorsIds = getUserDto().tutors ?: return@withContext null
+    override suspend fun getCurrentUserTutors(): List<Tutor>? = withContext(Dispatchers.IO) {
+        val tutorsIds = getCurrentUserDto().tutors ?: return@withContext null
 
         val tutorTasks = tutorsIds.map { tutorId ->
             async {
@@ -219,9 +263,9 @@ class FirestoreRepositoryImpl @Inject constructor(
                     .await()
                     .toObject<UserDto>()
                     ?.toDomainTutor(
-                        subjectsPrices = getUserSubjectsWithPrices(),
-                        languages = getUserLanguagesWithLevels(),
-                        education = getUserEducation()
+                        subjectsPrices = getUserSubjectsWithPrices(Id(tutorId)),
+                        languages = getUserLanguagesWithLevels(Id(tutorId)),
+                        educations = getUserEducations(Id(tutorId))
                     )
             }
         }
@@ -229,7 +273,7 @@ class FirestoreRepositoryImpl @Inject constructor(
         tutorTasks.awaitAll().filterNotNull().takeIf { it.isNotEmpty() }
     }
 
-    override suspend fun addUserTutor(tutorId: String) {
+    override suspend fun addCurrentUserTutor(tutorId: String) {
         val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
         val userDocRef = db.collection("users").document(userId)
 
@@ -248,7 +292,7 @@ class FirestoreRepositoryImpl @Inject constructor(
         }.await()
     }
 
-    override suspend fun removeUserTutor(tutorId: String) {
+    override suspend fun removeCurrentUserTutor(tutorId: Id) {
         val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
         val userDocRef = db.collection("users").document(userId)
 
@@ -258,8 +302,8 @@ class FirestoreRepositoryImpl @Inject constructor(
             // Проверяем, есть ли уже такой tutorId в массиве
             if (snapshot.exists()) {
                 val tutors = snapshot.get("tutors") as? List<String> ?: listOf()
-                if (!tutors.contains(tutorId)) {
-                    transaction.update(userDocRef, "tutors", FieldValue.arrayRemove(tutorId))
+                if (!tutors.contains(tutorId.value)) {
+                    transaction.update(userDocRef, "tutors", FieldValue.arrayRemove(tutorId.value))
                 }
             }
             // Возвращаем результат для дальнейшего использования, если необходимо
@@ -267,9 +311,9 @@ class FirestoreRepositoryImpl @Inject constructor(
         }.await()
     }
 
-    override suspend fun getUserSubjectsWithPrices(): List<SubjectWithPrice>? =
+    override suspend fun getUserSubjectsWithPrices(userId: Id): List<SubjectWithPrice>? =
         withContext(Dispatchers.IO) {
-            val subjectsWithPrices = getUserDto().subjects ?: return@withContext null
+            val subjectsWithPrices = getUserDto(userId).subjects ?: return@withContext null
 
             val subjectsTasks = subjectsWithPrices.map { subjectWithPrice ->
                 async {
@@ -282,15 +326,20 @@ class FirestoreRepositoryImpl @Inject constructor(
             subjectsTasks.awaitAll().filterNotNull().takeIf { it.isNotEmpty() }
         }
 
-    override suspend fun getUserLanguagesWithLevels(): List<Language>? =
+    override suspend fun getCurrentUserSubjectsWithPrices(): List<SubjectWithPrice>? =
         withContext(Dispatchers.IO) {
-            val languagesWithLevels = getUserDto().languages ?: return@withContext null
+            getUserSubjectsWithPrices(getCurrentUserId())
+        }
 
+    override suspend fun getUserLanguagesWithLevels(userId: Id): List<Language>? =
+        withContext(Dispatchers.IO) {
+            val languagesWithLevels = getUserDto(userId).languages ?: return@withContext null
             val languagesTasks = languagesWithLevels.map { languageWithLevel ->
                 async {
                     db.collection("languages").document(languageWithLevel.languageId).get()
                         .await()
                         .toObject<LanguageDto>()
+                        .apply { Log.d("TutorLanguage", "$this") }
                         ?.let { languageWithLevel.toDomain(it.name) }
                 }
             }
@@ -298,38 +347,75 @@ class FirestoreRepositoryImpl @Inject constructor(
             languagesTasks.awaitAll().filterNotNull().takeIf { it.isNotEmpty() }
         }
 
-    override suspend fun getUserEducation(): String? = withContext(Dispatchers.IO) {
-        val educationId = getUserDto().educationId ?: return@withContext null
+    override suspend fun getCurrentUserLanguagesWithLevels(): List<Language>? =
+        withContext(Dispatchers.IO) {
+            getUserLanguagesWithLevels(getCurrentUserId())
+        }
 
-        db.collection("education").document(educationId).get().await()
-            .toObject<EducationDto>()?.name
-    }
+    override suspend fun getUserEducations(userId: Id): List<Education>? =
+        withContext(Dispatchers.IO) {
+            val educations = getUserDto(userId).educations ?: return@withContext null
 
-    override suspend fun getStudents(): List<UserDto> {
-        val querySnapshot = db.collection("users").whereEqualTo("canBeTutor", false).get().await()
-        if (!querySnapshot.isEmpty) {
-            val students = mutableListOf<UserDto>()
-            querySnapshot.documents.forEach { document ->
-                val user = document.toObject<UserDto>()
-                if (user != null) {
-                    students.add(
-                        user.copy(id = document.id)
-                    )
+            val educationsTasks = educations.map { education ->
+                async {
+                    db.collection("education_types").document(education.typeId).get()
+                        .await()
+                        .toObject<EducationTypeDto>()
+                        ?.let { education.toDomain(it.toDomain()) }
                 }
             }
-            return students
-        } else {
-            return emptyList()
+
+            educationsTasks.awaitAll().filterNotNull().takeIf { it.isNotEmpty() }
         }
+
+    override suspend fun getCurrentUserEducations(): List<Education>? =
+        withContext(Dispatchers.IO) {
+            getUserEducations(getCurrentUserId())
+        }
+
+    override suspend fun getStudents(): List<Student> = withContext(Dispatchers.IO) {
+        db.collection("users")
+            .whereEqualTo("canBeTutor", false)
+            .get()
+            .await()
+            .toObjects<UserDto>()
+            .map { it.toDomainStudent() }
     }
 
-    override suspend fun addLesson(newLesson: LessonDto) {
+    override suspend fun getTutors(): List<Tutor> = withContext(Dispatchers.IO) {
+        db.collection("users")
+            .whereEqualTo("canBeTutor", true)
+            .get()
+            .await()
+            .toObjects<UserDto>()
+            .map {
+                it.toDomainTutor(
+                    subjectsPrices = getUserSubjectsWithPrices(Id(it.id)),
+                    languages = getUserLanguagesWithLevels(Id(it.id)),
+                    educations = getUserEducations(Id(it.id))
+                )
+            }
+    }
+
+    override suspend fun getTutor(id: Id): Tutor = withContext(Dispatchers.IO) {
+        db.collection("users")
+            .document(id.value)
+            .get()
+            .await()
+            .toObject<UserDto>()
+            ?.toDomainTutor(
+                subjectsPrices = getUserSubjectsWithPrices(id),
+                languages = getUserLanguagesWithLevels(id),
+                educations = getUserEducations(id)
+            ) ?: throw NoSuchElementException("Tutor not found for id: ${id.value}")
+    }
+
+    override suspend fun addLesson(newLesson: Lesson) {
         // Convert Lesson to LessonDto
-        val lessonDto = newLesson
+        val lessonDto = newLesson.toDto()
 
         // Add lesson to "lessons" collection
         val lessonRef = db.collection("lessons").document()
-        val lessonId = lessonRef.id
 //        lessonDto.id = lessonRef.id // Set the generated ID to lessonDto
         lessonRef.set(lessonDto).await()
 
@@ -339,38 +425,20 @@ class FirestoreRepositoryImpl @Inject constructor(
 //            homeworkDto.id = homeworkRef.id // Set the generated ID to homeworkDto
             homeworkRef.set(homework).await()
 
-            homework.attachments.forEach { attachment ->
+            homework.attachments?.forEach { attachment ->
                 val attachmentRef = homeworkRef.collection("attachments").document()
 //                attachmentDto.id = attachmentRef.id // Set the generated ID to attachmentDto
                 attachmentRef.set(attachment).await()
             }
         }
-
-        // Добавляем lessonId репетитору
-        addLessonIdToUser(newLesson.tutorId, lessonId)
-
-        // Добавляем lessonId всем ученикам
-        newLesson.studentIds.forEach { studentId ->
-            addLessonIdToUser(studentId, lessonId)
-        }
     }
 
-    override suspend fun getLessons(): List<Lesson> = withContext(Dispatchers.IO) {
-        val userLessons = getUserDto().lessons ?: return@withContext emptyList<Lesson>()
+    override suspend fun getLessons(): List<Lesson> {
+        val querySnapshot = db.collection("lessons").get().await()
+        val lessonsDto = querySnapshot.toObjects<LessonDto>()
 
-        if (userLessons.isEmpty()) {
-            return@withContext emptyList<Lesson>()
-        }
-
-        // Запрашиваем документы уроков, идентификаторы которых содержатся в списке userLessons
-        val lessonsDto = db.collection("lessons")
-            .whereIn(FieldPath.documentId(), userLessons)
-            .get()
-            .await()
-            .toObjects<LessonDto>()
-
-        lessonsDto.map {
-            val tutor = tutorProvider(it.tutorId)
+        return lessonsDto.map {
+            val tutor = getTutor(Id(it.tutorId))
             val subject = getSubject(Id(it.subjectId))
             it.toDomain(subject, tutor)
         }
@@ -383,28 +451,114 @@ class FirestoreRepositoryImpl @Inject constructor(
 
             return lesson?.toDomain(
                 subject = getSubject(Id(lesson.subjectId)),
-                tutor = tutorProvider(lesson.tutorId)
+                tutor = getTutor(Id(lesson.tutorId))
             ) ?: throw (IOException("Error parsing lesson"))
         } else throw (IOException("Lesson not found"))
     }
 
-
-    private suspend fun tutorProvider(id: String): Tutor {
-        val userSnapshot = db.collection("users").document(id).get().await()
-
-        val userDto = userSnapshot.toObject<UserDto>()
-        return userDto?.let {
-            Tutor(id = Id(id), name = it.name, surname = it.surname)
-        } ?: Tutor(id = Id("-1")) // TODO обработать более умно
+    override suspend fun getEducationTypes(): List<EducationType> {
+        if (educationTypes == null) {
+            val querySnapshot = db.collection("education_types").get().await()
+            educationTypes = querySnapshot.documents.map { document ->
+                val educationType = document.toObject<EducationTypeDto>()
+                educationType?.toDomain() ?: throw (IOException("Education type not found"))
+            }
+        }
+        return educationTypes!!
     }
 
-    override suspend fun addLessonIdToUser(userId: String, lessonId: String) {
-        val userRef = db.collection("users").document(userId)
-        db.runTransaction { transaction ->
-            val snapshot = transaction.get(userRef)
-            val lessonIds = snapshot.get("lessons") as? List<String> ?: emptyList()
-            val updatedLessonIds = lessonIds + lessonId
-            transaction.update(userRef, "lessons", updatedLessonIds)
-        }.await()
+    override suspend fun addCurrentUserLanguage(language: Language) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users").document(getCurrentUserId().value)
+            db.runTransaction { transaction ->
+                val snapshot = transaction.get(userRef)
+                val languages =
+                    snapshot.get("languages") as? List<LanguageWithLevelDto> ?: emptyList()
+
+                val updatedLanguages = languages + language.toLanguageWithLevelDto()
+                transaction.update(userRef, "languages", updatedLanguages)
+            }
+        }
+    }
+
+    override suspend fun updateCurrentUserLanguageLevel(languageId: Id, level: LanguageLevel) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users").document(getCurrentUserId().value)
+
+            db.runTransaction { transaction ->
+                val snapshot = transaction.get(userRef)
+                val languages =
+                    snapshot.get("languages") as? List<LanguageWithLevelDto> ?: emptyList()
+
+                val updatedLanguages = languages.toMutableList()
+
+                val index = languages.indexOfFirst { it.languageId == languageId.value }
+                if (index != -1) {
+                    updatedLanguages[index] = updatedLanguages[index].copy(level = level.value)
+                } else {
+                    updatedLanguages.add(LanguageWithLevelDto(languageId.value, level.value))
+                }
+
+                transaction.update(userRef, "languages", updatedLanguages)
+            }.await()
+        }
+    }
+
+    override suspend fun removeCurrentUserLanguage(languageId: Id) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users").document(getCurrentUserId().value)
+
+            db.runTransaction { transaction ->
+                val snapshot = transaction.get(userRef)
+                val languages =
+                    snapshot.get("languages") as? List<LanguageWithLevelDto> ?: emptyList()
+
+                val updatedLanguages = languages.toMutableList()
+
+                // Находим индекс языка с указанным languageId и удаляем его из списка
+                val index = languages.indexOfFirst { it.languageId == languageId.value }
+                if (index != -1) {
+                    updatedLanguages.removeAt(index)
+                }
+
+                transaction.update(userRef, "languages", updatedLanguages)
+            }.await()
+        }
+    }
+
+    override suspend fun addCurrentUserEducation(education: Education) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users")
+                .document(getCurrentUserId().value)
+                .collection("educations")
+
+            val newEducationRef = userRef.document()
+            val educationDto = education.copy(id = Id(newEducationRef.id)).toDto()
+
+            newEducationRef.set(educationDto).await()
+        }
+    }
+
+    override suspend fun updateCurrentUserEducation(education: Education) {
+        withContext(Dispatchers.IO) {
+            val educationDto = education.toDto()
+            val userRef = db.collection("users")
+                .document(getCurrentUserId().value)
+                .collection("educations")
+                .document(educationDto.id)
+
+            userRef.set(educationDto).await()
+        }
+    }
+
+    override suspend fun removeCurrentUserEducation(educationId: Id) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users")
+                .document(getCurrentUserId().value)
+                .collection("educations")
+                .document(educationId.value)
+
+            userRef.delete().await()
+        }
     }
 }

@@ -255,20 +255,20 @@ fun TutorCard(
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                tutor.subjects?.let {
+                tutor.subjects?.let { subjects ->
                     InfoSection(
                         modifier = Modifier.fillMaxWidth(),
                         title = R.string.subjects_section,
-                        body = it.joinToString(separator = " • ")
+                        body = subjects.joinToString(separator = " • ") { it.name }
                     )
                 }
 
-                // TODO добавить обработку списка образований
-                tutor.educations?.get(0)?.specialization?.let {
+                tutor.educations?.let { educations ->
                     InfoSection(
                         modifier = Modifier.fillMaxWidth(),
                         title = R.string.education_section,
-                        body = it
+                        body = educations.joinToString(separator = "\n")
+                        { " • ${it.type.value} - ${it.specialization ?: ""}" }
                     )
                 }
 

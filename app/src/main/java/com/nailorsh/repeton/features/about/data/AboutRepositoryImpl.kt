@@ -12,12 +12,12 @@ class AboutRepositoryImpl @Inject constructor(
     private val firestoreRepository: FirestoreRepository
 ) : AboutRepository {
     override suspend fun getUserData() = withContext(Dispatchers.IO) {
-        val userDto = firestoreRepository.getUserDto()
+        val user = firestoreRepository.getCurrentUser()
         AboutUserData(
-            name = userDto.name,
-            surname = userDto.surname,
+            name = user.name,
+            surname = user.surname,
             photoSrc = "https://i.imgur.com/C25Otm8.jpeg",
-            isTutor = userDto.canBeTutor
+            isTutor = user.isTutor
         )
     }
 

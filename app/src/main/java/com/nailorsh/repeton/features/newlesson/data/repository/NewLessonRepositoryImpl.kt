@@ -26,7 +26,7 @@ class NewLessonRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveNewLesson(lesson: NewLessonItem) = withContext(Dispatchers.IO) {
-        val tutor = firestoreRepository.getUser()
+        val tutor = firestoreRepository.getCurrentUser()
         val studentsIds = lesson.students.map { it.id }
         var homework: Homework? = null
         if (lesson.homework != null) {
@@ -80,7 +80,7 @@ class NewLessonRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getUserType(): Boolean = withContext(Dispatchers.IO) {
-        firestoreRepository.getUserType()
+        firestoreRepository.getCurrentUserType()
     }
     override suspend fun uploadFile(uri: Uri): String {
         /* TODO("Not yet implemented") */

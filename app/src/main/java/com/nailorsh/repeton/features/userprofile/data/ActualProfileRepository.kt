@@ -132,7 +132,7 @@ class ActualProfileRepository @Inject constructor(
         )
 
     override suspend fun getUserData(): ProfileUserData {
-        val user: User = firestoreRepository.getUser()
+        val user: User = firestoreRepository.getCurrentUser()
         return ProfileUserData(
             name = user.name,
             surname = user.surname,

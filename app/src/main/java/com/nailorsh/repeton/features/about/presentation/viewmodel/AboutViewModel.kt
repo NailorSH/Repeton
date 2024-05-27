@@ -8,6 +8,7 @@ import com.nailorsh.repeton.R
 import com.nailorsh.repeton.common.data.models.education.Education
 import com.nailorsh.repeton.common.data.models.language.Language
 import com.nailorsh.repeton.common.data.models.language.LanguageLevel
+import com.nailorsh.repeton.common.data.models.language.LanguageWithLevel
 import com.nailorsh.repeton.features.about.data.AboutRepository
 import com.nailorsh.repeton.features.about.data.mappers.toDomain
 import com.nailorsh.repeton.features.about.data.model.AboutUpdatedData
@@ -42,7 +43,7 @@ data class AboutState(
     val languageSearchQuery: String = "",
 
     val education: Education? = null,
-    val languages: List<Language>? = null,
+    val languagesWithLevels: List<LanguageWithLevel>? = null,
 
     val languagesList: List<LanguageItem> = emptyList(),
     val languageLevelList: List<LanguageLevel> = LanguageLevel.values().asList(),
@@ -62,8 +63,11 @@ sealed interface AboutAction {
     data class ChangeEducation(val education: EducationItem) : AboutAction
     data class UpdateSearchQuery(val searchQuery: String) : AboutAction
     data class AddLanguage(val languageItem: LanguageItem) : AboutAction
-    data class RemoveLanguage(val language: Language) : AboutAction
-    data class UpdateLanguageLevel(val language: Language, val languageLvl: LanguageLevel) :
+    data class RemoveLanguage(val languageWithLevel: LanguageWithLevel) : AboutAction
+    data class UpdateLanguageLevel(
+        val languageWithLevel: LanguageWithLevel,
+        val languageLvl: LanguageLevel
+    ) :
         AboutAction
 
     data class UpdateImage(val image: Uri) : AboutAction
@@ -132,7 +136,7 @@ class AboutViewModel @Inject constructor(
                         about = userData.about ?: "",
                         aboutNew = userData.about ?: "",
                         education = userData.education,
-                        languages = userData.languages,
+                        languagesWithLevels = userData.languagesWithLevels,
                         languagesList = languagesList,
                         educationList = educationList,
                         isTutor = userData.isTutor,
@@ -165,7 +169,7 @@ class AboutViewModel @Inject constructor(
                     about = if (_state.value.about != startData.about) _state.value.about else null,
                     photoSrc = if (_state.value.photoSrc != startData.photoSrc) _state.value.photoSrc else null,
                     education = if (_state.value.education != startData.education) _state.value.education else null,
-                    languages = if (_state.value.languages != startData.languages) _state.value.languages else null
+                    languagesWithLevels = if (_state.value.languagesWithLevels != startData.languagesWithLevels) _state.value.languagesWithLevels else null
                 )
             )
         } catch (e: Exception) {
@@ -192,7 +196,12 @@ class AboutViewModel @Inject constructor(
                     if (action.about.length > 200) {
                         _uiEvents.emit(AboutUiEvent.TooMuchSymbolsInBio)
                     } else
-                    _state.update { state -> state.copy(about = action.about, aboutIsChanging = false) }
+                        _state.update { state ->
+                            state.copy(
+                                about = action.about,
+                                aboutIsChanging = false
+                            )
+                        }
                 }
 
                 is AboutAction.ChangeEducation -> {
@@ -214,19 +223,22 @@ class AboutViewModel @Inject constructor(
                 }
 
                 is AboutAction.AddLanguage -> {
-                    if (_state.value.languages != null && _state.value.languages!!.size == 5) {
+                    if (_state.value.languagesWithLevels != null && _state.value.languagesWithLevels!!.size == 5) {
                         _uiEvents.emit(AboutUiEvent.TooMuchLessons)
-                    } else if (_state.value.languages != null && _state.value.languages!!.filter { language ->
-                            language.id == action.languageItem.id
+                    } else if (_state.value.languagesWithLevels != null && _state.value.languagesWithLevels!!.filter { languageWithLevel ->
+                            languageWithLevel.language.id == action.languageItem.id
                         }.isEmpty()) {
                         _uiEvents.emit(AboutUiEvent.LanguageAlreadyAdded)
                     } else
                         _state.update { state ->
                             state.copy(
-                                languages = (state.languages ?: emptyList()).plus(
-                                    Language(
-                                        id = action.languageItem.id,
-                                        name = action.languageItem.name,
+                                languagesWithLevels = (state.languagesWithLevels
+                                    ?: emptyList()).plus(
+                                    LanguageWithLevel(
+                                        Language(
+                                            id = action.languageItem.id,
+                                            name = action.languageItem.name
+                                        ),
                                         level = LanguageLevel.OTHER
                                     )
                                 )
@@ -237,7 +249,7 @@ class AboutViewModel @Inject constructor(
                 is AboutAction.RemoveLanguage -> {
                     _state.update { state ->
                         state.copy(
-                            languages = state.languages?.minusElement(action.language)
+                            languagesWithLevels = state.languagesWithLevels?.minusElement(action.languageWithLevel)
                         )
                     }
                 }
@@ -265,8 +277,8 @@ class AboutViewModel @Inject constructor(
 
                 is AboutAction.UpdateLanguageLevel -> {
                     _state.update { state ->
-                        state.copy(languages = state.languages?.map {
-                            if (it == action.language) {
+                        state.copy(languagesWithLevels = state.languagesWithLevels?.map {
+                            if (it == action.languageWithLevel) {
                                 it.copy(level = action.languageLvl)
                             } else {
                                 it

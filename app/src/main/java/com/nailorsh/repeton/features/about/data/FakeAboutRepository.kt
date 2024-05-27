@@ -2,8 +2,10 @@ package com.nailorsh.repeton.features.about.data
 
 import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.education.Education
+import com.nailorsh.repeton.common.data.models.education.EducationType
 import com.nailorsh.repeton.common.data.models.language.Language
 import com.nailorsh.repeton.common.data.models.language.LanguageLevel
+import com.nailorsh.repeton.common.data.models.language.LanguageWithLevel
 import com.nailorsh.repeton.common.firestore.FirestoreRepository
 import com.nailorsh.repeton.features.about.data.model.AboutUpdatedData
 import com.nailorsh.repeton.features.about.data.model.AboutUserData
@@ -17,26 +19,30 @@ class FakeAboutRepository @Inject constructor(
     private val firestoreRepository: FirestoreRepository
 ) : AboutRepository {
     override suspend fun getUserData() = withContext(Dispatchers.IO) {
-        val userDto = firestoreRepository.getUserDto()
+        val userDto = firestoreRepository.getCurrentUserDto()
         AboutUserData(
             name = userDto.name,
             surname = userDto.surname,
             photoSrc = "https://i.imgur.com/C25Otm8.jpeg",
             isTutor = userDto.canBeTutor,
-            languages = listOf(
-                Language(
-                    id = Id("0"),
-                    name = "Английский",
+            languagesWithLevels = listOf(
+                LanguageWithLevel(
+                    Language(
+                        id = Id("0"),
+                        name = "Английский"
+                    ),
                     level = LanguageLevel.OTHER
-                ), Language(
-                    id = Id("1"),
-                    name = "Русский",
+                ), LanguageWithLevel(
+                    Language(
+                        id = Id("1"),
+                        name = "Русский"
+                    ),
                     level = LanguageLevel.OTHER
                 )
             ),
             education = Education(
                 id = Id("0"),
-                name = "Бакалавриат",
+                type = EducationType.BACHELOR,
                 specialization = "Клоун с ИУ9"
             ),
             about = "Lorem Ipsum"
@@ -52,7 +58,10 @@ class FakeAboutRepository @Inject constructor(
     }
 
     override suspend fun getEducation(): List<EducationItem> {
-        return listOf(EducationItem(Id("0"), "Бакалавриат"), EducationItem(Id("1"), "Среднее общее"))
+        return listOf(
+            EducationItem(Id("0"), "Бакалавриат"),
+            EducationItem(Id("1"), "Среднее общее")
+        )
     }
 
 }

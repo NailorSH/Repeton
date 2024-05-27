@@ -16,7 +16,7 @@ class SubjectsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getUserSubjects(): List<SubjectWithPrice>? = withContext(Dispatchers.IO) {
-        firestoreRepository.getUserSubjectsWithPrices()
+        firestoreRepository.getCurrentUserSubjectsWithPrices()
     }
 
     override suspend fun updateUserSubjects() {

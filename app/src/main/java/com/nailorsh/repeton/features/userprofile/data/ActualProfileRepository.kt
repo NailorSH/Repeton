@@ -151,7 +151,7 @@ class ActualProfileRepository @Inject constructor(
 
 
     override suspend fun getUserOptions(): List<Options> {
-        if (firestoreRepository.getUserType()) {
+        if (firestoreRepository.getCurrentUserType()) {
             return listOf(
                 Options.LessonsTutor,
                 Options.Subjects,
@@ -168,7 +168,7 @@ class ActualProfileRepository @Inject constructor(
 
 
     override suspend fun getUserData(): ProfileUserData {
-        val userDto = firestoreRepository.getUserDto()
+        val userDto = firestoreRepository.getCurrentUserDto()
         return ProfileUserData(
             name = userDto.name,
             surname = userDto.surname,

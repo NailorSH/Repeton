@@ -5,6 +5,7 @@ import com.nailorsh.repeton.common.data.models.education.Education
 import com.nailorsh.repeton.common.data.models.education.EducationType
 import com.nailorsh.repeton.common.data.models.language.Language
 import com.nailorsh.repeton.common.data.models.language.LanguageLevel
+import com.nailorsh.repeton.common.data.models.language.LanguageWithLevel
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.models.lesson.Subject
@@ -59,11 +60,11 @@ interface FirestoreRepository {
     suspend fun getCurrentUserSubjectsWithPrices(): List<SubjectWithPrice>?
 
     // UserLanguagesWithLevels
-    suspend fun getUserLanguagesWithLevels(userId: Id): List<Language>?
-    suspend fun getCurrentUserLanguagesWithLevels(): List<Language>?
-    suspend fun addCurrentUserLanguage(language: Language)
+    suspend fun getUserLanguagesWithLevels(userId: Id): List<LanguageWithLevel>?
+    suspend fun getCurrentUserLanguagesWithLevels(): List<LanguageWithLevel>?
+    suspend fun addCurrentUserLanguageWithLevel(languageWithLevel: LanguageWithLevel)
     suspend fun updateCurrentUserLanguageLevel(languageId: Id, level: LanguageLevel)
-    suspend fun removeCurrentUserLanguage(languageId: Id)
+    suspend fun removeCurrentUserLanguageWithLevel(languageId: Id)
 
     // UserEducations
     suspend fun getUserEducations(userId: Id): List<Education>?
@@ -74,9 +75,6 @@ interface FirestoreRepository {
 
     // EducationTypes
     suspend fun getEducationTypes(): List<EducationType>
-
-    // LanguageLevels
-    suspend fun getLanguageLevels(): List<LanguageLevel>?
 
     // Students
     suspend fun getStudents(): List<Student>
@@ -98,5 +96,10 @@ interface FirestoreRepository {
     suspend fun getHomework(lessonId: Id): Homework
     suspend fun sendHomeworkMessage(lessonId: Id, message: String)
 
-    // Languages
+    // Language
+    suspend fun getLanguages(): List<Language>
+    suspend fun getLanguage(id: Id): Language
+
+    // LanguageLevels
+    suspend fun getLanguageLevels(): List<LanguageLevel>?
 }

@@ -11,6 +11,7 @@ import com.nailorsh.repeton.common.data.models.education.Education
 import com.nailorsh.repeton.common.data.models.education.EducationType
 import com.nailorsh.repeton.common.data.models.language.Language
 import com.nailorsh.repeton.common.data.models.language.LanguageLevel
+import com.nailorsh.repeton.common.data.models.language.LanguageWithLevel
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.models.lesson.Subject
@@ -22,7 +23,6 @@ import com.nailorsh.repeton.common.firestore.mappers.toDomain
 import com.nailorsh.repeton.common.firestore.mappers.toDomainStudent
 import com.nailorsh.repeton.common.firestore.mappers.toDomainTutor
 import com.nailorsh.repeton.common.firestore.mappers.toDto
-import com.nailorsh.repeton.common.firestore.mappers.toLanguageWithLevelDto
 import com.nailorsh.repeton.common.firestore.models.EducationTypeDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
 import com.nailorsh.repeton.common.firestore.models.LanguageDto
@@ -48,6 +48,7 @@ class FirestoreRepositoryImpl @Inject constructor(
     private var userDto: UserDto? = null
     private var subjects: List<Subject>? = null
     private var educationTypes: List<EducationType>? = null
+    private var languages: List<Language>? = null
     private var languageLevels: List<LanguageLevel>? = null
 
     override suspend fun sendHomeworkMessage(lessonId: Id, message: String) {
@@ -264,7 +265,7 @@ class FirestoreRepositoryImpl @Inject constructor(
                     .toObject<UserDto>()
                     ?.toDomainTutor(
                         subjectsPrices = getUserSubjectsWithPrices(Id(tutorId)),
-                        languages = getUserLanguagesWithLevels(Id(tutorId)),
+                        languagesWithLevels = getUserLanguagesWithLevels(Id(tutorId)),
                         educations = getUserEducations(Id(tutorId))
                     )
             }
@@ -331,7 +332,7 @@ class FirestoreRepositoryImpl @Inject constructor(
             getUserSubjectsWithPrices(getCurrentUserId())
         }
 
-    override suspend fun getUserLanguagesWithLevels(userId: Id): List<Language>? =
+    override suspend fun getUserLanguagesWithLevels(userId: Id): List<LanguageWithLevel>? =
         withContext(Dispatchers.IO) {
             val languagesWithLevels = getUserDto(userId).languages ?: return@withContext null
             val languagesTasks = languagesWithLevels.map { languageWithLevel ->
@@ -340,14 +341,18 @@ class FirestoreRepositoryImpl @Inject constructor(
                         .await()
                         .toObject<LanguageDto>()
                         .apply { Log.d("TutorLanguage", "$this") }
-                        ?.let { languageWithLevel.toDomain(it.name) }
+                        ?.let {
+                            languageWithLevel.toDomain(
+                                language = getLanguage(Id(it.id))
+                            )
+                        }
                 }
             }
 
             languagesTasks.awaitAll().filterNotNull().takeIf { it.isNotEmpty() }
         }
 
-    override suspend fun getCurrentUserLanguagesWithLevels(): List<Language>? =
+    override suspend fun getCurrentUserLanguagesWithLevels(): List<LanguageWithLevel>? =
         withContext(Dispatchers.IO) {
             getUserLanguagesWithLevels(getCurrentUserId())
         }
@@ -391,7 +396,7 @@ class FirestoreRepositoryImpl @Inject constructor(
             .map {
                 it.toDomainTutor(
                     subjectsPrices = getUserSubjectsWithPrices(Id(it.id)),
-                    languages = getUserLanguagesWithLevels(Id(it.id)),
+                    languagesWithLevels = getUserLanguagesWithLevels(Id(it.id)),
                     educations = getUserEducations(Id(it.id))
                 )
             }
@@ -405,7 +410,7 @@ class FirestoreRepositoryImpl @Inject constructor(
             .toObject<UserDto>()
             ?.toDomainTutor(
                 subjectsPrices = getUserSubjectsWithPrices(id),
-                languages = getUserLanguagesWithLevels(id),
+                languagesWithLevels = getUserLanguagesWithLevels(id),
                 educations = getUserEducations(id)
             ) ?: throw NoSuchElementException("Tutor not found for id: ${id.value}")
     }
@@ -467,7 +472,7 @@ class FirestoreRepositoryImpl @Inject constructor(
         return educationTypes!!
     }
 
-    override suspend fun addCurrentUserLanguage(language: Language) {
+    override suspend fun addCurrentUserLanguageWithLevel(languageWithLevel: LanguageWithLevel) {
         withContext(Dispatchers.IO) {
             val userRef = db.collection("users").document(getCurrentUserId().value)
             db.runTransaction { transaction ->
@@ -475,7 +480,7 @@ class FirestoreRepositoryImpl @Inject constructor(
                 val languages =
                     snapshot.get("languages") as? List<LanguageWithLevelDto> ?: emptyList()
 
-                val updatedLanguages = languages + language.toLanguageWithLevelDto()
+                val updatedLanguages = languages + languageWithLevel.toDto()
                 transaction.update(userRef, "languages", updatedLanguages)
             }
         }
@@ -504,7 +509,7 @@ class FirestoreRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun removeCurrentUserLanguage(languageId: Id) {
+    override suspend fun removeCurrentUserLanguageWithLevel(languageId: Id) {
         withContext(Dispatchers.IO) {
             val userRef = db.collection("users").document(getCurrentUserId().value)
 
@@ -560,5 +565,26 @@ class FirestoreRepositoryImpl @Inject constructor(
 
             userRef.delete().await()
         }
+    }
+
+    override suspend fun getLanguages(): List<Language> {
+        if (languages == null) {
+            val querySnapshot = db.collection("languages").get().await()
+            languages = querySnapshot.documents.map { document ->
+                val language = document.toObject<LanguageDto>()
+                language?.toDomain() ?: throw (IOException("Language not found"))
+            }
+        }
+        return languages!!
+    }
+
+    override suspend fun getLanguage(id: Id): Language {
+        val document = db.collection("languages").document(id.value).get().await()
+
+        if (document.exists()) {
+            val language = document.toObject<LanguageDto>()
+
+            return language?.toDomain() ?: throw (IOException("Error parsing language"))
+        } else throw (IOException("Language not found"))
     }
 }

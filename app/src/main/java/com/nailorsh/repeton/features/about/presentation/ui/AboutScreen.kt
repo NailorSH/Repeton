@@ -36,8 +36,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.education.Education
+import com.nailorsh.repeton.common.data.models.education.EducationType
 import com.nailorsh.repeton.common.data.models.language.Language
 import com.nailorsh.repeton.common.data.models.language.LanguageLevel
+import com.nailorsh.repeton.common.data.models.language.LanguageWithLevel
 import com.nailorsh.repeton.core.ui.components.ErrorScreen
 import com.nailorsh.repeton.features.about.presentation.ui.components.AboutBioCard
 import com.nailorsh.repeton.features.about.presentation.ui.components.AboutBottomSheet
@@ -77,7 +79,7 @@ fun AboutScreen(
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { image ->
-        image?.let{
+        image?.let {
             onAction(AboutAction.UpdateImage(it))
         }
     }
@@ -104,7 +106,7 @@ fun AboutScreen(
     }
 
     if (state.showSavingDialogue) {
-        Dialog(onDismissRequest = {  }) {
+        Dialog(onDismissRequest = { }) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(modifier = Modifier.size(48.dp))
             }
@@ -127,9 +129,11 @@ fun AboutScreen(
                 isExpanded = showChangeOptions,
                 showChangeOptions = { showChangeOptions = it },
                 onChangeAbout = { onAction(AboutAction.UpdateShowChangeAbout(true)) },
-                onChangePhoto = { photoPickerLauncher.launch(
-                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                ) },
+                onChangePhoto = {
+                    photoPickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                },
                 onNavigateBack = { onAction(AboutAction.NavigateBack) },
                 onSaveChanges = { onAction(AboutAction.SaveChanges) }
             )
@@ -168,7 +172,7 @@ fun AboutScreen(
                     AboutLanguages(
                         searchQuery = state.languageSearchQuery,
                         languages = state.languagesList,
-                        addedLanguages = state.languages,
+                        addedLanguageWithLevels = state.languagesWithLevels,
                         languageLevels = state.languageLevelList,
                         onQueryChange = { onAction(AboutAction.UpdateSearchQuery(it)) },
                         onSearch = { onAction(AboutAction.UpdateLanguagesList) },
@@ -196,7 +200,7 @@ fun AboutScreen(
 
                 item {
                     AboutEducation(
-                        education = state.education?.name,
+                        education = state.education?.type?.value,
                         specialization = state.education?.specialization,
                         educationsList = state.educationList,
                         onEducationChange = { onAction(AboutAction.ChangeEducation(it)) },
@@ -220,8 +224,15 @@ fun PreviewAboutScreen() {
     AboutScreen(
         state = AboutState(
             isLoading = false, error = false,
-            education = Education(id = Id("-1"), name = "Bach"),
-            languages = listOf(Language(Id(""), name = "Английский", level = LanguageLevel.B2)),
+            education = Education(id = Id("-1"), type = EducationType.BACHELOR),
+            languagesWithLevels = listOf(
+                LanguageWithLevel(
+                    Language(
+                        id = Id("-1"),
+                        name = "Английский"
+                    ), level = LanguageLevel.B2
+                )
+            ),
             about = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. " +
                     "Lorem Ipsum has been the industry's standard dummy text ever since"
         ), onAction = {}, uiEvents = flowOf()

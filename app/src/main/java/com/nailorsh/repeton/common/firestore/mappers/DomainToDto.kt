@@ -3,6 +3,7 @@ package com.nailorsh.repeton.common.firestore.mappers
 import com.google.firebase.Timestamp
 import com.nailorsh.repeton.common.data.models.education.Education
 import com.nailorsh.repeton.common.data.models.language.Language
+import com.nailorsh.repeton.common.data.models.language.LanguageWithLevel
 import com.nailorsh.repeton.common.data.models.lesson.Attachment
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
@@ -12,6 +13,7 @@ import com.nailorsh.repeton.common.firestore.models.EducationDto
 import com.nailorsh.repeton.common.firestore.models.FileDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
 import com.nailorsh.repeton.common.firestore.models.ImageDto
+import com.nailorsh.repeton.common.firestore.models.LanguageDto
 import com.nailorsh.repeton.common.firestore.models.LanguageWithLevelDto
 import com.nailorsh.repeton.common.firestore.models.LessonDto
 import com.nailorsh.repeton.common.firestore.models.ReviewDto
@@ -70,10 +72,17 @@ fun Attachment.toDto(): AttachmentDto {
     }
 }
 
-fun Language.toLanguageWithLevelDto(): LanguageWithLevelDto {
+fun LanguageWithLevel.toDto(): LanguageWithLevelDto {
     return LanguageWithLevelDto(
-        languageId = this.id.value,
+        languageId = this.language.id.value,
         level = this.level.value
+    )
+}
+
+fun Language.toDto(): LanguageDto {
+    return LanguageDto(
+        id = this.id.value,
+        name = this.name
     )
 }
 

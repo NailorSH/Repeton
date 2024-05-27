@@ -45,6 +45,7 @@ import com.nailorsh.repeton.R
 import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.language.Language
 import com.nailorsh.repeton.common.data.models.language.LanguageLevel
+import com.nailorsh.repeton.common.data.models.language.LanguageWithLevel
 import com.nailorsh.repeton.core.util.getDisabledInteractiveOutlinedTextFieldColors
 import com.nailorsh.repeton.features.about.data.model.LanguageItem
 
@@ -53,13 +54,13 @@ import com.nailorsh.repeton.features.about.data.model.LanguageItem
 fun AboutLanguages(
     searchQuery: String,
     languages: List<LanguageItem>,
-    addedLanguages: List<Language>?,
+    addedLanguageWithLevels: List<LanguageWithLevel>?,
     languageLevels: List<LanguageLevel>,
     onQueryChange: (String) -> Unit,
     onSearch: (String) -> Unit,
     onAddLanguage: (LanguageItem) -> Unit,
-    onRemoveLanguage: (Language) -> Unit,
-    updateLanguageLevel: (Language, LanguageLevel) -> Unit,
+    onRemoveLanguage: (LanguageWithLevel) -> Unit,
+    updateLanguageLevel: (LanguageWithLevel, LanguageLevel) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var active by rememberSaveable {
@@ -115,16 +116,22 @@ fun AboutLanguages(
 
             }
         }
-        if (addedLanguages != null)
+        if (addedLanguageWithLevels != null)
             Column {
-                addedLanguages.forEach { language ->
+                addedLanguageWithLevels.forEach { languageWithLevel ->
                     var languageDropDownMenu by rememberSaveable {
                         mutableStateOf(false)
                     }
                     ListItem(
-                        headlineContent = { Text(text = language.name, overflow = TextOverflow.Ellipsis, maxLines = 1) },
+                        headlineContent = {
+                            Text(
+                                text = languageWithLevel.language.name,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1
+                            )
+                        },
                         leadingContent = {
-                            IconButton(onClick = { onRemoveLanguage(language) }) {
+                            IconButton(onClick = { onRemoveLanguage(languageWithLevel) }) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_remove),
                                     contentDescription = null
@@ -132,7 +139,11 @@ fun AboutLanguages(
                             }
                         },
                         supportingContent = {
-                            Text(stringResource(R.string.about_screen_skill_level), overflow = TextOverflow.Ellipsis, maxLines = 1)
+                            Text(
+                                stringResource(R.string.about_screen_skill_level),
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1
+                            )
                         },
                         trailingContent = {
                             ExposedDropdownMenuBox(
@@ -147,7 +158,7 @@ fun AboutLanguages(
                                     readOnly = true,
                                     value = "",
                                     prefix = {
-                                        Text(text = if (language.level == LanguageLevel.OTHER) "" else language.level.toString())
+                                        Text(text = if (languageWithLevel.level == LanguageLevel.OTHER) "" else languageWithLevel.level.toString())
                                     },
                                     textStyle = MaterialTheme.typography.labelMedium,
                                     onValueChange = {},
@@ -193,7 +204,7 @@ fun AboutLanguages(
                                             text = { Text(text = languageLevel.toString()) },
                                             onClick = {
                                                 updateLanguageLevel(
-                                                    language,
+                                                    languageWithLevel,
                                                     languageLevel
                                                 )
                                                 languageDropDownMenu = false
@@ -216,7 +227,12 @@ fun AboutLanguagesPreview() {
     AboutLanguages(
         searchQuery = "",
         languages = emptyList(),
-        addedLanguages = listOf(Language(Id(""), name = "Английский", level = LanguageLevel.B2)),
+        addedLanguageWithLevels = listOf(
+            LanguageWithLevel(
+                Language(Id(""), name = "Английский"),
+                level = LanguageLevel.B2
+            )
+        ),
         languageLevels = emptyList(),
         onQueryChange = {},
         onSearch = {},

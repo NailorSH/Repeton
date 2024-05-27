@@ -33,6 +33,25 @@ class FirebaseAuthRepository @Inject constructor(
         MutableStateFlow(AuthState.NotInitialized)
         private set
 
+    private val authListeners = mutableListOf<(FirebaseAuth) -> Unit>()
+
+    init {
+        // Инициализация слушателя изменений состояния аутентификации
+        auth.addAuthStateListener { firebaseAuth ->
+            notifyAuthStateListeners(firebaseAuth)
+        }
+    }
+
+    override fun addAuthStateListener(listener: (FirebaseAuth) -> Unit) {
+        authListeners.add(listener)
+    }
+
+    private fun notifyAuthStateListeners(firebaseAuth: FirebaseAuth) {
+        authListeners.forEach { listener ->
+            listener(firebaseAuth)
+        }
+    }
+
     private val authCallbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         override fun onVerificationCompleted(credential: PhoneAuthCredential) {
             Log.i(
@@ -195,5 +214,9 @@ class FirebaseAuthRepository @Inject constructor(
             newUserRef.set(tmpUserData)
         }
         // TODO добавить обработку ошибок
+    }
+
+    override fun isUserAuthorized(): Boolean {
+        return auth.currentUser != null
     }
 }

@@ -4,6 +4,7 @@ import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.education.Education
 import com.nailorsh.repeton.common.data.models.education.EducationType
 import com.nailorsh.repeton.common.data.models.language.Language
+import com.nailorsh.repeton.common.data.models.language.LanguageLevel
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.models.lesson.Subject
@@ -44,4 +45,5 @@ interface FirestoreRepository {
     suspend fun updatePhotoSrc(url: String)
     suspend fun updateUserAbout(about: String)
     suspend fun getEducationTypes(): List<EducationType>
+    suspend fun getLanguageLevels(): List<LanguageLevel>?
 }

@@ -19,6 +19,7 @@ import com.nailorsh.repeton.common.firestore.models.AttachmentDto
 import com.nailorsh.repeton.common.firestore.models.EducationDto
 import com.nailorsh.repeton.common.firestore.models.EducationTypeDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
+import com.nailorsh.repeton.common.firestore.models.LanguageLevelDto
 import com.nailorsh.repeton.common.firestore.models.LanguageWithLevelDto
 import com.nailorsh.repeton.common.firestore.models.LessonDto
 import com.nailorsh.repeton.common.firestore.models.ReviewDto
@@ -177,4 +178,8 @@ fun EducationDto.toDomain(
         type = type,
         specialization = this.specialization
     )
+}
+
+fun LanguageLevelDto.toDomain(): LanguageLevel {
+    return LanguageLevel.fromId(Id(this.id))
 }

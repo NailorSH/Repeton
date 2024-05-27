@@ -9,6 +9,7 @@ import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.common.data.models.education.Education
 import com.nailorsh.repeton.common.data.models.education.EducationType
 import com.nailorsh.repeton.common.data.models.language.Language
+import com.nailorsh.repeton.common.data.models.language.LanguageLevel
 import com.nailorsh.repeton.common.data.models.lesson.Homework
 import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.models.lesson.Subject
@@ -21,6 +22,7 @@ import com.nailorsh.repeton.common.firestore.mappers.toDomainTutor
 import com.nailorsh.repeton.common.firestore.models.EducationTypeDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
 import com.nailorsh.repeton.common.firestore.models.LanguageDto
+import com.nailorsh.repeton.common.firestore.models.LanguageLevelDto
 import com.nailorsh.repeton.common.firestore.models.LessonDto
 import com.nailorsh.repeton.common.firestore.models.ReviewDto
 import com.nailorsh.repeton.common.firestore.models.SubjectDto
@@ -41,6 +43,7 @@ class FirestoreRepositoryImpl @Inject constructor(
     private var userDto: UserDto? = null
     private var subjects: List<Subject>? = null
     private var educationTypes: List<EducationType>? = null
+    private var languageLevels: List<LanguageLevel>? = null
 
     override suspend fun sendHomeworkMessage(lessonId: Id, message: String) {
         db.collection("lessons").document(lessonId.value).collection("homework").document()
@@ -91,11 +94,22 @@ class FirestoreRepositoryImpl @Inject constructor(
         if (subjects == null) {
             val querySnapshot = db.collection("subjects").get().await()
             subjects = querySnapshot.documents.map { document ->
-                val subject = document.toObject(SubjectDto::class.java)
+                val subject = document.toObject<SubjectDto>()
                 subject?.toDomain() ?: throw (IOException("Lesson not found"))
             }
         }
         return subjects!!
+    }
+
+    override suspend fun getLanguageLevels(): List<LanguageLevel>? {
+        if (languageLevels == null) {
+            val querySnapshot = db.collection("language_level").get().await()
+            languageLevels = querySnapshot.documents.map { document ->
+                val languageLevel = document.toObject<LanguageLevelDto>()
+                languageLevel?.toDomain() ?: throw (IOException("Lesson not found"))
+            }
+        }
+        return languageLevels!!
     }
 
     override suspend fun getUser(userId: Id): UserDto {

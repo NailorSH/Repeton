@@ -2,6 +2,7 @@ package com.nailorsh.repeton.common.firestore
 
 import com.google.firebase.auth.FirebaseUser
 import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.contact.Contact
 import com.nailorsh.repeton.common.data.models.education.Education
 import com.nailorsh.repeton.common.data.models.education.EducationType
 import com.nailorsh.repeton.common.data.models.language.Language
@@ -78,6 +79,14 @@ interface FirestoreRepository {
     suspend fun addCurrentUserEducation(education: Education)
     suspend fun updateCurrentUserEducation(education: Education)
     suspend fun removeCurrentUserEducation(educationId: Id)
+
+    // UserContacts
+    suspend fun getUserContacts(userId: Id): List<Contact>?
+    suspend fun getCurrentUserContacts(): List<Contact>?
+    suspend fun updateCurrentUserContacts(contacts: List<Contact>)
+    suspend fun addCurrentUserContact(contact: Contact)
+    suspend fun updateCurrentUserContact(contact: Contact)
+    suspend fun removeCurrentUserContact(contactId: Id)
 
     // EducationTypes
     suspend fun getEducationTypes(): List<EducationType>

@@ -9,6 +9,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.contact.Contact
 import com.nailorsh.repeton.common.data.models.education.Education
 import com.nailorsh.repeton.common.data.models.education.EducationType
 import com.nailorsh.repeton.common.data.models.language.Language
@@ -25,6 +26,7 @@ import com.nailorsh.repeton.common.firestore.mappers.toDomain
 import com.nailorsh.repeton.common.firestore.mappers.toDomainStudent
 import com.nailorsh.repeton.common.firestore.mappers.toDomainTutor
 import com.nailorsh.repeton.common.firestore.mappers.toDto
+import com.nailorsh.repeton.common.firestore.models.ContactDto
 import com.nailorsh.repeton.common.firestore.models.EducationDto
 import com.nailorsh.repeton.common.firestore.models.EducationTypeDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
@@ -678,5 +680,80 @@ class FirestoreRepositoryImpl @Inject constructor(
 
             return language?.toDomain() ?: throw (IOException("Error parsing language"))
         } else throw (IOException("Language not found"))
+    }
+
+    // UserContacts
+    override suspend fun getUserContacts(userId: Id): List<Contact>? = withContext(Dispatchers.IO) {
+        val userRef = db.collection("users").document(userId.value)
+        val contactsRef = userRef.collection("contacts")
+
+        val contacts = contactsRef.get().await().documents.mapNotNull { document ->
+            async {
+                document.toObject<ContactDto>()?.toDomain()
+            }
+        }.awaitAll().filterNotNull()
+
+        contacts.ifEmpty { null }
+    }
+
+    override suspend fun getCurrentUserContacts(): List<Contact>? =
+        withContext(Dispatchers.IO) {
+            getUserContacts(getCurrentUserId())
+        }
+
+    override suspend fun updateCurrentUserContacts(contacts: List<Contact>) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users")
+                .document(getCurrentUserId().value)
+                .collection("contacts")
+
+            val currentContacts = userRef.get().await()
+
+            currentContacts.documents.forEach { document ->
+                userRef.document(document.id).delete().await()
+            }
+
+            contacts.forEach { contact ->
+                val contactRef = userRef.document()
+                val contactDto = contact.toDto()
+                contactRef.set(contactDto).await()
+            }
+        }
+    }
+
+    override suspend fun addCurrentUserContact(contact: Contact) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users")
+                .document(getCurrentUserId().value)
+                .collection("contacts")
+
+            val newContactRef = userRef.document()
+            val contactDto = contact.copy(id = Id(newContactRef.id)).toDto()
+
+            newContactRef.set(contactDto).await()
+        }
+    }
+
+    override suspend fun updateCurrentUserContact(contact: Contact) {
+        withContext(Dispatchers.IO) {
+            val contactDto = contact.toDto()
+            val userRef = db.collection("users")
+                .document(getCurrentUserId().value)
+                .collection("contacts")
+                .document(contactDto.id)
+
+            userRef.set(contactDto).await()
+        }
+    }
+
+    override suspend fun removeCurrentUserContact(contactId: Id) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users")
+                .document(getCurrentUserId().value)
+                .collection("contacts")
+                .document(contactId.value)
+
+            userRef.delete().await()
+        }
     }
 }

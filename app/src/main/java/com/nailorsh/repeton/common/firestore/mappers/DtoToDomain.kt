@@ -2,6 +2,8 @@ package com.nailorsh.repeton.common.firestore.mappers
 
 import com.google.firebase.Timestamp
 import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.contact.Contact
+import com.nailorsh.repeton.common.data.models.contact.ContactType
 import com.nailorsh.repeton.common.data.models.education.Education
 import com.nailorsh.repeton.common.data.models.education.EducationType
 import com.nailorsh.repeton.common.data.models.language.Language
@@ -17,6 +19,7 @@ import com.nailorsh.repeton.common.data.models.user.Student
 import com.nailorsh.repeton.common.data.models.user.Tutor
 import com.nailorsh.repeton.common.data.models.user.User
 import com.nailorsh.repeton.common.firestore.models.AttachmentDto
+import com.nailorsh.repeton.common.firestore.models.ContactDto
 import com.nailorsh.repeton.common.firestore.models.EducationDto
 import com.nailorsh.repeton.common.firestore.models.EducationTypeDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
@@ -193,5 +196,13 @@ fun LanguageDto.toDomain(): Language {
     return Language(
         id = Id(this.id),
         name = this.name
+    )
+}
+
+fun ContactDto.toDomain(): Contact {
+    return Contact(
+        id = Id(this.id),
+        value = this.value,
+        type = ContactType.getTypeByString(this.type).value
     )
 }

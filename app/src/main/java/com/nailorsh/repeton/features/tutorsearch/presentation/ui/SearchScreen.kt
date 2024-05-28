@@ -16,26 +16,35 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -50,7 +59,6 @@ import com.nailorsh.repeton.core.ui.components.ExpandableText
 import com.nailorsh.repeton.core.ui.components.IconWithText
 import com.nailorsh.repeton.core.ui.components.LikeButton
 import com.nailorsh.repeton.core.ui.components.LoadingScreen
-import com.nailorsh.repeton.core.ui.components.SearchBarWithFilter
 import com.nailorsh.repeton.core.ui.theme.AmbientColor
 import com.nailorsh.repeton.core.ui.theme.BodyColor
 import com.nailorsh.repeton.core.ui.theme.RepetonTheme
@@ -63,6 +71,7 @@ import com.nailorsh.repeton.core.ui.theme.WriteButtonBackgroundColor
 import com.nailorsh.repeton.core.ui.theme.WriteButtonTextColor
 import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.SearchUiState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
     typingGetSearchResults: (String) -> Unit,
@@ -73,55 +82,73 @@ fun SearchScreen(
 ) {
     var query by remember { mutableStateOf("") }
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top,
-        modifier = modifier.fillMaxSize(),
-    ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(18.dp, Alignment.Top),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .padding(top = 15.dp)
-        ) {
-            SearchBarWithFilter(
-                placeholder = R.string.search_placeholder,
-                leadingIcon = R.drawable.ic_search_icon,
-                filterIcon = R.drawable.ic_filter_icon,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Search
-                ),
-                keyboardActions = KeyboardActions(
-                    onSearch = {
-                        getSearchResults()
-                    }
-                ),
-                value = query,
-                onSearch = getSearchResults,
-                onValueChanged = {
+    var active by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        getSearchResults()
+    }
+
+    Scaffold(
+        topBar = {
+            SearchBar(
+                query = query,
+                onQueryChange = {
                     query = it
                     typingGetSearchResults(it)
                 },
-                modifier = Modifier.fillMaxWidth()
+                onSearch = { getSearchResults() },
+                active = active,
+                onActiveChange = { active = it },
+                modifier = Modifier
+                    .padding(bottom = dimensionResource(R.dimen.padding_small))
+                    .fillMaxWidth(),
+                placeholder = { Text(stringResource(R.string.search_placeholder)) },
+                colors = SearchBarDefaults.colors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                ),
+                trailingIcon = {
+                    if (active) {
+                        IconButton(onClick = { query = "" }) {
+                            Icon(
+                                imageVector = Icons.Default.Clear,
+                                contentDescription = null
+                            )
+                        }
+                    }
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null
+                    )
+                }
+            ) {}
+        }
+    ) { innerPadding ->
+        when (searchUiState) {
+            is SearchUiState.None -> {}
+            is SearchUiState.Loading -> LoadingScreen(
+                modifier = modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
             )
 
-            when (searchUiState) {
-                is SearchUiState.None -> {}
-                is SearchUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
+            is SearchUiState.Success -> TutorList(
+                tutors = searchUiState.tutors,
+                onTutorCardClicked = onTutorCardClicked,
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxWidth()
+            )
 
-                is SearchUiState.Success -> TutorList(
-                    tutors = searchUiState.tutors,
-                    onTutorCardClicked = onTutorCardClicked,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                is SearchUiState.Error -> ErrorScreen(
-                    getSearchResults,
-                    modifier = modifier.fillMaxSize()
-                )
-            }
+            is SearchUiState.Error -> ErrorScreen(
+                getSearchResults,
+                modifier = modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+            )
         }
     }
 }

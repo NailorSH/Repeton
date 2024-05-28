@@ -36,6 +36,8 @@ sealed interface TutorSearchAction {
     data class ActiveChange(val active: Boolean) : TutorSearchAction
     object Clear : TutorSearchAction
     data class QueryChange(val query: String) : TutorSearchAction
+    data class AddQueryToHistory(val query: String) : TutorSearchAction
+    data class ChooseQueryHistoryItem(val query: String) : TutorSearchAction
     data class UpdateLoadingScreen(val isLoading: Boolean) : TutorSearchAction
 }
 
@@ -46,6 +48,8 @@ data class TutorSearchState(
     val tutorsList: List<Tutor> = emptyList(),
 
     val query: String = "",
+    val queryHistory: List<String> = emptyList(),
+
     val active: Boolean = false,
     val showLoadingScreen: Boolean = false
 )
@@ -124,14 +128,32 @@ class TutorSearchViewModel @Inject constructor(
                     _state.update { state -> state.copy(query = action.query) }
                 }
 
+                is TutorSearchAction.AddQueryToHistory -> {
+                    _state.update { state ->
+                        state.copy(
+                            queryHistory = state.queryHistory.takeUnless {
+                                it.contains(state.query) || state.query.isBlank()
+                            }?.plus(state.query) ?: state.queryHistory
+                        )
+                    }
+                }
+
+                is TutorSearchAction.ChooseQueryHistoryItem -> {
+                    _state.update { state -> state.copy(query = action.query) }
+                    onAction(TutorSearchAction.Search)
+                }
+
                 is TutorSearchAction.Search -> {
                     _state.update { state ->
+                        onAction(TutorSearchAction.AddQueryToHistory(state.query))
+
                         state.copy(
                             tutorsList = tutorsList.filter {
                                 it.doesMatchSearchQuery(state.query)
                             },
                             active = false
                         )
+
                     }
                 }
 

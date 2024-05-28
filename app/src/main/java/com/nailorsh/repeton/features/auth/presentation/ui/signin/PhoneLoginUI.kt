@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -42,73 +43,75 @@ fun PhoneLoginUI(
 
     val focusManager = LocalFocusManager.current
 
-    when (uiState) {
-        // Nothing happening yet
-        is AuthState.NotInitialized -> {
-            EnterPhoneNumberUI(
-                modifier = Modifier
-                    .padding(vertical = 56.dp, horizontal = 24.dp),
-                onClick = {
-                    focusManager.clearFocus()
-                    viewModel.authenticatePhone(phone)
-                },
-                phone = phone,
-                onPhoneChange = viewModel::onNumberChange,
-                onDone = {
-                    focusManager.clearFocus()
-                    viewModel.authenticatePhone(phone)
-                },
-                onGuestModeButtonClicked = {
-                    viewModel.createAnonymousAccount()
-                }
-            )
-        }
-
-        // State loading
-        is AuthState.Loading -> {
-            val text = (uiState as AuthState.Loading).message
-            if (text == context.getString(R.string.code_sent)) {
-
-                // If the code is sent, display the screen for code
-                EnterCodeUI(
-                    code = code,
-                    onCodeChange = viewModel::onCodeChange,
-                    phone = phone,
-                    onGo = {
-                        Log.d("Code Sent", "The code is $code")
+    Surface {
+        when (uiState) {
+            // Nothing happening yet
+            is AuthState.NotInitialized -> {
+                EnterPhoneNumberUI(
+                    modifier = Modifier
+                        .padding(vertical = 56.dp, horizontal = 24.dp),
+                    onClick = {
                         focusManager.clearFocus()
-                        viewModel.verifyOtp(code)
-                    })
-
-            } else {
-                // If the loading state is different form the code sent state,
-                // show a progress indicator
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    CircularProgressIndicator()
-                    text?.let {
-                        Text(
-                            it, modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                        )
+                        viewModel.authenticatePhone(phone)
+                    },
+                    phone = phone,
+                    onPhoneChange = viewModel::onNumberChange,
+                    onDone = {
+                        focusManager.clearFocus()
+                        viewModel.authenticatePhone(phone)
+                    },
+                    onGuestModeButtonClicked = {
+                        viewModel.createAnonymousAccount()
                     }
-                }
+                )
             }
 
-        }
+            // State loading
+            is AuthState.Loading -> {
+                val text = (uiState as AuthState.Loading).message
+                if (text == context.getString(R.string.code_sent)) {
 
-        // If it is the error state, show the error UI
-        is AuthState.Error -> {
-            val throwable = (uiState as AuthState.Error).exception!!
-            ErrorUi(exc = throwable, onRestart = restartLogin)
-        }
+                    // If the code is sent, display the screen for code
+                    EnterCodeUI(
+                        code = code,
+                        onCodeChange = viewModel::onCodeChange,
+                        phone = phone,
+                        onGo = {
+                            Log.d("Code Sent", "The code is $code")
+                            focusManager.clearFocus()
+                            viewModel.verifyOtp(code)
+                        })
 
-        // You can navigate when the auth process is successful
-        is AuthState.Success -> {
-            navigateNext()
+                } else {
+                    // If the loading state is different form the code sent state,
+                    // show a progress indicator
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        CircularProgressIndicator()
+                        text?.let {
+                            Text(
+                                it, modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
+
+            }
+
+            // If it is the error state, show the error UI
+            is AuthState.Error -> {
+                val throwable = (uiState as AuthState.Error).exception!!
+                ErrorUi(exc = throwable, onRestart = restartLogin)
+            }
+
+            // You can navigate when the auth process is successful
+            is AuthState.Success -> {
+                navigateNext()
+            }
         }
     }
 }

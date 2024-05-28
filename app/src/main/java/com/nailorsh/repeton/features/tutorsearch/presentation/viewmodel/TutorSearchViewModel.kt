@@ -91,6 +91,7 @@ class TutorSearchViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiEvents.emit(TutorSearchUIEvent.ErrorLoading)
             }
+            _state.update { it.copy(isLoading = false) }
         }
     }
 
@@ -128,7 +129,8 @@ class TutorSearchViewModel @Inject constructor(
                         state.copy(
                             tutorsList = tutorsList.filter {
                                 it.doesMatchSearchQuery(state.query)
-                            }
+                            },
+                            active = false
                         )
                     }
                 }

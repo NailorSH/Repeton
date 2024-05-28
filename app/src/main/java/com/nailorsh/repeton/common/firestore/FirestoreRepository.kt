@@ -19,6 +19,7 @@ import com.nailorsh.repeton.common.firestore.models.UserDto
 
 interface FirestoreRepository {
     suspend fun getSignedInUser(): FirebaseUser?
+    suspend fun isAnonymous(): Boolean
     suspend fun signoutUser()
     suspend fun getCurrentUserId(): Id
     suspend fun getCurrentUserDto(): UserDto

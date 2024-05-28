@@ -60,6 +60,11 @@ class FirestoreRepositoryImpl @Inject constructor(
         return auth.currentUser
     }
 
+    override suspend fun isAnonymous(): Boolean {
+        return auth.currentUser?.isAnonymous ?: true
+    }
+
+
     override suspend fun signoutUser() {
         auth.signOut()
     }

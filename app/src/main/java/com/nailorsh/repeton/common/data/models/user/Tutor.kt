@@ -28,4 +28,16 @@ data class Tutor(
     val experienceYears: Int = 0,
     val languagesWithLevels: List<LanguageWithLevel>? = null,
     val contacts: List<Contact>? = null,
-) : User
+) : User {
+    fun doesMatchSearchQuery(query: String): Boolean {
+        val matchingCombinations = listOf(
+            "$name$surname",
+            "$name $surname",
+            "${name.first()} ${surname.first()}"
+        )
+
+        return matchingCombinations.any {
+            it.contains(query, ignoreCase = true)
+        }
+    }
+}

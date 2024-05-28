@@ -13,56 +13,61 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.nailorsh.repeton.R
-import com.nailorsh.repeton.common.data.models.Id
 import com.nailorsh.repeton.core.ui.components.ErrorScreen
 import com.nailorsh.repeton.core.ui.components.LoadingScreen
 import com.nailorsh.repeton.core.ui.theme.RepetonTheme
 import com.nailorsh.repeton.features.tutorsearch.presentation.ui.components.TutorList
-import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.SearchUiState
+import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.TutorSearchAction
+import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.TutorSearchState
+import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.TutorSearchUIEvent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    typingGetSearchResults: (String) -> Unit,
-    getSearchResults: () -> Unit,
-    searchUiState: SearchUiState,
-    onTutorCardClicked: (Id) -> Unit,
+    state: TutorSearchState,
+    uiEvents: Flow<TutorSearchUIEvent>,
+    onAction: (TutorSearchAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var query by remember { mutableStateOf("") }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
-    var active by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    LaunchedEffect(key1 = Unit) {
-        getSearchResults()
+    LaunchedEffect(lifecycleOwner.lifecycle) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            uiEvents.collect { uiEvent ->
+                snackbarHostState.showSnackbar(
+                    message = context.getString(uiEvent.msg),
+                    withDismissAction = true
+                )
+            }
+        }
     }
 
     Scaffold(
         topBar = {
             SearchBar(
-                query = query,
-                onQueryChange = {
-                    query = it
-                    typingGetSearchResults(it)
-                },
-                onSearch = { getSearchResults() },
-                active = active,
-                onActiveChange = { active = it },
+                query = state.query,
+                onQueryChange = { onAction(TutorSearchAction.QueryChange(it)) },
+                onSearch = { onAction(TutorSearchAction.Search) },
+                active = state.active,
+                onActiveChange = { onAction(TutorSearchAction.ActiveChange(it)) },
                 modifier = Modifier
                     .padding(bottom = dimensionResource(R.dimen.padding_small))
                     .fillMaxWidth(),
@@ -71,8 +76,8 @@ fun SearchScreen(
                     containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                 ),
                 trailingIcon = {
-                    if (active) {
-                        IconButton(onClick = { query = "" }) {
+                    if (state.active) {
+                        IconButton(onClick = { onAction(TutorSearchAction.Clear) }) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
                                 contentDescription = null
@@ -89,27 +94,26 @@ fun SearchScreen(
             ) {}
         }
     ) { innerPadding ->
-        when (searchUiState) {
-            is SearchUiState.None -> {}
-            is SearchUiState.Loading -> LoadingScreen(
+        if (state.isLoading) {
+            LoadingScreen(
                 modifier = modifier
                     .padding(innerPadding)
                     .fillMaxSize()
             )
-
-            is SearchUiState.Success -> TutorList(
-                tutors = searchUiState.tutors,
-                onTutorCardClicked = onTutorCardClicked,
+        } else if (state.error) {
+            ErrorScreen(
+                retryAction = { onAction(TutorSearchAction.RetryAction) },
+                modifier = modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+            )
+        } else {
+            TutorList(
+                tutors = state.tutorsList,
+                onTutorCardClicked = { onAction(TutorSearchAction.NavigateToTutorProfile(it)) },
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxWidth()
-            )
-
-            is SearchUiState.Error -> ErrorScreen(
-                getSearchResults,
-                modifier = modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
             )
         }
     }
@@ -122,10 +126,7 @@ fun SearchScreen(
 fun SearchScreenPreview() {
     RepetonTheme {
         SearchScreen(
-            typingGetSearchResults = { _ -> },
-            getSearchResults = { },
-            searchUiState = SearchUiState.None,
-            onTutorCardClicked = {}
+            state = TutorSearchState(isLoading = false), uiEvents = flow { }, {}
         )
     }
 }

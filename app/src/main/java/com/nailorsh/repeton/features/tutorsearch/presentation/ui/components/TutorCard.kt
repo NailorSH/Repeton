@@ -37,11 +37,11 @@ import com.nailorsh.repeton.core.ui.theme.StarColor
 fun TutorCard(
     tutor: Tutor,
     modifier: Modifier = Modifier,
-    onCardClicked: (Id) -> Unit
+    onCardClicked: (Tutor) -> Unit
 ) {
     Card(
         modifier = modifier
-            .clickable { onCardClicked(tutor.id) },
+            .clickable { onCardClicked(tutor) },
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {

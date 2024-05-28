@@ -30,6 +30,7 @@ import com.nailorsh.repeton.R
 import com.nailorsh.repeton.core.ui.components.ErrorScreen
 import com.nailorsh.repeton.core.ui.components.LoadingScreen
 import com.nailorsh.repeton.core.ui.theme.RepetonTheme
+import com.nailorsh.repeton.features.tutorsearch.presentation.ui.components.QueryHistoryItem
 import com.nailorsh.repeton.features.tutorsearch.presentation.ui.components.TutorList
 import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.TutorSearchAction
 import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.TutorSearchState
@@ -91,7 +92,14 @@ fun SearchScreen(
                         contentDescription = null
                     )
                 }
-            ) {}
+            ) {
+                state.queryHistory.forEach {
+                    QueryHistoryItem(
+                        query = it,
+                        onClick = { onAction(TutorSearchAction.ChooseQueryHistoryItem(it)) }
+                    )
+                }
+            }
         }
     ) { innerPadding ->
         if (state.isLoading) {

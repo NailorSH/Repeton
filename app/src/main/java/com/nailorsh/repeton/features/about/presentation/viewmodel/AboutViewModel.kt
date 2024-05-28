@@ -11,6 +11,7 @@ import com.nailorsh.repeton.common.data.models.language.LanguageLevel
 import com.nailorsh.repeton.common.data.models.language.LanguageWithLevel
 import com.nailorsh.repeton.features.about.data.AboutRepository
 import com.nailorsh.repeton.features.about.data.mappers.toDomain
+import com.nailorsh.repeton.features.about.data.model.AboutContactItem
 import com.nailorsh.repeton.features.about.data.model.AboutUpdatedData
 import com.nailorsh.repeton.features.about.data.model.EducationItem
 import com.nailorsh.repeton.features.about.data.model.LanguageItem
@@ -44,6 +45,7 @@ data class AboutState(
 
     val education: Education? = null,
     val languagesWithLevels: List<LanguageWithLevel>? = null,
+    val contacts: List<AboutContactItem> = emptyList(),
 
     val languagesList: List<LanguageItem> = emptyList(),
     val languageLevelList: List<LanguageLevel> = LanguageLevel.values().asList(),
@@ -69,6 +71,11 @@ sealed interface AboutAction {
         val languageLvl: LanguageLevel
     ) :
         AboutAction
+
+    data class UpdateContact(
+        val contact: AboutContactItem,
+        val value: String
+    ) : AboutAction
 
     data class UpdateImage(val image: Uri) : AboutAction
     object SaveChanges : AboutAction
@@ -115,7 +122,7 @@ class AboutViewModel @Inject constructor(
     val navigationEvents = _navigationEvents.asSharedFlow()
 
     private lateinit var languagesList: List<LanguageItem>
-    private lateinit var startData: AboutState
+    private lateinit var startData: AboutUpdatedData
 
     init {
         getData()
@@ -129,21 +136,28 @@ class AboutViewModel @Inject constructor(
                     val userData = aboutRepository.getUserData()
                     languagesList = aboutRepository.getLanguages()
                     val educationList = aboutRepository.getEducation()
-                    startData = AboutState(
+                    startData = AboutUpdatedData(
                         photoSrc = userData.photoSrc,
-                        name = userData.name,
-                        surname = userData.surname,
                         about = userData.about ?: "",
-                        aboutNew = userData.about ?: "",
                         education = userData.education,
                         languagesWithLevels = userData.languagesWithLevels,
-                        languagesList = languagesList,
-                        educationList = educationList,
-                        isTutor = userData.isTutor,
-                        isLoading = false
+                        contacts = userData.contacts
                     )
                     _state.update { state ->
-                        startData
+                        AboutState(
+                            photoSrc = userData.photoSrc,
+                            name = userData.name,
+                            surname = userData.surname,
+                            about = userData.about ?: "",
+                            aboutNew = userData.about ?: "",
+                            education = userData.education,
+                            languagesWithLevels = userData.languagesWithLevels,
+                            contacts = userData.contacts,
+                            languagesList = languagesList,
+                            educationList = educationList,
+                            isTutor = userData.isTutor,
+                            isLoading = false
+                        )
                     }
                 }
             } catch (e: IOException) {
@@ -169,7 +183,8 @@ class AboutViewModel @Inject constructor(
                     about = if (_state.value.about != startData.about) _state.value.about else null,
                     photoSrc = if (_state.value.photoSrc != startData.photoSrc) _state.value.photoSrc else null,
                     education = if (_state.value.education != startData.education) _state.value.education else null,
-                    languagesWithLevels = if (_state.value.languagesWithLevels != startData.languagesWithLevels) _state.value.languagesWithLevels else null
+                    languagesWithLevels = if (_state.value.languagesWithLevels != startData.languagesWithLevels) _state.value.languagesWithLevels else null,
+                    contacts = if (_state.value.contacts != startData.contacts) _state.value.contacts else null
                 )
             )
         } catch (e: Exception) {
@@ -210,6 +225,38 @@ class AboutViewModel @Inject constructor(
 
                 is AboutAction.UpdateImage -> {
                     _state.update { state -> state.copy(photoSrc = action.image.toString()) }
+                }
+
+                is AboutAction.UpdateContact -> {
+                    _state.update { state ->
+                        state.copy(
+                            contacts = state.contacts.map { contact ->
+                                when (contact) {
+                                    is AboutContactItem.Other -> {
+                                        if (action.contact is AboutContactItem.Other) {
+                                            AboutContactItem.Other(action.value)
+                                        } else {
+                                            contact
+                                        }
+                                    }
+                                    is AboutContactItem.Telegram -> {
+                                        if (action.contact is AboutContactItem.Telegram) {
+                                            AboutContactItem.Telegram(action.value)
+                                        } else {
+                                            contact
+                                        }
+                                    }
+                                    is AboutContactItem.WhatsApp -> {
+                                        if (action.contact is AboutContactItem.WhatsApp) {
+                                            AboutContactItem.WhatsApp(action.value)
+                                        } else {
+                                            contact
+                                        }
+                                    }
+                                }
+                            }
+                        )
+                    }
                 }
 
                 is AboutAction.ChangeSpecialization -> {

@@ -8,4 +8,5 @@ data class AboutUpdatedData(
     val photoSrc : String? = null,
     val education : Education? = null,
     val languagesWithLevels: List<LanguageWithLevel>? = null,
+    val contacts : List<AboutContactItem>? = null
 )

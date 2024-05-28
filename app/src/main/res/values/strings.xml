@@ -202,4 +202,10 @@
     <string name="my_contacts">Мои контакты</string>
 
     <string name="tutor_search_screen_loading_error">Не удалось обновить список репетиторов</string>
+    <string name="telegram">Telegram</string>
+    <string name="whatsapp">WhatsApp</string>
+    <string name="other">Другое</string>
+    <string name="telegram_placeholder">Тэг в телеграме</string>
+    <string name="whatsapp_placeholder">Номер телефона в WhatsApp</string>
+    <string name="other_placeholder">Введите ваши контакты</string>
 </resources>

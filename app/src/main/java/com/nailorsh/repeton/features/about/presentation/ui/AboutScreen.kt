@@ -45,6 +45,7 @@ import com.nailorsh.repeton.core.ui.components.ErrorScreen
 import com.nailorsh.repeton.core.ui.components.LoadingDialogue
 import com.nailorsh.repeton.features.about.presentation.ui.components.AboutBioCard
 import com.nailorsh.repeton.features.about.presentation.ui.components.AboutBottomSheet
+import com.nailorsh.repeton.features.about.presentation.ui.components.AboutContacts
 import com.nailorsh.repeton.features.about.presentation.ui.components.AboutEducation
 import com.nailorsh.repeton.features.about.presentation.ui.components.AboutHeader
 import com.nailorsh.repeton.features.about.presentation.ui.components.AboutLanguages
@@ -164,12 +165,30 @@ fun AboutScreen(
                         surname = state.surname,
                         photoSrc = state.photoSrc,
                         isTutor = state.isTutor,
-                        onImageClick = { photoPickerLauncher.launch(
-                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                        ) }
+                        onImageClick = {
+                            photoPickerLauncher.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        }
                     )
                 }
-                item { AboutBioCard(biography = state.about, onBioClicked = { onAction(AboutAction.UpdateShowChangeAbout(true)) })  }
+                item {
+                    AboutBioCard(
+                        biography = state.about,
+                        onBioClicked = { onAction(AboutAction.UpdateShowChangeAbout(true)) })
+                }
+                item {
+                    AboutContacts(
+                        contacts = state.contacts,
+                        onContactUpdate = { contact, value ->
+                            onAction(
+                                AboutAction.UpdateContact(
+                                    contact,
+                                    value
+                                )
+                            )
+                        })
+                }
                 item {
                     HorizontalDivider(
                         modifier = Modifier.padding(

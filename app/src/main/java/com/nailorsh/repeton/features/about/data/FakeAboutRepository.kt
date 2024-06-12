@@ -45,7 +45,8 @@ class FakeAboutRepository @Inject constructor(
                 type = EducationType.BACHELOR,
                 specialization = "Клоун с ИУ9"
             ),
-            about = "Lorem Ipsum"
+            about = "Lorem Ipsum",
+            contacts = emptyList()
         )
     }
 

@@ -31,6 +31,7 @@ import com.nailorsh.repeton.features.subjects.presentation.ui.SubjectsScreen
 import com.nailorsh.repeton.features.subjects.presentation.viewmodel.SubjectViewModel
 import com.nailorsh.repeton.features.subjects.presentation.viewmodel.SubjectsNavigationEvent
 import com.nailorsh.repeton.features.tutorsearch.presentation.ui.SearchScreen
+import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.TutorSearchNavigationEvent
 import com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel.TutorSearchViewModel
 import com.nailorsh.repeton.features.userprofile.presentation.ui.ProfileScreen
 import com.nailorsh.repeton.features.userprofile.presentation.viewmodel.ProfileViewModel
@@ -51,13 +52,26 @@ fun HomeNavGraph(
         composable(route = BottomBarScreen.Search.route) {
             val tutorSearchViewModel = hiltViewModel<TutorSearchViewModel>()
 
-            SearchScreen(
-                getSearchResults = tutorSearchViewModel::getTutors,
-                typingGetSearchResults = tutorSearchViewModel::typingTutorSearch,
-                searchUiState = tutorSearchViewModel.searchUiState,
-                onTutorCardClicked = { tutorId ->
-                    navController.navigate(TutorViewScreen.TutorView.createTutorViewRoute(tutorId))
+            val lifecycleOwner = LocalLifecycleOwner.current
+            val navigationEvents = tutorSearchViewModel.navigationEvents
+            val uiEvents = tutorSearchViewModel.uiEvents
+            LaunchedEffect(lifecycleOwner.lifecycle) {
+                lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    navigationEvents.collect { navigationEvent ->
+                        when (navigationEvent) {
+                            is TutorSearchNavigationEvent.NavigateBack -> navController.popBackStack()
+                            is TutorSearchNavigationEvent.NavigateToTutorProfile -> navController.navigate(
+                                TutorViewScreen.TutorView.createTutorViewRoute(navigationEvent.tutor.id)
+                            )
+                        }
+                    }
                 }
+            }
+
+            SearchScreen(
+                state = tutorSearchViewModel.state.collectAsState().value,
+                uiEvents = uiEvents,
+                onAction = tutorSearchViewModel::onAction
             )
         }
 

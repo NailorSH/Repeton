@@ -2,8 +2,6 @@ package com.nailorsh.repeton.features.tutorprofile.presentation.ui.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -17,8 +15,8 @@ import com.nailorsh.repeton.R
 @Composable
 fun TopTutorProfileBar(
     onBackClick: () -> Unit,
-    onShareClick: () -> Unit,
-    onFavoriteClick: () -> Unit,
+//    onShareClick: () -> Unit,
+//    onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
@@ -31,20 +29,20 @@ fun TopTutorProfileBar(
                 )
             }
         },
-        actions = {
-            IconButton(onClick = onShareClick) {
-                Icon(
-                    Icons.Filled.Share,
-                    contentDescription = stringResource(R.string.share)
-                )
-            }
-            IconButton(onClick = onFavoriteClick) {
-                Icon(
-                    Icons.Filled.Favorite,
-                    contentDescription = stringResource(R.string.favorite)
-                )
-            }
-        },
+//        actions = {
+//            IconButton(onClick = onShareClick) {
+//                Icon(
+//                    Icons.Filled.Share,
+//                    contentDescription = stringResource(R.string.share)
+//                )
+//            }
+//            IconButton(onClick = onFavoriteClick) {
+//                Icon(
+//                    Icons.Filled.Favorite,
+//                    contentDescription = stringResource(R.string.favorite)
+//                )
+//            }
+//        },
         modifier = modifier
     )
 }

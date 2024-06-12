@@ -1,81 +1,172 @@
 package com.nailorsh.repeton.features.tutorsearch.presentation.viewmodel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nailorsh.repeton.R
 import com.nailorsh.repeton.common.data.models.user.Tutor
 import com.nailorsh.repeton.features.tutorsearch.data.TutorSearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.net.HttpRetryException
 import javax.inject.Inject
 
-sealed interface SearchUiState {
-    data class Success(val tutors: List<Tutor>) : SearchUiState
-    object Error : SearchUiState
-    object Loading : SearchUiState
-    object None : SearchUiState
+sealed interface TutorSearchNavigationEvent {
+    data class NavigateToTutorProfile(val tutor: Tutor) : TutorSearchNavigationEvent
+    object NavigateBack : TutorSearchNavigationEvent
 }
+
+sealed class TutorSearchUIEvent(@StringRes val msg: Int) {
+    object ErrorLoading : TutorSearchUIEvent(R.string.tutor_search_screen_loading_error)
+}
+
+sealed interface TutorSearchAction {
+    object RetryAction : TutorSearchAction
+    object NavigateBack : TutorSearchAction
+    data class NavigateToTutorProfile(val tutor: Tutor) : TutorSearchAction
+    object Search : TutorSearchAction
+    data class ActiveChange(val active: Boolean) : TutorSearchAction
+    object Clear : TutorSearchAction
+    data class QueryChange(val query: String) : TutorSearchAction
+    data class AddQueryToHistory(val query: String) : TutorSearchAction
+    data class ChooseQueryHistoryItem(val query: String) : TutorSearchAction
+    data class UpdateLoadingScreen(val isLoading: Boolean) : TutorSearchAction
+}
+
+data class TutorSearchState(
+    val isLoading: Boolean = true,
+    val error: Boolean = false,
+
+    val tutorsList: List<Tutor> = emptyList(),
+
+    val query: String = "",
+    val queryHistory: List<String> = emptyList(),
+
+    val active: Boolean = false,
+    val showLoadingScreen: Boolean = false
+)
 
 @HiltViewModel
 class TutorSearchViewModel @Inject constructor(
     private val tutorSearchRepository: TutorSearchRepository
 ) : ViewModel() {
-    var searchUiState: SearchUiState by mutableStateOf(SearchUiState.None)
-        private set
 
-    private var tutorSearchJob: Job? = null
+    private val _state = MutableStateFlow(TutorSearchState())
+    val state = _state.asStateFlow()
 
-    fun typingTutorSearch(prefix: String) {
-        with(prefix) {
-            when {
-                length > 1 -> {
-                    tutorSearchJob?.cancel()
-                    tutorSearchJob = viewModelScope.launch {
-                        delay(600) //debounce
-                        searchUiState = SearchUiState.Loading
-                        delay(2000)
-                        searchUiState = try {
-                            withContext(Dispatchers.IO) {
-                                SearchUiState.Success(tutorSearchRepository.getTutors())
-                            }
-                        } catch (e: IOException) {
-                            SearchUiState.Error
-                        } catch (e: HttpRetryException) {
-                            SearchUiState.Error
-                        } catch (e: NoSuchElementException) {
-                            SearchUiState.Error
-                        } catch (e: Exception) {
-                            SearchUiState.Error
-                        }
+    private val _uiEvents = MutableSharedFlow<TutorSearchUIEvent>()
+    val uiEvents = _uiEvents.asSharedFlow()
+
+    private val _navigationEvents = MutableSharedFlow<TutorSearchNavigationEvent>()
+    val navigationEvents = _navigationEvents.asSharedFlow()
+
+    private lateinit var tutorsList: List<Tutor>
+
+    init {
+        getTutors()
+    }
+
+    private fun getTutors() {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true) }
+            try {
+                withContext(Dispatchers.IO) {
+                    tutorsList = tutorSearchRepository.getTutors()
+                    _state.update {
+                        it.copy(
+                            tutorsList = tutorsList,
+                        )
                     }
                 }
+            } catch (e: IOException) {
+                _uiEvents.emit(TutorSearchUIEvent.ErrorLoading)
+            } catch (e: HttpRetryException) {
+                _uiEvents.emit(TutorSearchUIEvent.ErrorLoading)
+            } catch (e: NoSuchElementException) {
+                _uiEvents.emit(TutorSearchUIEvent.ErrorLoading)
+            } catch (e: Exception) {
+                _uiEvents.emit(TutorSearchUIEvent.ErrorLoading)
             }
+            _state.update { it.copy(isLoading = false) }
         }
     }
 
-    fun getTutors() {
+    fun onAction(action: TutorSearchAction) {
         viewModelScope.launch {
-            searchUiState = SearchUiState.Loading
-            searchUiState = try {
-                withContext(Dispatchers.IO) {
-                    SearchUiState.Success(tutorSearchRepository.getTutors())
+            when (action) {
+                is TutorSearchAction.RetryAction -> {
+                    getTutors()
                 }
-            } catch (e: IOException) {
-                SearchUiState.Error
-            } catch (e: HttpRetryException) {
-                SearchUiState.Error
-            } catch (e: NoSuchElementException) {
-                SearchUiState.Error
-            } catch (e: Exception) {
-                SearchUiState.Error
+
+                is TutorSearchAction.UpdateLoadingScreen -> {
+                    _state.update { state ->
+                        state.copy(showLoadingScreen = action.isLoading)
+                    }
+                }
+
+                is TutorSearchAction.NavigateBack -> {
+                    _navigationEvents.emit(TutorSearchNavigationEvent.NavigateBack)
+                }
+
+                is TutorSearchAction.NavigateToTutorProfile -> {
+                    _navigationEvents.emit(
+                        TutorSearchNavigationEvent.NavigateToTutorProfile(
+                            action.tutor
+                        )
+                    )
+                }
+
+                is TutorSearchAction.QueryChange -> {
+                    _state.update { state -> state.copy(query = action.query) }
+                }
+
+                is TutorSearchAction.AddQueryToHistory -> {
+                    _state.update { state ->
+                        state.copy(
+                            queryHistory = state.queryHistory.takeUnless {
+                                it.contains(state.query) || state.query.isBlank()
+                            }?.plus(state.query) ?: state.queryHistory
+                        )
+                    }
+                }
+
+                is TutorSearchAction.ChooseQueryHistoryItem -> {
+                    _state.update { state -> state.copy(query = action.query) }
+                    onAction(TutorSearchAction.Search)
+                }
+
+                is TutorSearchAction.Search -> {
+                    _state.update { state ->
+                        onAction(TutorSearchAction.AddQueryToHistory(state.query))
+
+                        state.copy(
+                            tutorsList = tutorsList.filter {
+                                it.doesMatchSearchQuery(state.query)
+                            },
+                            active = false
+                        )
+
+                    }
+                }
+
+                is TutorSearchAction.Clear -> {
+                    _state.update { state ->
+                        if (state.query.isNotEmpty()) state.copy(query = "")
+                        else state.copy(active = false)
+                    }
+                }
+
+                is TutorSearchAction.ActiveChange -> {
+                    _state.update { state -> state.copy(active = action.active) }
+                }
             }
         }
     }

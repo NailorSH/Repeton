@@ -198,4 +198,14 @@
     <string name="dismiss">Отмена</string>
     <string name="confirm">Подтвердить</string>
     <string name="new_lesson_screen_empty_users_subjects">Похоже у вас нет ни одного предмета. Добавить их можно в профиле</string>
+    <string name="profile_screen_logout">Выход</string>
+    <string name="my_contacts">Мои контакты</string>
+
+    <string name="tutor_search_screen_loading_error">Не удалось обновить список репетиторов</string>
+    <string name="telegram">Telegram</string>
+    <string name="whatsapp">WhatsApp</string>
+    <string name="other">Другое</string>
+    <string name="telegram_placeholder">Тэг в телеграме</string>
+    <string name="whatsapp_placeholder">Номер телефона в WhatsApp</string>
+    <string name="other_placeholder">Введите ваши контакты</string>
 </resources>

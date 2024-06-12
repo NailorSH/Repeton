@@ -1,6 +1,7 @@
 package com.nailorsh.repeton.common.firestore.mappers
 
 import com.google.firebase.Timestamp
+import com.nailorsh.repeton.common.data.models.contact.Contact
 import com.nailorsh.repeton.common.data.models.education.Education
 import com.nailorsh.repeton.common.data.models.language.Language
 import com.nailorsh.repeton.common.data.models.language.LanguageWithLevel
@@ -10,6 +11,7 @@ import com.nailorsh.repeton.common.data.models.lesson.Lesson
 import com.nailorsh.repeton.common.data.models.lesson.Review
 import com.nailorsh.repeton.common.data.models.lesson.SubjectWithPrice
 import com.nailorsh.repeton.common.firestore.models.AttachmentDto
+import com.nailorsh.repeton.common.firestore.models.ContactDto
 import com.nailorsh.repeton.common.firestore.models.EducationDto
 import com.nailorsh.repeton.common.firestore.models.FileDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
@@ -100,5 +102,13 @@ fun SubjectWithPrice.toDto() : SubjectWithPriceDto {
     return SubjectWithPriceDto(
         subjectId = subject.id.value,
         price = price
+    )
+}
+
+fun Contact.toDto(): ContactDto {
+    return ContactDto(
+        id = this.id.value,
+        value = this.value,
+        type = this.type
     )
 }

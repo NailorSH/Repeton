@@ -12,7 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.nailorsh.repeton.features.userprofile.data.*
+import com.nailorsh.repeton.features.userprofile.data.HomeworkBadge
+import com.nailorsh.repeton.features.userprofile.data.Options
+import com.nailorsh.repeton.features.userprofile.data.ThemeSwitcher
+import com.nailorsh.repeton.features.userprofile.data.TrailingContent
+import com.nailorsh.repeton.features.userprofile.data.TrailingContentType
 
 @Composable
 fun ProfileOptions(
@@ -35,6 +39,7 @@ fun ProfileOptions(
         ) {
             optionsList.forEachIndexed { index, item ->
                 ProfileMenuItem(
+                    isLogout = (item is Options.Logout),
                     icon = item.icon,
                     text = item.text,
                     onPressCallback = { onOptionClicked(item) },

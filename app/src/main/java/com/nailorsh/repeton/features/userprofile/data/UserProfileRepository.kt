@@ -8,4 +8,5 @@ interface UserProfileRepository {
     suspend fun getSettingsOptions(): List<Options>
     suspend fun getUserOptions(): List<Options>
     suspend fun getUserData() : ProfileUserData
+    suspend fun signOut()
 }

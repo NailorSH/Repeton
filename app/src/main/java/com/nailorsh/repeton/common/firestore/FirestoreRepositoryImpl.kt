@@ -9,6 +9,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 import com.nailorsh.repeton.common.data.models.Id
+import com.nailorsh.repeton.common.data.models.contact.Contact
 import com.nailorsh.repeton.common.data.models.education.Education
 import com.nailorsh.repeton.common.data.models.education.EducationType
 import com.nailorsh.repeton.common.data.models.language.Language
@@ -25,6 +26,8 @@ import com.nailorsh.repeton.common.firestore.mappers.toDomain
 import com.nailorsh.repeton.common.firestore.mappers.toDomainStudent
 import com.nailorsh.repeton.common.firestore.mappers.toDomainTutor
 import com.nailorsh.repeton.common.firestore.mappers.toDto
+import com.nailorsh.repeton.common.firestore.models.ContactDto
+import com.nailorsh.repeton.common.firestore.models.EducationDto
 import com.nailorsh.repeton.common.firestore.models.EducationTypeDto
 import com.nailorsh.repeton.common.firestore.models.HomeworkDto
 import com.nailorsh.repeton.common.firestore.models.LanguageDto
@@ -55,6 +58,15 @@ class FirestoreRepositoryImpl @Inject constructor(
 
     override suspend fun getSignedInUser(): FirebaseUser? {
         return auth.currentUser
+    }
+
+    override suspend fun isAnonymous(): Boolean {
+        return auth.currentUser?.isAnonymous ?: true
+    }
+
+
+    override suspend fun signoutUser() {
+        auth.signOut()
     }
 
     override suspend fun sendHomeworkMessage(lessonId: Id, message: String) {
@@ -272,7 +284,8 @@ class FirestoreRepositoryImpl @Inject constructor(
                     ?.toDomainTutor(
                         subjectsPrices = getUserSubjectsWithPrices(Id(tutorId)),
                         languagesWithLevels = getUserLanguagesWithLevels(Id(tutorId)),
-                        educations = getUserEducations(Id(tutorId))
+                        educations = getUserEducations(Id(tutorId)),
+                        contacts = getUserContacts(Id(tutorId))
                     )
             }
         }
@@ -411,18 +424,23 @@ class FirestoreRepositoryImpl @Inject constructor(
 
     override suspend fun getUserEducations(userId: Id): List<Education>? =
         withContext(Dispatchers.IO) {
-            val educations = getUserDto(userId).educations ?: return@withContext null
+            val userRef = db.collection("users").document(userId.value)
+            val educationsRef = userRef.collection("educations")
 
-            val educationsTasks = educations.map { education ->
+            val educations = educationsRef.get().await().documents.mapNotNull { document ->
                 async {
-                    db.collection("education_types").document(education.typeId).get()
-                        .await()
-                        .toObject<EducationTypeDto>()
-                        ?.let { education.toDomain(it.toDomain()) }
-                }
-            }
+                    val educationDto = document.toObject<EducationDto>()
+                    val educationType =
+                        educationDto?.let {
+                            db.collection("education_types").document(it.typeId).get().await()
+                                .toObject<EducationTypeDto>()?.toDomain()
+                        }
 
-            educationsTasks.awaitAll().filterNotNull().takeIf { it.isNotEmpty() }
+                    educationType?.let { educationDto.toDomain(it) }
+                }
+            }.awaitAll().filterNotNull()
+
+            educations.ifEmpty { null }
         }
 
     override suspend fun getCurrentUserEducations(): List<Education>? =
@@ -472,7 +490,8 @@ class FirestoreRepositoryImpl @Inject constructor(
                 it.toDomainTutor(
                     subjectsPrices = getUserSubjectsWithPrices(Id(it.id)),
                     languagesWithLevels = getUserLanguagesWithLevels(Id(it.id)),
-                    educations = getUserEducations(Id(it.id))
+                    educations = getUserEducations(Id(it.id)),
+                    contacts = getUserContacts(Id(it.id))
                 )
             }
     }
@@ -486,9 +505,11 @@ class FirestoreRepositoryImpl @Inject constructor(
             ?.toDomainTutor(
                 subjectsPrices = getUserSubjectsWithPrices(id),
                 languagesWithLevels = getUserLanguagesWithLevels(id),
-                educations = getUserEducations(id)
+                educations = getUserEducations(id),
+                contacts = getUserContacts(id)
             ) ?: throw NoSuchElementException("Tutor not found for id: ${id.value}")
     }
+
     private suspend fun addLessonIdToUser(userId: String, lessonId: String) {
         val userRef = db.collection("users").document(userId)
         db.runTransaction { transaction ->
@@ -498,6 +519,7 @@ class FirestoreRepositoryImpl @Inject constructor(
             transaction.update(userRef, "lessons", updatedLessonIds)
         }.await()
     }
+
     override suspend fun addLesson(newLesson: Lesson) = withContext(Dispatchers.IO) {
         // Convert Lesson to LessonDto
         val lessonDto = newLesson.toDto()
@@ -531,7 +553,8 @@ class FirestoreRepositoryImpl @Inject constructor(
 
 
     override suspend fun getLessons(): List<Lesson> = withContext(Dispatchers.IO) {
-        val userLessons = getUserDto(getCurrentUserId()).lessons ?: return@withContext emptyList<Lesson>()
+        val userLessons =
+            getUserDto(getCurrentUserId()).lessons ?: return@withContext emptyList<Lesson>()
         if (userLessons.isEmpty()) {
             return@withContext emptyList<Lesson>()
         }
@@ -665,5 +688,80 @@ class FirestoreRepositoryImpl @Inject constructor(
 
             return language?.toDomain() ?: throw (IOException("Error parsing language"))
         } else throw (IOException("Language not found"))
+    }
+
+    // UserContacts
+    override suspend fun getUserContacts(userId: Id): List<Contact>? = withContext(Dispatchers.IO) {
+        val userRef = db.collection("users").document(userId.value)
+        val contactsRef = userRef.collection("contacts")
+
+        val contacts = contactsRef.get().await().documents.mapNotNull { document ->
+            async {
+                document.toObject<ContactDto>()?.toDomain()
+            }
+        }.awaitAll().filterNotNull()
+
+        contacts.ifEmpty { null }
+    }
+
+    override suspend fun getCurrentUserContacts(): List<Contact>? =
+        withContext(Dispatchers.IO) {
+            getUserContacts(getCurrentUserId())
+        }
+
+    override suspend fun updateCurrentUserContacts(contacts: List<Contact>) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users")
+                .document(getCurrentUserId().value)
+                .collection("contacts")
+
+            val currentContacts = userRef.get().await()
+
+            currentContacts.documents.forEach { document ->
+                userRef.document(document.id).delete().await()
+            }
+
+            contacts.forEach { contact ->
+                val contactRef = userRef.document()
+                val contactDto = contact.toDto()
+                contactRef.set(contactDto).await()
+            }
+        }
+    }
+
+    override suspend fun addCurrentUserContact(contact: Contact) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users")
+                .document(getCurrentUserId().value)
+                .collection("contacts")
+
+            val newContactRef = userRef.document()
+            val contactDto = contact.copy(id = Id(newContactRef.id)).toDto()
+
+            newContactRef.set(contactDto).await()
+        }
+    }
+
+    override suspend fun updateCurrentUserContact(contact: Contact) {
+        withContext(Dispatchers.IO) {
+            val contactDto = contact.toDto()
+            val userRef = db.collection("users")
+                .document(getCurrentUserId().value)
+                .collection("contacts")
+                .document(contactDto.id)
+
+            userRef.set(contactDto).await()
+        }
+    }
+
+    override suspend fun removeCurrentUserContact(contactId: Id) {
+        withContext(Dispatchers.IO) {
+            val userRef = db.collection("users")
+                .document(getCurrentUserId().value)
+                .collection("contacts")
+                .document(contactId.value)
+
+            userRef.delete().await()
+        }
     }
 }

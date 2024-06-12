@@ -19,7 +19,7 @@ fun HomeScreen(
                 tabs = listOf(
                     BottomBarScreen.Search,
                     BottomBarScreen.Home,
-                    BottomBarScreen.Chats,
+//                    BottomBarScreen.Chats,
                     BottomBarScreen.Profile
                 ).toTypedArray(),
 

@@ -86,7 +86,7 @@ fun LessonCard(lesson: Lesson, onClick: (Lesson) -> Unit, modifier: Modifier = M
                 )
             }
             Text(
-                text = lesson.tutor.name,
+                text = "${lesson.tutor.surname} ${lesson.tutor.name}",
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 style = MaterialTheme.typography.bodyMedium,
                 letterSpacing = 0.25.sp,

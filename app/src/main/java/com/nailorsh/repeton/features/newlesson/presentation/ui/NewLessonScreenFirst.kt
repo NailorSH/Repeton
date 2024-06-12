@@ -196,7 +196,7 @@ fun NewLessonScreenContent(
             verticalArrangement = Arrangement.spacedBy(24.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.surfaceBright)
+                .background(color = MaterialTheme.colorScheme.surface)
                 .padding(paddingValues)
                 .padding(horizontal = 32.dp, vertical = 16.dp)
                 .clickable(

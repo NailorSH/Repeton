@@ -80,10 +80,13 @@ fun NavGraphBuilder.lessonCreationNavGraph(
                     navigationChannel.collect { navigationEvent ->
                         when (navigationEvent) {
                             NewLessonSecondNavigationEvent.NavigateBack -> navController.popBackStack()
-                            NewLessonSecondNavigationEvent.SaveLesson -> navController.popBackStack(
-                                route = BottomBarScreen.Home.route,
-                                inclusive = false
-                            )
+                            NewLessonSecondNavigationEvent.SaveLesson ->  {
+                                navController.popBackStack(
+                                    route = BottomBarScreen.Home.route,
+                                    inclusive = true
+                                )
+                                 navController.navigate(route = BottomBarScreen.Home.route)
+                            }
                         }
                     }
                 }

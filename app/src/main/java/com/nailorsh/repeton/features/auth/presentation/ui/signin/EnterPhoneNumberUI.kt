@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,7 +15,6 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,8 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -35,8 +31,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nailorsh.repeton.R
 import com.nailorsh.repeton.core.ui.theme.RepetonTheme
-import com.vk.id.AccessToken
-import com.vk.id.onetap.compose.onetap.OneTap
 
 @Composable
 fun EnterPhoneNumberUI(
@@ -45,7 +39,6 @@ fun EnterPhoneNumberUI(
     onPhoneChange: (String) -> Unit,
     onDone: (KeyboardActionScope.() -> Unit)?,
     onGuestModeButtonClicked: () -> Unit,
-    onVKAuth: (AccessToken) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isError by remember { mutableStateOf(false) }
@@ -91,30 +84,19 @@ fun EnterPhoneNumberUI(
             ) {
                 Text(text = stringResource(id = R.string.next))
             }
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Text(
-                text = "или",
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            OneTap(onAuth = onVKAuth)
         }
 
-        OutlinedButton(onClick = onGuestModeButtonClicked) {
-            Icon(
-                painter = painterResource(R.drawable.ic_footprint),
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
-            Text(
-                text = stringResource(R.string.guest_mode),
-                style = MaterialTheme.typography.titleMedium
-            )
-        }
+//        OutlinedButton(onClick = onGuestModeButtonClicked) {
+//            Icon(
+//                painter = painterResource(R.drawable.ic_footprint),
+//                contentDescription = null
+//            )
+//            Spacer(modifier = Modifier.width(dimensionResource(R.dimen.padding_small)))
+//            Text(
+//                text = stringResource(R.string.guest_mode),
+//                style = MaterialTheme.typography.titleMedium
+//            )
+//        }
     }
 }
 
@@ -169,8 +151,7 @@ private fun EnterPhoneNumberUIPreview() {
             phone = "",
             onPhoneChange = {},
             onDone = {},
-            onGuestModeButtonClicked = {},
-            onVKAuth = {}
+            onGuestModeButtonClicked = {}
         )
     }
 }

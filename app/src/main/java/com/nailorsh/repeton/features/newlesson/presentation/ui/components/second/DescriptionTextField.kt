@@ -4,6 +4,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -12,7 +13,8 @@ import com.nailorsh.repeton.R
 @Composable
 fun DescriptionTextField(
     description : String,
-    onDescriptionChange : (String) -> Unit
+    onDescriptionChange : (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
 
     OutlinedTextField(
@@ -28,5 +30,6 @@ fun DescriptionTextField(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Done
         ),
+        modifier = modifier
     )
 }

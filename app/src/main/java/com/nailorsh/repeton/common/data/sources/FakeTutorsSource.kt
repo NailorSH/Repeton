@@ -17,17 +17,14 @@ object FakeTutorsSource {
                 FakeSubjectsSource.getSubject(1),
                 FakeSubjectsSource.getSubject(2)
             ),
-            education = "Окончил МФТИ, ФОПФ, два красных диплома, 2005 г.",
-            subjectsPrices = mapOf(
-                "Математика" to "500-1000 ₽ / 60 мин",
-                "Информатика" to "800-1000 ₽ / 60 мин"
-            ),
+            subjectsPrices = null,
             averagePrice = 500,
             rating = 4.93,
             reviewsNumber = 100,
             taughtLessonNumber = 250,
             experienceYears = 6,
-            languages = mapOf("Русский" to "Носитель"),
+            languagesWithLevels = null,
+            phoneNumber = ""
         ),
 
         Tutor(
@@ -40,21 +37,14 @@ object FakeTutorsSource {
                 FakeSubjectsSource.getSubject(1),
                 FakeSubjectsSource.getSubject(2)
             ),
-            education = "",
-            subjectsPrices = mapOf(
-                "Информатика" to "800-1000 ₽ / 60 мин",
-                "Алгоритмы" to "1000-1500 ₽ / 60 мин"
-            ),
+            subjectsPrices = null,
             averagePrice = 1000,
             rating = 4.0,
             reviewsNumber = 3,
             taughtLessonNumber = 10,
             experienceYears = 1,
-            languages = mapOf(
-                "Русский" to "Носитель",
-                "Английский" to "Выше среднего B2",
-                "Французский" to "Средний B1"
-            ),
+            languagesWithLevels = null,
+            phoneNumber = ""
         ),
 
         Tutor(
@@ -68,22 +58,14 @@ object FakeTutorsSource {
                 FakeSubjectsSource.getSubject(7),
                 FakeSubjectsSource.getSubject(8)
             ),
-            education = "2004 — Московский физико-технический институт\n" +
-                    "Прикладные математика и физика",
-            subjectsPrices = mapOf(
-                "ООП" to "800-1500 ₽ / 60 мин",
-                "Компьютерные сети" to "1000-2000 ₽ / 60 мин",
-                "Разработка мобильных приложений" to "1000-2000 ₽ / 60 мин"
-            ),
+            subjectsPrices = null,
             averagePrice = 1500,
             rating = 4.5,
             reviewsNumber = 10,
             taughtLessonNumber = 50,
             experienceYears = 2,
-            languages = mapOf(
-                "Русский" to "Носитель",
-                "Английский" to "Выше среднего B2",
-            ),
+            languagesWithLevels = null,
+            phoneNumber = ""
         ),
 
         Tutor(
@@ -97,23 +79,14 @@ object FakeTutorsSource {
                 FakeSubjectsSource.getSubject(1),
                 FakeSubjectsSource.getSubject(2)
             ),
-            education = "Новгородский государственный университет имени Ярослава Мудрого, " +
-                    "оператор электронно-вычислительных и вычислительных машин второго разряда" +
-                    "\n2014–2015 гг.",
-            subjectsPrices = mapOf(
-                "Русский язык" to "500-1000 ₽ / 60 мин",
-                "Английский язык" to "800-1500 ₽ / 60 мин",
-                "Немецкий язык" to "800-1500 ₽ / 60 мин"
-            ),
+            subjectsPrices = null,
             averagePrice = 800,
             rating = 3.9,
             reviewsNumber = 19,
             taughtLessonNumber = 100,
             experienceYears = 8,
-            languages = mapOf(
-                "Русский" to "Носитель",
-                "Английский" to "Выше среднего B2",
-            ),
+            languagesWithLevels = null,
+            phoneNumber = ""
         ),
     )
 

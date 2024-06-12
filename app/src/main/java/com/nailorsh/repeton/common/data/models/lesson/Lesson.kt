@@ -9,6 +9,7 @@ data class Lesson(
     val subject: Subject,
     val topic: String,
     val description: String? = null,
+    val studentIds: List<Id> = emptyList(),
     val tutor: User,
     val startTime: LocalDateTime,
     val endTime: LocalDateTime,

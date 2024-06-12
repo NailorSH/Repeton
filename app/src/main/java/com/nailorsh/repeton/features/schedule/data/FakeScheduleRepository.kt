@@ -17,4 +17,8 @@ class FakeScheduleRepository @Inject constructor() : ScheduleRepository {
             it.startTime.year == day.year && it.startTime.dayOfYear == day.dayOfYear
         }
     }
+
+    override suspend fun getUserType(): Boolean {
+        return true
+    }
 }

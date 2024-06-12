@@ -21,4 +21,8 @@ class ScheduleRepositoryImpl @Inject constructor(
             it.startTime.year == day.year && it.startTime.dayOfYear == day.dayOfYear
         }
     }
+
+    override suspend fun getUserType(): Boolean {
+        return firestoreRepository.getCurrentUserType()
+    }
 }

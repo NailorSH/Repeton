@@ -61,7 +61,8 @@ sealed interface NewLessonFirstAction {
 }
 
 sealed class NewLessonUIEvent(@StringRes val errorMsg: Int) {
-
+    object EmptyUsersStudents : NewLessonUIEvent(R.string.new_lesson_screen_empty_users_students)
+    object EmptyUsersSubjects : NewLessonUIEvent(R.string.new_lesson_screen_empty_users_subjects)
     object SubjectError : NewLessonUIEvent(R.string.new_lesson_screen_subject_error)
 
     object TopicError : NewLessonUIEvent(R.string.new_lesson_screen_topic_error)
@@ -147,7 +148,7 @@ class NewLessonFirstViewModel @Inject constructor(
                         NewLessonFirstUIState.Success(
                             NewLessonFirstState(
                                 loadedSubjects = subjects,
-                                allStudents = students
+                                allStudents = students ?: emptyList()
                             )
                         )
                     }
@@ -320,10 +321,17 @@ class NewLessonFirstViewModel @Inject constructor(
                                         action.timePickerStartEnabled
                                     )
 
-                                    is NewLessonFirstAction.UpdateShowDropDownMenu -> updateDropDownMenuState(
-                                        state,
-                                        action.dropDownMenuEnabled
-                                    )
+                                    is NewLessonFirstAction.UpdateShowDropDownMenu -> {
+                                        if (state.state.loadedSubjects.isEmpty()) {
+                                            _uiEvents.emit(NewLessonUIEvent.EmptyUsersSubjects)
+                                            state
+                                        } else {
+                                            updateDropDownMenuState(
+                                                state,
+                                                action.dropDownMenuEnabled
+                                            )
+                                        }
+                                    }
 
                                     is NewLessonFirstAction.UpdateShowTimePickerStartTextField -> updateTimePickerStartTextFieldState(
                                         state,
@@ -335,10 +343,17 @@ class NewLessonFirstViewModel @Inject constructor(
                                         action.timePickerEndTextFieldEnabled
                                     )
 
-                                    is NewLessonFirstAction.UpdateShowAddUserDialogue -> updateAddUserDialogueState(
-                                        state,
-                                        action.addUserDialogueEnable
-                                    )
+                                    is NewLessonFirstAction.UpdateShowAddUserDialogue -> {
+                                        if (state.state.allStudents.isEmpty()) {
+                                            _uiEvents.emit(NewLessonUIEvent.EmptyUsersStudents)
+                                            state
+                                        } else {
+                                            updateAddUserDialogueState(
+                                                state,
+                                                action.addUserDialogueEnable
+                                            )
+                                        }
+                                    }
 
                                     else -> state
                                 }

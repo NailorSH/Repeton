@@ -7,12 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nailorsh.repeton.features.auth.data.AuthRepository
 import com.nailorsh.repeton.features.auth.data.model.UserData
-import com.vk.id.AccessToken
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -38,6 +39,21 @@ class AuthViewModel @Inject constructor(
     private val authService: AuthRepository
 ) : ViewModel() {
     val authUiState: MutableStateFlow<AuthState> = authService.authState
+
+    private val _isUserAuthenticated = MutableStateFlow(isUserAuthenticated())
+    val isUserAuthenticated: Flow<Boolean> = _isUserAuthenticated.asStateFlow()
+
+    init {
+        // Слушатель состояния аутентификации
+        authService.addAuthStateListener { auth ->
+            _isUserAuthenticated.value = auth.currentUser != null
+        }
+    }
+
+    // Утилита для асинхронного обновления статуса аутентификации
+    private fun checkAuthenticationStatus() = flow {
+        emit(isUserAuthenticated())
+    }
 
     private val _newUserUIState = MutableStateFlow(UserData())
     val newUserUiState: StateFlow<UserData> = _newUserUIState.asStateFlow()
@@ -90,6 +106,10 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    private fun isUserAuthenticated(): Boolean {
+        return authService.isUserAuthorized()
+    }
+
     fun registerNewUser() {
         viewModelScope.launch {
             registrationUiState = RegistrationUiState.Loading
@@ -107,12 +127,6 @@ class AuthViewModel @Inject constructor(
             } catch (e: Exception) {
                 RegistrationUiState.Error
             }
-        }
-    }
-
-    fun onVKAuth(token: AccessToken) {
-        viewModelScope.launch {
-            authService.onVKAuth(token)
         }
     }
 }
